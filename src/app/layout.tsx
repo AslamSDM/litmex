@@ -3,7 +3,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FluxDock } from "@/components/FluxDock";
 import { Footer } from "@/components/Footer";
+import localFont from "next/font/local";
 
+const blackBird = localFont({
+  src: "../../public/fonts/ductile.otf",
+  variable: "--font-display",
+});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${blackBird.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <FluxDock />
