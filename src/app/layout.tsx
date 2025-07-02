@@ -14,10 +14,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 export const metadata: Metadata = {
   metadataBase: new URL("https://litmexpresale.com"),
   title: "Litmex | Premium Web3 Gaming Platform",
@@ -46,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${blackBird.variable} ${geistMono.variable} antialiased bg-black`}
+        className={`${geistSans.variable} ${blackBird.variable} antialiased bg-black`}
       >
         {children}
         <FluxDock />
