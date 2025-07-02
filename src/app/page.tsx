@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Suspense,
-} from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import {
   motion,
   useScroll,
@@ -27,7 +21,7 @@ import {
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
-const MAX_SPLINE_SCROLL_VALUE = 1000;
+// const MAX_SPLINE_SCROLL_VALUE = 1000;
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,89 +34,53 @@ export default function HomePage() {
     isMobile: false,
     memoryLimited: false,
   });
-  const [webglSupport, setWebglSupport] = useState({
-    webgl: false,
-    webgl2: false,
-  });
-  const [splineError, setSplineError] = useState<string | null>(null);
-  // const referralInfo = useReferralHandling();
 
   const { scrollY } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  const [useSplineFallback, setUseSplineFallback] = useState<boolean>(false);
+  // const [useSplineFallback, setUseSplineFallback] = useState<boolean>(false);
   useMotionValueEvent(scrollY, "change", (latest) => {
     setMappedScrollProgress(latest / 50);
   });
 
-  const navigateToSection = useCallback(
-    (sectionIndex: number) => {
-      try {
-        const targetSection = Math.max(0, Math.min(sectionIndex, 5));
-        let targetScrollPercentage: number;
+  // const navigateToSection = useCallback(
+  //   (sectionIndex: number) => {
+  //     try {
+  //       const targetSection = Math.max(0, Math.min(sectionIndex, 5));
+  //       let targetScrollPercentage: number;
 
-        if (targetSection === 0) {
-          targetScrollPercentage = 0;
-        } else {
-          const sectionThresholds = [
-            TOTAL_SCROLL_ANIMATION_UNITS * (1 / 6),
-            TOTAL_SCROLL_ANIMATION_UNITS * (2 / 6),
-            TOTAL_SCROLL_ANIMATION_UNITS * (3 / 6),
-            TOTAL_SCROLL_ANIMATION_UNITS * (4 / 6),
-            TOTAL_SCROLL_ANIMATION_UNITS * (5 / 6),
-          ];
+  //       if (targetSection === 0) {
+  //         targetScrollPercentage = 0;
+  //       } else {
+  //         const sectionThresholds = [
+  //           TOTAL_SCROLL_ANIMATION_UNITS * (1 / 6),
+  //           TOTAL_SCROLL_ANIMATION_UNITS * (2 / 6),
+  //           TOTAL_SCROLL_ANIMATION_UNITS * (3 / 6),
+  //           TOTAL_SCROLL_ANIMATION_UNITS * (4 / 6),
+  //           TOTAL_SCROLL_ANIMATION_UNITS * (5 / 6),
+  //         ];
 
-          targetScrollPercentage =
-            (sectionThresholds[targetSection - 1] + 1) /
-            TOTAL_SCROLL_ANIMATION_UNITS;
-        }
+  //         targetScrollPercentage =
+  //           (sectionThresholds[targetSection - 1] + 1) /
+  //           TOTAL_SCROLL_ANIMATION_UNITS;
+  //       }
 
-        const scrollHeight =
-          document.documentElement.scrollHeight - window.innerHeight;
-        const targetScrollPosition = scrollHeight * targetScrollPercentage;
+  //       const scrollHeight =
+  //         document.documentElement.scrollHeight - window.innerHeight;
+  //       const targetScrollPosition = scrollHeight * targetScrollPercentage;
 
-        window.scrollTo({
-          top: targetScrollPosition,
-          behavior: "smooth",
-        });
-      } catch (error) {
-        console.error("Error navigating to section:", error);
-      }
-    },
-    [useSplineFallback]
-  );
-
-  const goToNextSection = useCallback(() => {
-    const nextSection = activeSection >= 5 ? 5 : activeSection + 1;
-    if (nextSection !== activeSection) {
-      navigateToSection(nextSection);
-      // sectionChangeSound.play();
-    }
-  }, [activeSection, navigateToSection]);
-
-  const goToPreviousSection = useCallback(() => {
-    const prevSection = activeSection <= 0 ? 0 : activeSection - 1;
-    if (prevSection !== activeSection) {
-      navigateToSection(prevSection);
-      // sectionChangeSound.play();
-    }
-  }, [activeSection, navigateToSection]);
-
-  const goToFirstSection = useCallback(() => {
-    if (activeSection !== 0) {
-      navigateToSection(0);
-      // sectionChangeSound.play();
-    }
-  }, [activeSection, navigateToSection]);
-
-  const goToLastSection = useCallback(() => {
-    if (activeSection !== 5) {
-      navigateToSection(5);
-      // sectionChangeSound.play();
-    }
-  }, [activeSection, navigateToSection]);
+  //       window.scrollTo({
+  //         top: targetScrollPosition,
+  //         behavior: "smooth",
+  //       });
+  //     } catch (error) {
+  //       console.error("Error navigating to section:", error);
+  //     }
+  //   },
+  //   [useSplineFallback]
+  // );
 
   // Section change detection
   useEffect(() => {
@@ -160,14 +118,14 @@ export default function HomePage() {
     }
   }, [mappedScrollProgress, activeSection]);
 
-  const sectionVisibility = [
-    activeSection === 0,
-    activeSection === 1,
-    activeSection === 2,
-    activeSection === 3,
-    activeSection === 4,
-    activeSection === 5,
-  ];
+  // const sectionVisibility = [
+  //   activeSection === 0,
+  //   activeSection === 1,
+  //   activeSection === 2,
+  //   activeSection === 3,
+  //   activeSection === 4,
+  //   activeSection === 5,
+  // ];
 
   return (
     <div ref={containerRef} className="relative w-full">
