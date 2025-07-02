@@ -1,0 +1,196 @@
+/* Section layout and animation utilities */
+
+/* Scattered layout positioning */
+.title-text {
+  position: absolute;
+  top: 25%;
+  left: 5%;
+  max-width: 90%;
+  z-index: 10;
+  font-family: sans-serif;
+}
+
+.title-text h1 {
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: inline-block;
+}
+
+/* Angular white background for headings */
+.angular-bg {
+  position: relative;
+  display: inline-block;
+}
+
+.angular-bg::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -20px;
+  right: -20px;
+  bottom: -10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: skew(-10deg);
+  z-index: -1;
+  opacity: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+}
+
+.angular-bg.slide-in-bg::before {
+  animation: slideInBg 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInBg {
+  0% {
+    transform: translateX(-50px) skew(-10deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateX(0) skew(-10deg);
+    opacity: 0.15;
+  }
+}
+
+.floating-text {
+  position: absolute;
+  max-width: 500px;
+  pointer-events: auto;
+}
+
+.center-left {
+  left: 5%;
+  bottom: 10%;
+  max-width: 400px;
+  transform: translateY(-50%);
+}
+
+.center-right {
+  right: 5%;
+  top: 70%;
+  max-width: 350px;
+  transform: translateY(-50%);
+}
+
+.top-left {
+  right: 7%;
+  bottom: 25%;
+}
+
+.top-right {
+  right: 8%;
+  top: 62%;
+}
+
+.bottom-left {
+  left: 12%;
+  bottom: 30%;
+}
+
+.bottom-right {
+  right: 7%;
+  bottom: 25%;
+}
+
+.random-top {
+  right: 22%;
+  top: 18%;
+}
+
+.random-middle {
+  right: 18%;
+  bottom: 32%;
+}
+/* Floating animations with only vertical movement */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.random-middle-right {
+    right: 38%;
+    top: 45%;
+}
+
+.random-middle-left {
+    left: 35%;
+    top: 50%;
+}
+.random-bottom {
+  right: 28%;
+  bottom: 28%;
+}
+
+.offset-top-left {
+  left: 23%;
+  top: 14%;
+}
+
+.offset-top-right {
+  right: 15%;
+  top: 22%;
+}
+
+.offset-bottom-left {
+  left: 32%;
+  bottom: 18%;
+}
+
+.offset-bottom-right {
+  right: 32%;
+  bottom: 22%;
+}
+
+/* Floating animations */
+.floating-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-animation-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.floating-animation-fast {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.slide-in {
+  animation: slideIn 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Additional positioning classes */
+.center-top {
+  left: 30%;
+  top: 15%;
+  max-width: 300px;
+}
+
+.center-bottom {
+  left: 60%;
+  bottom: 15%;
+  text-align: center;
+}

@@ -11,17 +11,17 @@ import {
 // import ReferralIndicator from "@/components/ReferralIndicator";
 
 // Import section components
-// import IntroSection from "@/components/sections/IntroSection";
-// import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
-// import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
-// import StakeEarnSection from "@/components/sections/StakeEarnSection";
-// import SecuritySection from "@/components/sections/SecuritySection";
-// import CtaSection from "@/components/sections/CtaSection";
+import IntroSection from "@/components/sections/IntroSection";
+import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
+import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
+import StakeEarnSection from "@/components/sections/StakeEarnSection";
+import SecuritySection from "@/components/sections/SecuritySection";
+import CtaSection from "@/components/sections/CtaSection";
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
-// const MAX_SPLINE_SCR OLL_VALUE = 1000;
+const MAX_SPLINE_SCROLL_VALUE = 1000;
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,14 +118,14 @@ export default function HomePage() {
     }
   }, [mappedScrollProgress, activeSection]);
 
-  // const sectionVisibility = [
-  //   activeSection === 0,
-  //   activeSection === 1,
-  //   activeSection === 2,
-  //   activeSection === 3,
-  //   activeSection === 4,
-  //   activeSection === 5,
-  // ];
+  const sectionVisibility = [
+    activeSection === 0,
+    activeSection === 1,
+    activeSection === 2,
+    activeSection === 3,
+    activeSection === 4,
+    activeSection === 5,
+  ];
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -162,7 +162,7 @@ export default function HomePage() {
       {/* Sections container */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <AnimatePresence mode="wait">
-          {/* {sectionVisibility[0] && (
+          {sectionVisibility[0] && (
             <IntroSection isVisible={true} key="intro" />
           )}
           {sectionVisibility[1] && (
@@ -177,7 +177,7 @@ export default function HomePage() {
           {sectionVisibility[4] && (
             <SecuritySection isVisible={true} key="security" />
           )}
-          {sectionVisibility[5] && <CtaSection isVisible={true} key="cta" />} */}
+          {sectionVisibility[5] && <CtaSection isVisible={true} key="cta" />}
         </AnimatePresence>
       </div>
 

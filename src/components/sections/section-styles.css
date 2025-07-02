@@ -1,0 +1,112 @@
+/* Section styling for random positioning and creative text layouts */
+
+/* Section positioning variables */
+:root {
+  --section-z-index: 20;
+  --section-transition-duration: 0.7s;
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Common section wrapper - applies to all sections */
+.section-wrapper {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--section-z-index);
+  pointer-events: none; /* Default state */
+  overflow: hidden;
+  will-change: opacity;
+}
+
+/* Content containers with absolute positioning */
+.floating-text {
+  position: absolute;
+  pointer-events: auto;
+  /* No fixed dimensions - let content decide size */
+  max-width: 80vw;
+}
+
+/* Title text positioning - bottom left by default */
+.title-text {
+  position: absolute;
+  left: 5vw;
+  bottom: 5vh;
+  font-weight: bold;
+  text-shadow: var(--text-shadow);
+  max-width: 80vw;
+}
+
+/* Paragraph text typically positioned elsewhere */
+.paragraph-text {
+  position: absolute;
+  text-shadow: var(--text-shadow);
+  max-width: 40vw;
+}
+
+/* Position variants */
+.section-center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--section-center-max-width);
+}
+
+.section-left {
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+  margin-left: 5%;
+  margin-right: auto;
+  max-width: var(--section-side-max-width);
+}
+
+.section-right {
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+  margin-left: auto;
+  margin-right: 5%;
+  max-width: var(--section-side-max-width);
+}
+
+/* Common section content styling */
+.section-content {
+  backdrop-filter: blur(var(--section-backdrop-blur));
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(55, 128, 212, 0.3);
+  transition: all var(--section-transition-duration) ease;
+  overflow: hidden;
+  width: 100%;
+  /* Ensure the content itself is properly centered */
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Debug helpers */
+.section-debug {
+  border: 1px dashed rgba(255, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-left, .section-right {
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+  }
+  
+  .section-content {
+    max-width: calc(100% - 2rem);
+    padding: 1.5rem;
+  }
+}
