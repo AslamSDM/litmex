@@ -3,7 +3,6 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Home, User, Sparkle } from "lucide-react";
 import { Dock, DockIcon } from "@/components/magicui/dock";
-import { DockThemeToggle } from "./DockThemeToggle";
 
 export function FluxDock() {
   const pathname = usePathname();

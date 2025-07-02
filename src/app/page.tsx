@@ -21,7 +21,7 @@ import CtaSection from "@/components/sections/CtaSection";
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
-const MAX_SPLINE_SCROLL_VALUE = 1000;
+// const MAX_SPLINE_SCROLL_VALUE = 1000;
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
