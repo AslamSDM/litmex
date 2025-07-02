@@ -5,6 +5,7 @@ import { FluxDock } from "@/components/FluxDock";
 import { Footer } from "@/components/Footer";
 import localFont from "next/font/local";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { LoadingProvider } from "@/components/providers/loading-provider";
 
 const blackBird = localFont({
   src: "../../public/fonts/ductile.otf",
@@ -45,11 +46,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${blackBird.variable} antialiased bg-black`}
       >
-        <AuthProvider>
-          {children}
-          <FluxDock />
-          <Footer />
-        </AuthProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            {children}
+            <FluxDock />
+            <Footer />
+          </AuthProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
