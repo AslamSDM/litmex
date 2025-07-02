@@ -6,6 +6,7 @@ import React, {
   useState,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 
 interface LoadingContextType {
@@ -48,7 +49,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const clearAllLoadingTimers = () => {
+  const clearAllLoadingTimers = useCallback(() => {
     if (initialProgressTimerRef.current)
       clearTimeout(initialProgressTimerRef.current);
     if (fallbackCompleteTimerRef.current)
@@ -66,7 +67,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
     progressSim1Ref.current = null;
     progressSim2Ref.current = null;
     progressSim3Ref.current = null;
-  };
+  }, [clearWatchdog]);
 
   const startLoading = () => {
     clearAllLoadingTimers(); // Clear any pending timers from previous load cycles.
@@ -95,7 +96,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
     }, 400); // Watchdog timeout (e.g., 4 seconds)
   };
 
-  const completeLoading = () => {
+  const completeLoading = useCallback(() => {
     clearWatchdog(); // Clear the watchdog timer as we are now completing
 
     // Clear any running progress simulation timers from startLoading
@@ -118,7 +119,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(false);
       completeLoadingDelayTimerRef.current = null; // Clear ref after execution
     }, 300); // Adjusted delay for a slightly quicker transition
-  };
+  }, [clearWatchdog]);
 
   // Effect for initial page load simulation and fallback
   useEffect(() => {
@@ -141,7 +142,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
       // Cleanup all timers when the provider unmounts
       clearAllLoadingTimers();
     };
-  }, []); // Runs only on mount and unmount
+  }, [isLoading, progress, completeLoading, clearAllLoadingTimers]); // Runs only on mount and unmount
   useEffect(() => {
     if (isLoading) {
       setTimeout(() => {

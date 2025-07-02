@@ -1,0 +1,32 @@
+/* ReferralCard responsive styles */
+@media (max-width: 640px) {
+  .referral-link-input {
+    font-size: 12px;
+    padding: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .referral-stats-container {
+    padding: 8px;
+  }
+  
+  .referral-share-button {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .referral-link-input {
+    font-size: 10px;
+  }
+  
+  .referral-share-button {
+    min-width: 70px;
+    font-size: 11px;
+  }
+  
+  .referral-stats-grid {
+    grid-gap: 6px;
+  }
+}
