@@ -1,103 +1,230 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  Suspense,
+} from "react";
+import {
+  motion,
+  useScroll,
+  AnimatePresence,
+  useMotionValueEvent,
+} from "framer-motion";
+// import useReferralHandling from "@/components/hooks/useReferralHandling";
+// import ReferralIndicator from "@/components/ReferralIndicator";
+
+// Import section components
+// import IntroSection from "@/components/sections/IntroSection";
+// import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
+// import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
+// import StakeEarnSection from "@/components/sections/StakeEarnSection";
+// import SecuritySection from "@/components/sections/SecuritySection";
+// import CtaSection from "@/components/sections/CtaSection";
+
+const TOTAL_SCROLL_ANIMATION_UNITS = 100;
+const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
+
+const MAX_SPLINE_SCROLL_VALUE = 1000;
+
+export default function HomePage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState<number>(0);
+  const [mappedScrollProgress, setMappedScrollProgress] = useState<number>(0);
+
+  // Device and capability detection
+  const [deviceInfo, setDeviceInfo] = useState({
+    isIOS: false,
+    isMobile: false,
+    memoryLimited: false,
+  });
+  const [webglSupport, setWebglSupport] = useState({
+    webgl: false,
+    webgl2: false,
+  });
+  const [splineError, setSplineError] = useState<string | null>(null);
+  // const referralInfo = useReferralHandling();
+
+  const { scrollY } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const [useSplineFallback, setUseSplineFallback] = useState<boolean>(false);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setMappedScrollProgress(latest / 50);
+  });
+
+  const navigateToSection = useCallback(
+    (sectionIndex: number) => {
+      try {
+        const targetSection = Math.max(0, Math.min(sectionIndex, 5));
+        let targetScrollPercentage: number;
+
+        if (targetSection === 0) {
+          targetScrollPercentage = 0;
+        } else {
+          const sectionThresholds = [
+            TOTAL_SCROLL_ANIMATION_UNITS * (1 / 6),
+            TOTAL_SCROLL_ANIMATION_UNITS * (2 / 6),
+            TOTAL_SCROLL_ANIMATION_UNITS * (3 / 6),
+            TOTAL_SCROLL_ANIMATION_UNITS * (4 / 6),
+            TOTAL_SCROLL_ANIMATION_UNITS * (5 / 6),
+          ];
+
+          targetScrollPercentage =
+            (sectionThresholds[targetSection - 1] + 1) /
+            TOTAL_SCROLL_ANIMATION_UNITS;
+        }
+
+        const scrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const targetScrollPosition = scrollHeight * targetScrollPercentage;
+
+        window.scrollTo({
+          top: targetScrollPosition,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        console.error("Error navigating to section:", error);
+      }
+    },
+    [useSplineFallback]
+  );
+
+  const goToNextSection = useCallback(() => {
+    const nextSection = activeSection >= 5 ? 5 : activeSection + 1;
+    if (nextSection !== activeSection) {
+      navigateToSection(nextSection);
+      // sectionChangeSound.play();
+    }
+  }, [activeSection, navigateToSection]);
+
+  const goToPreviousSection = useCallback(() => {
+    const prevSection = activeSection <= 0 ? 0 : activeSection - 1;
+    if (prevSection !== activeSection) {
+      navigateToSection(prevSection);
+      // sectionChangeSound.play();
+    }
+  }, [activeSection, navigateToSection]);
+
+  const goToFirstSection = useCallback(() => {
+    if (activeSection !== 0) {
+      navigateToSection(0);
+      // sectionChangeSound.play();
+    }
+  }, [activeSection, navigateToSection]);
+
+  const goToLastSection = useCallback(() => {
+    if (activeSection !== 5) {
+      navigateToSection(5);
+      // sectionChangeSound.play();
+    }
+  }, [activeSection, navigateToSection]);
+
+  // Section change detection
+  useEffect(() => {
+    const sectionThresholds = [
+      TOTAL_SCROLL_ANIMATION_UNITS * (1 / 6),
+      TOTAL_SCROLL_ANIMATION_UNITS * (2 / 6),
+      TOTAL_SCROLL_ANIMATION_UNITS * (3 / 6),
+      TOTAL_SCROLL_ANIMATION_UNITS * (4 / 6),
+      TOTAL_SCROLL_ANIMATION_UNITS * (5 / 6),
+    ];
+
+    let newSection;
+    if (mappedScrollProgress < sectionThresholds[0]) {
+      newSection = 0;
+    } else if (mappedScrollProgress < sectionThresholds[1]) {
+      newSection = 1;
+    } else if (mappedScrollProgress < sectionThresholds[2]) {
+      newSection = 2;
+    } else if (mappedScrollProgress < sectionThresholds[3]) {
+      newSection = 3;
+    } else if (mappedScrollProgress < sectionThresholds[4]) {
+      newSection = 4;
+    } else {
+      newSection = 5;
+    }
+
+    if (newSection !== activeSection) {
+      setActiveSection(newSection);
+      // sectionChangeSound.play();
+      console.log(
+        `Section changed to: ${newSection}, at mapped progress: ${mappedScrollProgress.toFixed(
+          2
+        )}`
+      );
+    }
+  }, [mappedScrollProgress, activeSection]);
+
+  const sectionVisibility = [
+    activeSection === 0,
+    activeSection === 1,
+    activeSection === 2,
+    activeSection === 3,
+    activeSection === 4,
+    activeSection === 5,
+  ];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div ref={containerRef} className="relative w-full">
+      {/* Referral indicator */}
+      {/* {referralInfo.isValid && referralInfo.code && (
+        <ReferralIndicator
+          referralCode={referralInfo.code}
+          referrerUsername={referralInfo.referrerUsername}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+      )} */}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      {/* Main 3D scene container */}
+      <div className="sticky top-0 left-0 w-full h-screen z-0 overflow-hidden">
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+        <Suspense fallback={<div className="w-full h-full bg-gray-100" />}>
+          <DynamicSpline
+            scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
+            className="w-full h-full"
+            // style={{
+            //   // Optimize for mobile performance
+            //   willChange: deviceInfo.isMobile ? "auto" : "transform",
+            // }}
+            // Reduce quality on memory-limited devices
+            renderOnDemand={deviceInfo.memoryLimited}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </Suspense>
+      </div>
+
+      {/* Sections container */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <AnimatePresence mode="wait">
+          {/* {sectionVisibility[0] && (
+            <IntroSection isVisible={true} key="intro" />
+          )}
+          {sectionVisibility[1] && (
+            <FutureGamblingSection isVisible={true} key="future" />
+          )}
+          {sectionVisibility[2] && (
+            <BettingMarketsSection isVisible={true} key="markets" />
+          )}
+          {sectionVisibility[3] && (
+            <StakeEarnSection isVisible={true} key="stake" />
+          )}
+          {sectionVisibility[4] && (
+            <SecuritySection isVisible={true} key="security" />
+          )}
+          {sectionVisibility[5] && <CtaSection isVisible={true} key="cta" />} */}
+        </AnimatePresence>
+      </div>
+
+      {/* Scrollable height container */}
+      <div style={{ height: "600vh" }} aria-hidden="true"></div>
     </div>
   );
 }
