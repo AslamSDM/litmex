@@ -21,7 +21,7 @@ import {
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
-// const MAX_SPLINE_SCROLL_VALUE = 1000;
+// const MAX_SPLINE_SCR OLL_VALUE = 1000;
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,11 +29,11 @@ export default function HomePage() {
   const [mappedScrollProgress, setMappedScrollProgress] = useState<number>(0);
 
   // Device and capability detection
-  const [deviceInfo, setDeviceInfo] = useState({
-    isIOS: false,
-    isMobile: false,
-    memoryLimited: false,
-  });
+  // const [deviceInfo, setDeviceInfo] = useState({
+  //   isIOS: false,
+  //   isMobile: false,
+  //   memoryLimited: false,
+  // });
 
   const { scrollY } = useScroll({
     target: containerRef,
@@ -154,7 +154,7 @@ export default function HomePage() {
             //   willChange: deviceInfo.isMobile ? "auto" : "transform",
             // }}
             // Reduce quality on memory-limited devices
-            renderOnDemand={deviceInfo.memoryLimited}
+            // renderOnDemand={deviceInfo.memoryLimited}
           />
         </Suspense>
       </div>
