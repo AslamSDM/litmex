@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Bruno_Ace } from "next/font/google";
 import "./globals.css";
 import { FluxDock } from "@/components/FluxDock";
 import { Footer } from "@/components/Footer";
-import localFont from "next/font/local";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
 
-const blackBird = localFont({
-  src: "../../public/fonts/ductile.otf",
-  variable: "--font-display",
-});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+const brunoAce = Bruno_Ace({
+  variable: "--font-bruno-ace",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${blackBird.variable} antialiased bg-black`}
+        className={`${geistSans.variable} ${brunoAce.className}  antialiased bg-black`}
       >
         <LoadingProvider>
           <AuthProvider>
