@@ -66,12 +66,12 @@ export default function LuxuryCard({
     <Card
       ref={cardRef}
       className={cn(
-        "relative overflow-hidden luxury-card transition-all duration-500",
+        "relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] border border-[rgba(55,128,212,0.3)] bg-[rgba(13,13,15,0.6)] backdrop-blur-lg p-2 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.4),0_0_25px_rgba(212,175,55,0.25)] hover:border-[rgba(212,175,55,0.6)] group",
         animationClass,
         className
       )}
     >
-      <div className="luxury-shimmer"></div>
+      <div className="absolute inset-[-10%] bg-[radial-gradient(circle_at_var(--x,50%)_var(--y,50%),rgba(212,175,55,0.15)_0%,transparent_50%)] z-0 pointer-events-none transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100"></div>
       <div className="cut-corner-border"></div>
       <DecorativeCorner position="br" />
       <div className="luxury-corner luxury-corner-tl"></div>

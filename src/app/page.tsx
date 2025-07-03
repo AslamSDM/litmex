@@ -101,10 +101,8 @@ export default function HomePage() {
       newSection = 2;
     } else if (mappedScrollProgress < sectionThresholds[3]) {
       newSection = 3;
-    } else if (mappedScrollProgress < sectionThresholds[4]) {
-      newSection = 4;
     } else {
-      newSection = 5;
+      newSection = 4;
     }
 
     if (newSection !== activeSection) {
@@ -174,15 +172,15 @@ export default function HomePage() {
           {sectionVisibility[3] && (
             <StakeEarnSection isVisible={true} key="stake" />
           )}
-          {sectionVisibility[4] && (
+          {/* {sectionVisibility[4] && (
             <SecuritySection isVisible={true} key="security" />
-          )}
-          {sectionVisibility[5] && <CtaSection isVisible={true} key="cta" />}
+          )} */}
+          {sectionVisibility[4] && <CtaSection isVisible={true} key="cta" />}
         </AnimatePresence>
       </div>
 
       {/* Scrollable height container */}
-      <div style={{ height: "600vh" }} aria-hidden="true"></div>
+      <div style={{ height: "500vh" }} aria-hidden="true"></div>
     </div>
   );
 }
