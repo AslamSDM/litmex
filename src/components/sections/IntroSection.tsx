@@ -39,7 +39,7 @@ export default function IntroSection({ isVisible }: IntroSectionProps) {
           style={{ zIndex: 2, position: "relative" }}
         >
           <motion.h1
-            className="text-6xl md:text-8xl font-display text-white"
+            className="text-6xl md:text-8xl text-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -59,7 +59,7 @@ export default function IntroSection({ isVisible }: IntroSectionProps) {
         }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <p className="text-xl text-white/90">
+        <p className="text-xl mt-2 text-white/90">
           Built on Solana, Litmex combines decentralized prediction markets,
           addictive mini games, and autonomous AI betting agents. It&apos;s not
           just gambling it&apos;s intelligent, automated crypto wagering at
