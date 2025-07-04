@@ -6,9 +6,10 @@ import Link from "next/link";
 
 interface CtaSectionProps {
   isVisible: boolean;
+  isIos?: boolean; // Optional prop for iOS detection
 }
 
-export default function CtaSection({ isVisible }: CtaSectionProps) {
+export default function CtaSection({ isVisible, isIos }: CtaSectionProps) {
   return (
     <motion.div
       className="sticky top-0 left-0 w-screen h-screen overflow-hidden flex flex-col justify-between -z-1"
@@ -74,7 +75,7 @@ export default function CtaSection({ isVisible }: CtaSectionProps) {
         </span>
       </VelocityScroll> */}
 
-      <Link href="/presale" target="_blank" rel="noopener noreferrer">
+      <Link href={isIos ? "presale-ios" : "/presale"}>
         <button className=" absolute bottom-24 left-1/2 text-center justify-center transform -translate-x-1/2 text-center z-40 bg-primary hover:bg-primary/90 text-primary-foreground w-1/2 h-12 px-3 py-3 rounded-xl text-lg font-medium transition-colors duration-300 flex items-center mr-[300px]">
           Join Presale <span className="ml-1">&gt;</span>
         </button>

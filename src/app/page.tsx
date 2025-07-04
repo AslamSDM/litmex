@@ -197,7 +197,9 @@ export default function HomePage() {
           {/* {sectionVisibility[4] && (
             <SecuritySection isVisible={true} key="security" />
           )} */}
-          {sectionVisibility[4] && <CtaSection isVisible={true} key="cta" />}
+          {sectionVisibility[4] && (
+            <CtaSection isVisible={true} key="cta" isIos={isIOS} />
+          )}
         </AnimatePresence>
       </div>
 

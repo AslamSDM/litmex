@@ -8,6 +8,7 @@ import SimpleProfileContent from "./SimpleProfileContent";
 import ErrorBoundary from "./ErrorBoundary";
 import { PublicKey } from "@solana/web3.js";
 import { getTokenDetails } from "@/lib/price-utils";
+import { Header } from "@/components/Header";
 
 // Route segment config
 export const dynamic = "force-dynamic";
@@ -400,6 +401,7 @@ export default async function ProfilePage() {
           />
         }
       >
+        <Header />
         <ProfileClientContent
           userData={jsonSafeData}
           initialSession={session}
