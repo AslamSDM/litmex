@@ -122,7 +122,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#"
+                  href="https://github.com/Litmexprotocol/Litmex-Whitepaper/blob/main/LItmex%20Protocol%20Whitepaper.pdf"
                   className="text-white/70 hover:text-primary transition-colors"
                 >
                   Whitepaper
