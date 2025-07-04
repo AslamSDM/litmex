@@ -165,15 +165,15 @@ export default function SimplePresalePage() {
     <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
       <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
+        <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
+        <div className="flex justify-between items-center mb-6 mt-2">
           <div className="flex items-center gap-3">
             {/* Network selector with icons */}
-            <div className="bg-black/30 rounded-md p-1 border border-primary/20">
+            <div className="bg-black/30 rounded-sm p-1 border border-primary/20">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => handleNetworkChange("bsc")}
-                  className={`px-3 py-1 rounded-md text-sm transition-colors flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
                     network === "bsc"
                       ? "bg-primary/30 text-white"
                       : "text-white/70 hover:text-white"
@@ -190,7 +190,7 @@ export default function SimplePresalePage() {
                 </button>
                 <button
                   onClick={() => handleNetworkChange("solana")}
-                  className={`px-3 py-1 rounded-md text-sm transition-colors flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
                     network === "solana"
                       ? "bg-primary/30 text-white"
                       : "text-white/70 hover:text-white"
