@@ -50,7 +50,7 @@ export default function IntroSection({ isVisible }: IntroSectionProps) {
 
       {/* Main description text - scattered on the left */}
       <motion.div
-        className="floating-text absolute left-[5%] bottom-[20%] md:bottom-[10%]   transform -translate-y-1/2 slide-in"
+        className="floating-text absolute left-[5%] bottom-[10%] md:bottom-[10%] max-w-[90%]  transform -translate-y-1/2 slide-in"
         initial={{ opacity: 0, x: -30 }}
         animate={{
           opacity: isVisible ? 1 : 0,
