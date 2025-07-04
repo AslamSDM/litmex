@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Share2, Copy, Check, Users } from "lucide-react";
+import { Share2, Copy, Check } from "lucide-react";
 import LuxuryCard from "./LuxuryCard";
 import { generateReferralUrl } from "@/lib/referral";
 import { useSession } from "next-auth/react";
-import ReferralStats from "./ReferralStats";
-import "./ReferralCard.css";
 
 interface ReferralPaymentStats {
   totalPaidAmount: number;
@@ -125,7 +123,7 @@ export const ReferralCard: React.FC<ReferralCardProps> = ({
             type="text"
             readOnly
             value={generateReferralUrl(session?.user.referralCode)}
-            className="referral-link-input flex-grow bg-black/50 border border-primary/30 sm:rounded-l-md rounded-t-md sm:rounded-tr-none p-3 text-white/90 focus:outline-none text-xs sm:text-sm overflow-ellipsis"
+            className="referral-link-input flex-grow bg-black/50 border border-primary/30 sm:rounded-l-md rounded-t-md sm:rounded-tr-none sm:p-3 p-2 text-white/90 focus:outline-none max-sm:text-[12px] max-xs:text-[10px] sm:text-sm overflow-hidden text-ellipsis"
           />
           <button
             onClick={handleCopyReferralLink}
@@ -173,7 +171,7 @@ export const ReferralCard: React.FC<ReferralCardProps> = ({
             href={platform.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="referral-share-button bg-black/40 border border-primary/20 rounded-md px-3 py-2 text-xs sm:text-sm hover:border-primary/50 transition-all inline-block text-center min-w-[90px] flex-1 sm:flex-initial"
+            className="referral-share-button bg-black/40 border border-primary/20 rounded-md px-3 py-2 hover:border-primary/50 transition-all inline-block text-center sm:text-sm text-xs max-xs:text-[11px] sm:min-w-[90px] min-w-[80px] max-xs:min-w-[70px] flex-1 sm:flex-initial"
             whileHover={{ y: -2, boxShadow: "0 5px 15px rgba(0,0,0,0.3)" }}
             whileTap={{ scale: 0.97 }}
             initial={{ opacity: 0, y: 10 }}
@@ -193,11 +191,11 @@ export const ReferralCard: React.FC<ReferralCardProps> = ({
 export default ReferralCard;
 
 // {serverRenderedStats?.referralCount && (
-//   <div className="mt-6 pt-6 border-t border-primary/20">
+//   <div className="mt-6 pt-6 border-t border-primary/20 referral-stats-container sm:p-4 p-2">
 //     <h4 className="font-medium mb-3 text-center">
 //       Your Referral Rewards
 //     </h4>
-//     <div className="flex flex-wrap justify-between items-center">
+//     <div className="referral-stats-grid">
 //       <div className="text-xs sm:text-sm text-gray-400">
 //         Total Referred
 //       </div>

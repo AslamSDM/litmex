@@ -1,24 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Link from "next/link";
+
 import {
   ArrowRight,
   Wallet,
   RefreshCcw,
   Loader2,
-  DollarSign,
-  CoinsIcon,
   BadgeCheck,
   ChevronDown,
 } from "lucide-react";
@@ -71,9 +61,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
   prices = { bnb: 600, sol: 1500 }, // Default prices if not provided
 }) => {
   // State
-  const [customReferralCode, setCustomReferralCode] = useState<string>(
-    referralCode || ""
-  );
+
   const [usdAmount, setUsdAmount] = useState<number>(500);
   const [tokenAmount, setTokenAmount] = useState<number>(35714.2857142857); // Derived from USD amount
   const [cryptoAmount, setCryptoAmount] = useState<number>(0);
@@ -82,49 +70,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
   const { data: session } = useSession();
   const user = session?.user as CustomSessionUser | undefined;
   const referralInfo = useReferralHandling();
-
-  // Get referral code from multiple sources
-  useEffect(() => {
-    // Skip if referral code is already set via props
-    if (referralCode) {
-      //console.log("Using referral code from props:", referralCode);
-      return;
-    }
-
-    // Check for referral code in session data first
-    if (user?.referredBy) {
-      //console.log("Using referral code from session:", user.referredBy);
-      setCustomReferralCode(user.referredBy);
-      return;
-    }
-
-    // Try to get referral code from cookies
-    const cookieRefCode = getCookie("referralCode");
-    if (cookieRefCode) {
-      //console.log("Using referral code from cookie:", cookieRefCode);
-      setCustomReferralCode(cookieRefCode);
-
-      return;
-    }
-
-    // Try to get referral code from localStorage
-    const storedRefCode = getStoredReferralCode();
-    if (storedRefCode) {
-      //console.log("Using referral code from localStorage:", storedRefCode);
-      setCustomReferralCode(storedRefCode);
-      return;
-    }
-
-    // Try to get referral code from URL (for new visitors)
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlRefCode = urlParams.get("ref") || urlParams.get("referral");
-    if (urlRefCode) {
-      //console.log("Using referral code from URL:", urlRefCode);
-      setCustomReferralCode(urlRefCode);
-    } else {
-      //console.log("No referral code found in any source");
-    }
-  }, [referralCode, user]);
 
   const [network, setNetwork] = useState<"bsc" | "solana">("bsc");
   const [solanaCurrency, setSolanaCurrency] = useState<"SOL" | "USDT">("SOL");
@@ -151,20 +96,8 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
   }, [network]);
 
   // Get all presale functionality from the usePresale hook
-  const {
-    signReferralCode,
-    cryptoPrices,
-    isLoadingPrices,
-    loadCryptoPrices,
-    calculateTokensFromCrypto,
-    lmxPriceUsd,
-    max,
-    min,
-    totalRaised,
-    percentageSold,
-    hardcap,
-    soldTokens,
-  } = usePresale();
+  const { cryptoPrices, isLoadingPrices, loadCryptoPrices, lmxPriceUsd } =
+    usePresale();
 
   // Handle session updates after wallet verification
   useEffect(() => {
@@ -209,7 +142,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       isError: false,
     },
     transactionSignature: bscTransactionSignature = null,
-  } = useBscPresale(tokenAmount, customReferralCode);
+  } = useBscPresale(tokenAmount, "");
 
   // Use BSC USDT hook if BSC currency is USDT
   const {
@@ -228,7 +161,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       isError: false,
     },
     transactionSignature: bscUsdtTransactionSignature = null,
-  } = useBscUsdtPresale(tokenAmount, customReferralCode);
+  } = useBscUsdtPresale(tokenAmount, "");
 
   const {
     buyTokens: buySolTokens,
@@ -242,7 +175,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       isError: false,
     },
     transactionSignature: solTransactionSignature = null,
-  } = useSolanaPresale(tokenAmount, customReferralCode);
+  } = useSolanaPresale(tokenAmount, "");
 
   const {
     buyTokens: buySolUsdtTokens,
@@ -256,7 +189,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       isError: false,
     },
     transactionSignature: solUsdtTransactionSignature = null,
-  } = useSolanaUsdtPresale(tokenAmount, customReferralCode);
+  } = useSolanaUsdtPresale(tokenAmount, "");
 
   // Use the appropriate values based on selected network and currency
   const isLoading =
@@ -657,16 +590,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
               </div>
               {/* <span className="text-xs text-white/60">Fixed USD Price</span> */}
             </div>
-            {/* <div className="ml-1 text-left">
-              <div className="text-sm font-medium text-white/80 mb-2 text-cente">
-                For $1 USD you get
-              </div>
-              <div className="text-sm">
-                <span className="text-amber-400 font-medium">
-                  {lmxPriceUsd > 0 ? (1 / lmxPriceUsd).toFixed(4) : "..."} LMX
-                </span>
-              </div>
-            </div> */}
           </div>
 
           {/* Purchase Form */}
@@ -811,31 +734,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
 
               {/* Referral Code Display (read-only) */}
               <div className="mb-6">
-                {/* <Label
-                  htmlFor="referral"
-                  className="text-sm text-white/70 block mb-2"
-                >
-                  Referral Code
-                </Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="referral"
-                    type="text"
-                    value={customReferralCode}
-                    readOnly
-                    className="bg-black/30 border border-primary/20 text-white cursor-default"
-                  />
-                  {customReferralCode ? (
-                    <div className="text-green-500 text-xs">
-                      {user?.referredBy === customReferralCode
-                        ? "From Session"
-                        : "Applied"}
-                    </div>
-                  ) : (
-                    <div className="text-yellow-500 text-xs">None</div>
-                  )}
-                </div> */}
-
                 {/* Debug info (remove in production) */}
                 {process.env.NODE_ENV !== "production" && (
                   <div className="mt-1 text-xs text-primary/50">
@@ -948,70 +846,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
               </div>
 
               {/* Presale Progress */}
-              <div className="mt-6">
-                <div className="bg-black/20 p-3 rounded-md mb-3">
-                  {/* <div className="flex justify-between text-sm mb-1">
-                    <span className="text-white/70">LMX Price:</span>
-                    <span className="text-white">${lmxPriceUsd}</span>
-                  </div> */}
-                  {/* <div className="flex justify-between text-sm">
-                    <span className="text-white/70">Tokens Sold:</span>
-                    <span className="text-white">
-                      {formatEther(
-                        BigInt(
-                          typeof soldTokens === "string" ||
-                            typeof soldTokens === "number"
-                            ? soldTokens
-                            : "0"
-                        )
-                      )}{" "}
-                      /{" "}
-                      {formatEther(
-                        BigInt(
-                          typeof hardcap === "string" ||
-                            typeof hardcap === "number"
-                            ? hardcap
-                            : "0"
-                        )
-                      )}{" "}
-                      LMX
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mt-1">
-                    <span className="text-white/70">Total Raised:</span>
-                    <span className="text-white">
-                      {typeof totalRaised === "string" ||
-                      typeof totalRaised === "number"
-                        ? parseFloat(String(totalRaised)).toFixed(4)
-                        : "0"}{" "}
-                      {currencySymbol}
-                    </span>
-                  </div> */}
-                </div>
-
-                {/* Progress bar */}
-                {/* <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-2">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-primary/60 to-primary"
-                    initial={{ width: "0%" }}
-                    animate={{ width: `${percentageSold}%` }}
-                    transition={{ duration: 1 }}
-                  />
-                </div>
-                <div className="text-right text-xs text-primary">
-                  {percentageSold.toFixed(2)}% sold
-                </div> */}
-              </div>
-
-              {/* Link to purchase history */}
-              {/* <div className="mt-4 text-center">
-                <Link
-                  href="/presale/purchases"
-                  className="text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-2"
-                >
-                  View your purchase history
-                </Link>
-              </div> */}
             </>
           )}
 
@@ -1028,24 +862,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
         transactionSignature={transactionSignature || undefined}
         network={network}
       />
-      {/* Solana Wallet Verification Modal */}
-      {/* <SolanaWalletPrompt
-        isModal={!session?.user?.solanaAddress}
-        onVerificationComplete={() => {
-          setShowSolanaVerificationModal(false);
-          // Small delay to allow session to update before refreshing
-          setTimeout(() => window.location.reload(), 500);
-        }}
-      /> */}
-      {/* BSC Wallet Verification Modal */}
-      {/* <BSCWalletPrompt
-        isModal={!session?.user?.evmAddress}
-        onVerificationComplete={() => {
-          setShowBSCVerificationModal(false);
-          // Small delay to allow session to update before refreshing
-          setTimeout(() => window.location.reload(), 500);
-        }}
-      /> */}
     </div>
   );
 };
