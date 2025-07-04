@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export function Footer() {
   const pathname = usePathname();
-  if (pathname == "/") return null; // Hide footer on the homepage
+  return null; // Hide footer on the homepage
   return (
     <footer className="w-full bg-black/50 border-t border-white/10 backdrop-blur-lg z-[9999]">
       <div className="container mx-auto px-4 py-8">

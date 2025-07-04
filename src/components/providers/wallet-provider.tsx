@@ -34,21 +34,13 @@ export const modal = createAppKit({
   themeMode: "dark",
   defaultNetwork: networks[0], // Default to first network (Solana)
   features: {
-    analytics: true,
+    analytics: false,
     socials: false,
     email: false,
     allWallets: false,
   },
   themeVariables: {
     "--w3m-accent": "#3b82f6", // Blue accent to match our app theme
-  },
-  tokens: {
-    "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp": {
-      address: "Sol1111111111111111111111111111111111",
-    },
-    "eip155:56:0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": {
-      address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", // BNB
-    },
   },
 
   defaultAccountTypes: {

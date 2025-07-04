@@ -183,44 +183,6 @@ export default function usePresale() {
     functionName: "balanceOf",
     args: [walletAddress],
   });
-  //   const { data: presaleStatus } = useReadContract({
-  //     address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-  //     abi: presaleAbi.abi,
-  //     functionName: "presaleActive",
-  //     args: [],
-  //   });
-  const { data: min } = useReadContract({
-    address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: presaleAbi.abi,
-    functionName: "minPurchase",
-    args: [],
-  });
-  const { data: max } = useReadContract({
-    address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: presaleAbi.abi,
-    functionName: "maxPurchase",
-    args: [],
-  });
-  const { data: soldTokens } = useReadContract({
-    address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: presaleAbi.abi,
-    functionName: "soldTokens",
-    args: [],
-  });
-  const { data: totalRaised } = useReadContract({
-    address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: presaleAbi.abi,
-    functionName: "totalRaised",
-    args: [],
-  });
-  const { data: hardcap } = useReadContract({
-    address: BSC_PRESALE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: presaleAbi.abi,
-    functionName: "hardCap",
-    args: [],
-  });
-  const percentageSold =
-    totalRaised && hardcap ? (Number(totalRaised) / Number(hardcap)) * 100 : 0;
 
   const [isLoading, setIsLoading] = useState(true);
   const [isBuying, setIsBuying] = useState(false);
@@ -490,14 +452,8 @@ export default function usePresale() {
     cryptoPrices,
     estimatedCost,
     isLoadingPrices,
-    hardcap,
     loadCryptoPrices,
-    max,
 
-    min,
-    soldTokens,
-    totalRaised,
-    percentageSold,
     calculateTokensFromCrypto,
     lmxPriceUsd: LMX_PRICE_USD,
     refreshData: async () => {

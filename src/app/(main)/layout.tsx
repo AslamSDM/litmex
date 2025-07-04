@@ -1,6 +1,5 @@
 import { Header } from "@/components/Header";
 import ContextProviderAsWalletProviders from "@/components/providers/wallet-provider";
-import { SolanaWalletPrompt } from "@/components/SolanaWalletPrompt";
 import { headers } from "next/headers";
 import React from "react";
 
@@ -14,8 +13,7 @@ export default async function Layout({
   return (
     <>
       <ContextProviderAsWalletProviders cookies={cookies}>
-        <Header />
-        <SolanaWalletPrompt />
+        {/* <Header /> */}
 
         {children}
       </ContextProviderAsWalletProviders>
