@@ -54,12 +54,15 @@ export default function SignIn() {
       const result = await signIn("email-password", {
         email,
         password,
-        redirect: true,
+        redirect: false, // Changed to false to handle errors
         callbackUrl: isIOS ? "/presale-ios" : "/presale",
       });
+      console.log("SignIn result:", result);
 
       if (result?.error === "EMAIL_NOT_VERIFIED") {
         setNeedsVerification(true);
+      } else if (result?.error === "CredentialsSignin") {
+        setError("Incorrect password. Please try again.");
       } else if (result?.error) {
         setError("Invalid email or password");
       } else if (result?.url) {
