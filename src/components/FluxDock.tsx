@@ -63,7 +63,10 @@ export function FluxDock() {
         </DockIcon>
       </Link>
 
-      <Link href="/profile" className="block cursor-pointer">
+      <Link
+        href={isIOS ? "/profile-ios" : "/profile"}
+        className="block cursor-pointer"
+      >
         <DockIcon
           className={`flex flex-col items-center justify-center transition-all duration-300 p-3 cursor-pointer ${
             pathname === "/profile" ? "text-primary" : "hover:text-primary"
