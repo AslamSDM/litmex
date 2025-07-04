@@ -107,7 +107,6 @@ export default function useReferralHandling(): ReferralInfo {
       try {
         // If no code in URL, check if we already have one in cookies
         const savedCode = getCookie("referralCode");
-
         if (!savedCode || savedCode !== code) {
           setCookie("referralCode", code);
         }
@@ -115,7 +114,7 @@ export default function useReferralHandling(): ReferralInfo {
         if (status !== "authenticated") return;
 
         // Skip unnecessary API calls if we already validated this code
-        const isValidFromCookie = getCookie("referralIsValid") === "true";
+        const isValidFromCookie = savedCode !== code;
         const storedReferrerId = getCookie("referrerId");
 
         // If we already validated this code and have the data stored, use the cached version
