@@ -107,6 +107,35 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
   const { loading } = appKitState;
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
+  const [isIOS, setIsIOS] = useState<boolean>(false);
+  const [isLowMemoryDevice, setIsLowMemoryDevice] = useState<boolean>(false);
+  const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
+
+  // Detect iOS devices and set memory optimization flags
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Check specifically for iOS devices
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setIsIOS(isIOS);
+
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      setIsReducedMotion(prefersReducedMotion);
+
+      // For iOS devices, enable memory optimization mode
+      if (isIOS) {
+        setIsLowMemoryDevice(true);
+      }
+
+      console.log(
+        `Profile: Device detected - iOS: ${isIOS}, Memory optimization: ${isIOS ? "enabled" : "disabled"}`
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
       router.push("/auth/signin");
@@ -166,29 +195,39 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+      transition: {
+        staggerChildren: isLowMemoryDevice ? 0.05 : 0.1,
+        delayChildren: isLowMemoryDevice ? 0.1 : 0.2,
+      },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: isLowMemoryDevice ? 10 : 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5 },
+      transition: { duration: isLowMemoryDevice ? 0.3 : 0.5 },
     },
   };
 
   return (
     <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
+      {/* Optimized background for iOS devices */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-40 w-80 h-80 rounded-full bg-primary/5 blur-3xl"></div>
+        {!isLowMemoryDevice ? (
+          <>
+            <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl"></div>
+            <div className="absolute -bottom-20 -left-40 w-80 h-80 rounded-full bg-primary/5 blur-3xl"></div>
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-radial from-primary/5 to-transparent opacity-50"></div>
+        )}
       </div>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: isLowMemoryDevice ? 10 : 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: isLowMemoryDevice ? 0.3 : 0.5 }}
         className="text-center mb-12"
       >
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
@@ -210,7 +249,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
           className="lg:col-span-1 space-y-8"
         >
           <Card className="p-6 border border-primary/30 bg-black/60 backdrop-blur-sm relative overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.1)] luxury-card min-h-[500px]">
-            <div className="luxury-shimmer"></div>
+            {!isLowMemoryDevice && <div className="luxury-shimmer"></div>}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
             <div className="luxury-corner luxury-corner-tl"></div>
             <div className="luxury-corner luxury-corner-br"></div>
@@ -218,8 +257,12 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
             <div className="flex flex-col items-center space-y-4">
               <motion.div
                 className="w-24 h-24 rounded-full bg-gradient-to-r from-primary/30 via-primary/20 to-primary/30 flex items-center justify-center border border-primary/40 shadow-[0_0_15px_rgba(212,175,55,0.2)]"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                whileHover={!isLowMemoryDevice ? { scale: 1.05 } : {}}
+                transition={
+                  !isLowMemoryDevice
+                    ? { type: "spring", stiffness: 300, damping: 10 }
+                    : {}
+                }
               >
                 <User size={40} className="text-primary" />
               </motion.div>
@@ -262,14 +305,22 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       <span className="text-white/70">Transactions</span>
                       <motion.span
                         className="text-primary"
-                        animate={{
-                          textShadow: [
-                            "0 0 0px rgba(212,175,55,0)",
-                            "0 0 5px rgba(212,175,55,0.5)",
-                            "0 0 0px rgba(212,175,55,0)",
-                          ],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                        animate={
+                          !isLowMemoryDevice
+                            ? {
+                                textShadow: [
+                                  "0 0 0px rgba(212,175,55,0)",
+                                  "0 0 5px rgba(212,175,55,0.5)",
+                                  "0 0 0px rgba(212,175,55,0)",
+                                ],
+                              }
+                            : {}
+                        }
+                        transition={
+                          !isLowMemoryDevice
+                            ? { duration: 2, repeat: Infinity }
+                            : {}
+                        }
                       >
                         {userData.purchaseCount}
                       </motion.span>
@@ -278,18 +329,26 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       <span className="text-white/70">Balance</span>
                       <motion.span
                         className="text-primary"
-                        animate={{
-                          textShadow: [
-                            "0 0 0px rgba(212,175,55,0)",
-                            "0 0 5px rgba(212,175,55,0.5)",
-                            "0 0 0px rgba(212,175,55,0)",
-                          ],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 0.5,
-                        }}
+                        animate={
+                          !isLowMemoryDevice
+                            ? {
+                                textShadow: [
+                                  "0 0 0px rgba(212,175,55,0)",
+                                  "0 0 5px rgba(212,175,55,0.5)",
+                                  "0 0 0px rgba(212,175,55,0)",
+                                ],
+                              }
+                            : {}
+                        }
+                        transition={
+                          !isLowMemoryDevice
+                            ? {
+                                duration: 2,
+                                repeat: Infinity,
+                                delay: 0.5,
+                              }
+                            : {}
+                        }
                       >
                         {userData.balance.toFixed(2)}
                       </motion.span>
@@ -298,18 +357,26 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       <span className="text-white/70">Referrals</span>
                       <motion.span
                         className="text-primary"
-                        animate={{
-                          textShadow: [
-                            "0 0 0px rgba(212,175,55,0)",
-                            "0 0 5px rgba(212,175,55,0.5)",
-                            "0 0 0px rgba(212,175,55,0)",
-                          ],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 1,
-                        }}
+                        animate={
+                          !isLowMemoryDevice
+                            ? {
+                                textShadow: [
+                                  "0 0 0px rgba(212,175,55,0)",
+                                  "0 0 5px rgba(212,175,55,0.5)",
+                                  "0 0 0px rgba(212,175,55,0)",
+                                ],
+                              }
+                            : {}
+                        }
+                        transition={
+                          !isLowMemoryDevice
+                            ? {
+                                duration: 2,
+                                repeat: Infinity,
+                                delay: 1,
+                              }
+                            : {}
+                        }
                       >
                         {userData.referrals.count}
                       </motion.span>
@@ -357,7 +424,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
           className="lg:col-span-2"
         >
           <Card className="border border-primary/30 bg-black/60 backdrop-blur-sm overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.1)] luxury-card">
-            <div className="luxury-shimmer"></div>
+            {!isLowMemoryDevice && <div className="luxury-shimmer"></div>}
             <div className="border-b border-primary/20">
               <div className="flex overflow-x-auto">
                 <motion.button
@@ -367,8 +434,8 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
                   }`}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
+                  whileHover={!isLowMemoryDevice ? { y: -2 } : {}}
+                  whileTap={!isLowMemoryDevice ? { y: 0 } : {}}
                 >
                   Overview
                 </motion.button>
@@ -379,8 +446,8 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
                   }`}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
+                  whileHover={!isLowMemoryDevice ? { y: -2 } : {}}
+                  whileTap={!isLowMemoryDevice ? { y: 0 } : {}}
                 >
                   Wallets
                 </motion.button>
@@ -391,8 +458,8 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
                   }`}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
+                  whileHover={!isLowMemoryDevice ? { y: -2 } : {}}
+                  whileTap={!isLowMemoryDevice ? { y: 0 } : {}}
                 >
                   Activity
                 </motion.button>
@@ -403,8 +470,8 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
                   }`}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
+                  whileHover={!isLowMemoryDevice ? { y: -2 } : {}}
+                  whileTap={!isLowMemoryDevice ? { y: 0 } : {}}
                 >
                   Referrals
                 </motion.button>
@@ -428,11 +495,19 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                     {isAuthenticated ? (
                       <div className="flex items-center text-primary">
                         <motion.div
-                          animate={{
-                            rotate: [0, 10, 0],
-                            scale: [1, 1.1, 1],
-                          }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          animate={
+                            !isLowMemoryDevice
+                              ? {
+                                  rotate: [0, 10, 0],
+                                  scale: [1, 1.1, 1],
+                                }
+                              : {}
+                          }
+                          transition={
+                            !isLowMemoryDevice
+                              ? { duration: 2, repeat: Infinity }
+                              : {}
+                          }
                         >
                           <Award className="mr-2 h-5 w-5" />
                         </motion.div>
@@ -444,8 +519,14 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                     ) : (
                       <div className="flex items-center text-primary">
                         <motion.div
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
+                          animate={
+                            !isLowMemoryDevice ? { scale: [1, 1.1, 1] } : {}
+                          }
+                          transition={
+                            !isLowMemoryDevice
+                              ? { duration: 1.5, repeat: Infinity }
+                              : {}
+                          }
                         >
                           <AlertCircle className="mr-2 h-5 w-5" />
                         </motion.div>
@@ -556,12 +637,20 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                           <div className="flex items-center">
                             <motion.div
                               className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mr-3 border border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.15)]"
-                              whileHover={{ rotate: 10, scale: 1.1 }}
-                              transition={{
-                                type: "spring",
-                                stiffness: 300,
-                                damping: 10,
-                              }}
+                              whileHover={
+                                !isLowMemoryDevice
+                                  ? { rotate: 10, scale: 1.1 }
+                                  : {}
+                              }
+                              transition={
+                                !isLowMemoryDevice
+                                  ? {
+                                      type: "spring",
+                                      stiffness: 300,
+                                      damping: 10,
+                                    }
+                                  : {}
+                              }
                             >
                               <span className="text-xs text-primary font-bold uppercase">
                                 {currentWalletType?.substring(0, 3) || "N/A"}
@@ -593,14 +682,24 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         <div className="text-center py-8">
                           <motion.p
                             className="text-white/70 mb-5"
-                            animate={{ opacity: [0.7, 1, 0.7] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+                            animate={
+                              !isLowMemoryDevice
+                                ? { opacity: [0.7, 1, 0.7] }
+                                : {}
+                            }
+                            transition={
+                              !isLowMemoryDevice
+                                ? { duration: 2, repeat: Infinity }
+                                : {}
+                            }
                           >
                             No wallets connected
                           </motion.p>
                           <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={
+                              !isLowMemoryDevice ? { scale: 1.05 } : {}
+                            }
+                            whileTap={!isLowMemoryDevice ? { scale: 0.98 } : {}}
                           >
                             <Button
                               onClick={handleConnect}
@@ -629,15 +728,21 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       <div className="text-center py-10">
                         <motion.p
                           className="text-white/70 mb-6"
-                          animate={{ opacity: [0.7, 1, 0.7] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          animate={
+                            !isLowMemoryDevice ? { opacity: [0.7, 1, 0.7] } : {}
+                          }
+                          transition={
+                            !isLowMemoryDevice
+                              ? { duration: 2, repeat: Infinity }
+                              : {}
+                          }
                         >
                           Sign in or connect your wallet to view transaction
                           history
                         </motion.p>
                         <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.98 }}
+                          whileHover={!isLowMemoryDevice ? { scale: 1.05 } : {}}
+                          whileTap={!isLowMemoryDevice ? { scale: 0.98 } : {}}
                         >
                           <Button
                             onClick={handleConnect}
@@ -770,15 +875,21 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                     <div className="text-center py-10">
                       <motion.p
                         className="text-white/70 mb-6"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                        animate={
+                          !isLowMemoryDevice ? { opacity: [0.7, 1, 0.7] } : {}
+                        }
+                        transition={
+                          !isLowMemoryDevice
+                            ? { duration: 2, repeat: Infinity }
+                            : {}
+                        }
                       >
                         Sign in or connect your wallet to access the referral
                         program
                       </motion.p>
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover={!isLowMemoryDevice ? { scale: 1.05 } : {}}
+                        whileTap={!isLowMemoryDevice ? { scale: 0.98 } : {}}
                       >
                         <Button
                           onClick={handleConnect}

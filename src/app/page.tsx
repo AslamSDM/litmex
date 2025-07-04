@@ -17,6 +17,8 @@ import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
 import StakeEarnSection from "@/components/sections/StakeEarnSection";
 import SecuritySection from "@/components/sections/SecuritySection";
 import CtaSection from "@/components/sections/CtaSection";
+import { FakeHeader } from "@/components/FakeHeader";
+import useReferralHandling from "@/components/hooks/useReferralHandling";
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
@@ -27,6 +29,27 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<number>(0);
   const [mappedScrollProgress, setMappedScrollProgress] = useState<number>(0);
+  const [isIOS, setIsIOS] = useState<boolean>(false);
+  const referralInfo = useReferralHandling();
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Check for mobile devices
+      const isMobile =
+        /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(
+          navigator.userAgent
+        );
+
+      // Check specifically for iOS devices
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setIsIOS(isIOS);
+      // Check for memory limitations (simple heuristic)
+
+      console.log(
+        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
+      );
+    }
+  }, []);
 
   // Device and capability detection
   // const [deviceInfo, setDeviceInfo] = useState({
@@ -128,6 +151,8 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="relative w-full">
+      <FakeHeader />
+
       {/* Referral indicator */}
       {/* {referralInfo.isValid && referralInfo.code && (
         <ReferralIndicator
