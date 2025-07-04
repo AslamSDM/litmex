@@ -60,7 +60,7 @@ export default function LuxuryCard({
     };
   }, []);
 
-  const animationClass = animate ? "animate-float" : "";
+  const animationClass = animate ? "" : "";
 
   return (
     <Card
@@ -73,11 +73,8 @@ export default function LuxuryCard({
     >
       <div className="absolute inset-[-10%] bg-[radial-gradient(circle_at_var(--x,50%)_var(--y,50%),rgba(212,175,55,0.15)_0%,transparent_50%)] z-0 pointer-events-none transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100"></div>
       <div className="cut-corner-border"></div>
+
       <DecorativeCorner position="br" />
-      <div className="luxury-corner luxury-corner-tl"></div>
-      <div className="luxury-corner luxury-corner-tr"></div>
-      <div className="luxury-corner luxury-corner-bl"></div>
-      <div className="luxury-corner luxury-corner-br"></div>
 
       {decorativeText && (
         <DecorativeText text={decorativeText} position="left" />
@@ -98,12 +95,12 @@ export default function LuxuryCard({
       )}
 
       {title && (
-        <CardHeader>
+        <CardHeader className="mt-4">
           <CardTitle>{title}</CardTitle>
         </CardHeader>
       )}
 
-      <CardContent className="relative z-10">{children}</CardContent>
+      <CardContent className="relative z-10 mt-4">{children}</CardContent>
 
       {footer && <CardFooter className="relative z-10">{footer}</CardFooter>}
     </Card>
