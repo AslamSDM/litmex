@@ -245,6 +245,26 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const { status } = useSession();
   const router = useRouter();
   const referralInfo = useReferralHandling();
+  const [isIOS, setIsIOS] = useState<boolean>(false);
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Check for mobile devices
+      const isMobile =
+        /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(
+          navigator.userAgent
+        );
+
+      // Check specifically for iOS devices
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setIsIOS(isIOS);
+      // Check for memory limitations (simple heuristic)
+
+      console.log(
+        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
+      );
+    }
+  }, []);
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -337,7 +357,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-purple-900/20" />
 
         {/* Interactive Grid Pattern - Fixed positioning */}
-        <div className="absolute inset-0">
+        {/* <div className="absolute inset-0">
           <InteractiveGridPattern
             width={40}
             height={40}
@@ -345,7 +365,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             squaresClassName="fill-primary/5 stroke-primary/10 hover:fill-primary/20 transition-all duration-500"
             className="opacity-30 [mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
           />
-        </div>
+        </div> */}
 
         {/* Dot Pattern Overlay */}
         <div className="absolute inset-0">
@@ -470,18 +490,20 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
       </div>
       {/* Spline 3D background - with lower opacity and responsive display */}
       <div className="fixed inset-0 w-full h-full z-[1] pointer-events-none opacity-20 sm:opacity-25 md:opacity-30 overflow-hidden">
-        <Suspense
-          fallback={
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-sm sm:text-base">Loading 3D Scene...</p>
-            </div>
-          }
-        >
-          <DynamicSpline
-            scene="https://prod.spline.design/PF2KyDFuGz-3ZjKz/scene.splinecode"
-            className="w-full h-full absolute inset-0 z-0 object-cover"
-          />
-        </Suspense>
+        {!isIOS && (
+          <Suspense
+            fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-sm sm:text-base">Loading 3D Scene...</p>
+              </div>
+            }
+          >
+            <DynamicSpline
+              scene="https://prod.spline.design/PF2KyDFuGz-3ZjKz/scene.splinecode"
+              className="w-full h-full absolute inset-0 z-0 object-cover"
+            />
+          </Suspense>
+        )}
       </div>
       {/* Scroll indicator at bottom - improved responsiveness */}
       <div className="fixed bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none w-full max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
@@ -936,34 +958,36 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
                   />
                 </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/paradigm-logo-removebg-preview.png"
-                    alt="Paradigm"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/animoca-removebg-preview.png"
-                    alt="Animoca Brands"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/dragonfly-removebg-preview.png"
-                    alt="Dragonfly Capital"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                {!isIOS && (
+                  <>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/paradigm-logo-removebg-preview.png"
+                        alt="Paradigm"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/animoca-removebg-preview.png"
+                        alt="Animoca Brands"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/dragonfly-removebg-preview.png"
+                        alt="Dragonfly Capital"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
                   <Image
                     src="/logos/cbventures-removebg-preview.png"
                     alt="CB Ventures"
@@ -972,34 +996,36 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain scale-150 filter brightness-0 invert"
                   />
                 </div> */}
-                {/* Duplicate logos for seamless loop */}
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/a16zcrypto_Logo.svg"
-                    alt="a16z Crypto"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/paradigm-logo-removebg-preview.png"
-                    alt="Paradigm"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/animoca-removebg-preview.png"
-                    alt="Animoca Brands"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
+                    {/* Duplicate logos for seamless loop */}
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/a16zcrypto_Logo.svg"
+                        alt="a16z Crypto"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/paradigm-logo-removebg-preview.png"
+                        alt="Paradigm"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/animoca-removebg-preview.png"
+                        alt="Animoca Brands"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                  </>
+                )}
               </motion.div>
             </div>
           </div>
@@ -1171,7 +1197,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </motion.div>
         </div>
 
-        <BackgroundDecorations />
+        {/* <BackgroundDecorations /> */}
         <div className="container mx-auto px-3 sm:px-4 relative z-10">
           <ScrollAnimationWrapper delay={0.2}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-4 sm:mb-6 md:mb-8 lg:mb-12  text-gold-400">
@@ -1300,26 +1326,29 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         </div>
       </section>
       {/* FAQ Section */}
-      <section
-        ref={faqSectionRef}
-        className="py-8 sm:py-12 md:py-20 relative overflow-hidden"
-      >
-        <div className="container mx-auto max-w-[95%] sm:max-w-md md:max-w-2xl lg:max-w-4xl px-1 sm:px-2 relative z-10">
-          <ScrollAnimationWrapper>
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 lg:mb-12 text-center font-display">
-                Frequently <span className="text-primary">Asked</span> Questions
-              </h2>
-            </motion.div>
-          </ScrollAnimationWrapper>
+      {!isIOS && (
+        <section
+          ref={faqSectionRef}
+          className="py-8 sm:py-12 md:py-20 relative overflow-hidden"
+        >
+          <div className="container mx-auto max-w-[95%] sm:max-w-md md:max-w-2xl lg:max-w-4xl px-1 sm:px-2 relative z-10">
+            <ScrollAnimationWrapper>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 lg:mb-12 text-center font-display">
+                  Frequently <span className="text-primary">Asked</span>{" "}
+                  Questions
+                </h2>
+              </motion.div>
+            </ScrollAnimationWrapper>
 
-          <FaqAccordion />
-        </div>
-      </section>
+            <FaqAccordion />
+          </div>
+        </section>
+      )}
     </div>
   );
 };
