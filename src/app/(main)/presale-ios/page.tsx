@@ -18,6 +18,7 @@ import { useBscPresale } from "@/components/hooks/useBscPresale";
 import { useWalletBalances } from "@/components/hooks/useWalletBalances";
 import { MIN_BUY } from "@/lib/constants";
 import TransactionStatusModal from "@/components/TransactionStatusModal";
+import useReferralHandling from "@/components/hooks/useReferralHandling";
 
 // Network icons
 const NETWORK_ICONS = {
@@ -47,7 +48,7 @@ export default function SimplePresalePage() {
   const [network, setNetwork] = useState<"bsc" | "solana">("bsc");
   const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("BNB");
   const [solanaCurrency, setSolanaCurrency] = useState<"SOL" | "USDT">("SOL");
-
+  const refer = useReferralHandling();
   // Access appkit hooks for wallet connection
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();

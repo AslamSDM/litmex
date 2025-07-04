@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { generateReferralUrl } from "@/lib/referral";
 import { Button } from "@/components/ui/button";
+import useReferralHandling from "@/components/hooks/useReferralHandling";
 
 interface UserData {
   balance: number;
@@ -35,6 +36,8 @@ export default function ProfileIOSClient({
   const { data: session, status } = useSession();
   const { isConnected } = useAppKitAccount();
   const [copied, setCopied] = useState(false);
+  const refer = useReferralHandling();
+
   const [referralUrl, setReferralUrl] = useState("");
 
   // Use server-rendered data instead of fetching it again
