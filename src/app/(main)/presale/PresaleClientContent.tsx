@@ -246,6 +246,9 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const router = useRouter();
   const referralInfo = useReferralHandling();
   const [isIOS, setIsIOS] = useState<boolean>(false);
+  const [isLowMemoryDevice, setIsLowMemoryDevice] = useState<boolean>(false);
+  const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
+
   useEffect(() => {
     // Only run on client side
     if (typeof window !== "undefined") {
@@ -258,10 +261,20 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
       // Check specifically for iOS devices
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       setIsIOS(isIOS);
-      // Check for memory limitations (simple heuristic)
+
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      setIsReducedMotion(prefersReducedMotion);
+
+      // For iOS devices, enable memory optimization mode
+      if (isIOS) {
+        setIsLowMemoryDevice(true);
+      }
 
       console.log(
-        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
+        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory optimization: ${isIOS ? "enabled" : "disabled"}`
       );
     }
   }, []);
@@ -285,7 +298,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   // Audio effects similar to the homepage
   const transitionSound = useAudioPlayer({
     src: "/sounds/section-change.mp3",
-    volume: 0.2,
+    volume: isIOS ? 0 : 0.2, // Disable audio on iOS to save memory
   });
 
   // Track scroll position and update active section
@@ -342,8 +355,14 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             transition={{ duration: 0.8 }}
           >
             <motion.div
-              animate={{ scale: [0.9, 1, 0.9], opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 2 }}
+              animate={
+                isLowMemoryDevice
+                  ? {}
+                  : { scale: [0.9, 1, 0.9], opacity: [0.5, 1, 0.5] }
+              }
+              transition={
+                isLowMemoryDevice ? {} : { repeat: Infinity, duration: 2 }
+              }
               className="text-4xl text-primary font-display"
             >
               LITMEX
@@ -367,130 +386,161 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           />
         </div> */}
 
-        {/* Dot Pattern Overlay */}
-        <div className="absolute inset-0">
-          <DotPattern
-            width={20}
-            height={20}
-            cx={1}
-            cy={1}
-            cr={1}
-            className="opacity-20 fill-primary/10 [mask-image:linear-gradient(to_bottom_right,white,transparent,white)]"
-          />
-        </div>
+        {/* Dot Pattern Overlay - Simplified for iOS */}
+        {!isLowMemoryDevice ? (
+          <div className="absolute inset-0">
+            <DotPattern
+              width={20}
+              height={20}
+              cx={1}
+              cy={1}
+              cr={1}
+              className="opacity-20 fill-primary/10 [mask-image:linear-gradient(to_bottom_right,white,transparent,white)]"
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_1px,transparent_1px)] bg-[length:20px_20px] opacity-10"></div>
+        )}
 
-        {/* Animated floating orbs */}
-        <motion.div
-          className="absolute w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none"
-          animate={{
-            x: [0, 100, -50, 0],
-            y: [0, -80, 60, 0],
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.2, 0.8, 1],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          style={{ left: "10%", top: "20%" }}
-        />
+        {/* Animated floating orbs - conditionally rendered for non-iOS or high-memory devices */}
+        {!isLowMemoryDevice ? (
+          <>
+            <motion.div
+              className="absolute w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none"
+              animate={{
+                x: [0, 100, -50, 0],
+                y: [0, -80, 60, 0],
+                opacity: [0.3, 0.6, 0.3],
+                scale: [1, 1.2, 0.8, 1],
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              style={{ left: "10%", top: "20%" }}
+            />
 
-        <motion.div
-          className="absolute w-[300px] h-[300px] rounded-full  blur-[80px] pointer-events-none"
-          animate={{
-            x: [0, -80, 60, 0],
-            y: [0, 100, -40, 0],
-            opacity: [0.2, 0.5, 0.2],
-            scale: [1, 0.8, 1.3, 1],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 5,
-          }}
-          style={{ right: "15%", top: "40%" }}
-        />
+            <motion.div
+              className="absolute w-[300px] h-[300px] rounded-full blur-[80px] pointer-events-none"
+              animate={{
+                x: [0, -80, 60, 0],
+                y: [0, 100, -40, 0],
+                opacity: [0.2, 0.5, 0.2],
+                scale: [1, 0.8, 1.3, 1],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 5,
+              }}
+              style={{ right: "15%", top: "40%" }}
+            />
 
-        <motion.div
-          className="absolute w-[250px] h-[250px] rounded-full  blur-[60px] pointer-events-none"
-          animate={{
-            x: [0, 60, -30, 0],
-            y: [0, -60, 80, 0],
-            opacity: [0.2, 0.4, 0.2],
-            scale: [1, 1.1, 0.9, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 10,
-          }}
-          style={{ left: "60%", bottom: "20%" }}
-        />
+            <motion.div
+              className="absolute w-[250px] h-[250px] rounded-full blur-[60px] pointer-events-none"
+              animate={{
+                x: [0, 60, -30, 0],
+                y: [0, -60, 80, 0],
+                opacity: [0.2, 0.4, 0.2],
+                scale: [1, 1.1, 0.9, 1],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 10,
+              }}
+              style={{ left: "60%", bottom: "20%" }}
+            />
+          </>
+        ) : (
+          // Simple static gradient for iOS devices
+          <div className="absolute w-full h-full opacity-20 bg-gradient-radial from-primary/10 to-transparent pointer-events-none"></div>
+        )}
 
-        {/* Animated connection lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-10 overflow-hidden">
-          <motion.path
-            d="M0,200 Q30%,100 60%,200 T100%,200"
-            stroke="url(#gradient1)"
-            strokeWidth="1"
-            fill="transparent"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 8, repeat: Infinity, repeatType: "loop" }}
-          />
-          <motion.path
-            d="M0,400 Q25%,300 50%,400 T100%,400"
-            stroke="url(#gradient2)"
-            strokeWidth="1"
-            fill="transparent"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              repeatType: "loop",
-              delay: 2,
-            }}
-          />
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(212,175,55,0)" />
-              <stop offset="50%" stopColor="rgba(212,175,55,0.8)" />
-              <stop offset="100%" stopColor="rgba(212,175,55,0)" />
-            </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(147,51,234,0)" />
-              <stop offset="50%" stopColor="rgba(147,51,234,0.6)" />
-              <stop offset="100%" stopColor="rgba(147,51,234,0)" />
-            </linearGradient>
-          </defs>
-        </svg>
+        {/* Animated connection lines - disabled for low memory devices */}
+        {!isLowMemoryDevice && (
+          <svg className="absolute inset-0 w-full h-full opacity-10 overflow-hidden">
+            <motion.path
+              d="M0,200 Q30%,100 60%,200 T100%,200"
+              stroke="url(#gradient1)"
+              strokeWidth="1"
+              fill="transparent"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 8, repeat: Infinity, repeatType: "loop" }}
+            />
+            <motion.path
+              d="M0,400 Q25%,300 50%,400 T100%,400"
+              stroke="url(#gradient2)"
+              strokeWidth="1"
+              fill="transparent"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                repeatType: "loop",
+                delay: 2,
+              }}
+            />
+          </svg>
+        )}
 
-        {/* Particle effects */}
-        {Array.from({ length: 30 }).map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-1 h-1 bg-primary/40 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        <defs>
+          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(212,175,55,0)" />
+            <stop offset="50%" stopColor="rgba(212,175,55,0.8)" />
+            <stop offset="100%" stopColor="rgba(212,175,55,0)" />
+          </linearGradient>
+          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(147,51,234,0)" />
+            <stop offset="50%" stopColor="rgba(147,51,234,0.6)" />
+            <stop offset="100%" stopColor="rgba(147,51,234,0)" />
+          </linearGradient>
+        </defs>
+        <defs>
+          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(212,175,55,0)" />
+            <stop offset="50%" stopColor="rgba(212,175,55,0.8)" />
+            <stop offset="100%" stopColor="rgba(212,175,55,0)" />
+          </linearGradient>
+          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(147,51,234,0)" />
+            <stop offset="50%" stopColor="rgba(147,51,234,0.6)" />
+            <stop offset="100%" stopColor="rgba(147,51,234,0)" />
+          </linearGradient>
+        </defs>
+
+        {/* Particle effects - Reduced or static for iOS/low memory devices */}
+        {!isLowMemoryDevice ? (
+          // Full particles for high-memory devices
+          Array.from({ length: 30 }).map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-1 h-1 bg-primary/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "easeInOut",
+              }}
+            />
+          ))
+        ) : (
+          <></>
+        )}
       </div>
-      {/* Spline 3D background - with lower opacity and responsive display */}
+      {/* Spline 3D background - with lower opacity and responsive display - completely disabled for iOS and low memory devices */}
       <div className="fixed inset-0 w-full h-full z-[1] pointer-events-none opacity-20 sm:opacity-25 md:opacity-30 overflow-hidden">
-        {!isIOS && (
+        {!isLowMemoryDevice && !isIOS && (
           <Suspense
             fallback={
               <div className="w-full h-full flex items-center justify-center">
@@ -537,9 +587,9 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
 
         <div className="container mx-auto relative z-10 mt-24 sm:mt-16 md:mt-22">
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: isLowMemoryDevice ? 0 : -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: isLowMemoryDevice ? 0.3 : 0.6 }}
             className="mb-8 sm:mb-12 md:mb-16"
           >
             <motion.div
@@ -597,8 +647,9 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             />
             {/* Direct Buy Section */}{" "}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: isLowMemoryDevice ? 10 : 30 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: isLowMemoryDevice ? 0.3 : 0.5 }}
               className="mt-6 lg:max-w-2xl mx-auto relative px-0"
             >
               <div className="w-full">
@@ -609,23 +660,28 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               </div>
 
               {/* Enhanced dot pattern for buy form */}
-              <div className="absolute inset-0 -z-10">
-                <DotPattern
-                  className={cn(
-                    "opacity-20 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
-                  )}
-                  width={15}
-                  height={15}
-                  cx={1}
-                  cy={1}
-                  cr={0.5}
-                />
-              </div>
+              {!isLowMemoryDevice && (
+                <div className="absolute inset-0 -z-10">
+                  <DotPattern
+                    className={cn(
+                      "opacity-20 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
+                    )}
+                    width={15}
+                    height={15}
+                    cx={1}
+                    cy={1}
+                    cr={0.5}
+                  />
+                </div>
+              )}
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: isLowMemoryDevice ? 5 : 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{
+                duration: isLowMemoryDevice ? 0.3 : 0.5,
+                delay: isLowMemoryDevice ? 0.1 : 0.2,
+              }}
               className="flex flex-col sm:flex-row justify-center items-stretch gap-4 sm:gap-6 mt-6 sm:mt-8 md:mt-10 flex-wrap"
             >
               <LuxuryCard
@@ -792,15 +848,19 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               {/* First set of logos - will be animated */}
               <motion.div
                 className="flex items-center gap-16 sm:gap-24 md:gap-32"
-                animate={{ x: [0, "-100%"] }}
-                transition={{
-                  x: {
-                    repeat: Infinity,
-                    repeatType: "loop",
-                    duration: 30,
-                    ease: "linear",
-                  },
-                }}
+                animate={isLowMemoryDevice ? {} : { x: [0, "-100%"] }}
+                transition={
+                  isLowMemoryDevice
+                    ? {}
+                    : {
+                        x: {
+                          repeat: Infinity,
+                          repeatType: "loop",
+                          duration: 30,
+                          ease: "linear",
+                        },
+                      }
+                }
               >
                 {" "}
                 <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
@@ -885,34 +945,36 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
                   />
                 </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/paradigm-logo-removebg-preview.png"
-                    alt="Paradigm"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/animoca-removebg-preview.png"
-                    alt="Animoca Brands"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/dragonfly-removebg-preview.png"
-                    alt="Dragonfly Capital"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                {!isIOS && (
+                  <>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/paradigm-logo-removebg-preview.png"
+                        alt="Paradigm"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/animoca-removebg-preview.png"
+                        alt="Animoca Brands"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/dragonfly-removebg-preview.png"
+                        alt="Dragonfly Capital"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
                   <Image
                     src="/logos/cbventures-removebg-preview.png"
                     alt="CB Ventures"
@@ -921,45 +983,44 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain scale-150 filter brightness-0 invert"
                   />
                 </div> */}
-                {/* Duplicate logos for seamless loop */}
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/a16zcrypto_Logo.svg"
-                    alt="a16z Crypto"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/paradigm-logo-removebg-preview.png"
-                    alt="Paradigm"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/animoca-removebg-preview.png"
-                    alt="Animoca Brands"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/a16zcrypto_Logo.svg"
-                    alt="a16z Crypto"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                  />
-                </div>
-                {!isIOS && (
-                  <>
+                    {/* Duplicate logos for seamless loop */}
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/a16zcrypto_Logo.svg"
+                        alt="a16z Crypto"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/paradigm-logo-removebg-preview.png"
+                        alt="Paradigm"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/animoca-removebg-preview.png"
+                        alt="Animoca Brands"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                      <Image
+                        src="/logos/a16zcrypto_Logo.svg"
+                        alt="a16z Crypto"
+                        width={160}
+                        height={80}
+                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                      />
+                    </div>
+
                     <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
                       <Image
                         src="/logos/paradigm-logo-removebg-preview.png"
@@ -1133,68 +1194,74 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         ref={referralSectionRef}
         className="py-8 sm:py-12 md:py-20 relative overflow-hidden"
       >
-        {/* Enhanced referral section background */}
-        <div className="absolute inset-0  overflow-hidden">
-          <motion.div
-            className="absolute w-full h-full opacity-50 sm:opacity-60 md:opacity-70 lg:opacity-100"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            {/* Animated star-like dots */}
-            {Array.from({ length: 20 }).map((_, i) => (
-              <motion.div
-                key={`star-${i}`}
-                className="absolute rounded-full bg-white"
-                style={{
-                  width: Math.random() * 3 + 1 + "px",
-                  height: Math.random() * 3 + 1 + "px",
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  opacity: [0.1, 0.8, 0.1],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 5,
-                  repeat: Infinity,
-                  delay: Math.random() * 5,
-                }}
-              />
-            ))}
+        {/* Enhanced referral section background - simplified for iOS */}
+        <div className="absolute inset-0 overflow-hidden">
+          {!isLowMemoryDevice ? (
+            // Full animated background for non-iOS
+            <motion.div
+              className="absolute w-full h-full opacity-50 sm:opacity-60 md:opacity-70 lg:opacity-100"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              {/* Animated star-like dots - reduced count for performance */}
+              {Array.from({ length: isIOS ? 5 : 20 }).map((_, i) => (
+                <motion.div
+                  key={`star-${i}`}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    width: Math.random() * 3 + 1 + "px",
+                    height: Math.random() * 3 + 1 + "px",
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    opacity: [0.1, 0.8, 0.1],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 3 + Math.random() * 5,
+                    repeat: Infinity,
+                    delay: Math.random() * 5,
+                  }}
+                />
+              ))}
 
-            {/* Animated connection lines */}
-            <svg className="absolute inset-0 w-full h-full">
-              <motion.path
-                d="M0,100 C150,200 350,0 500,100"
-                stroke="rgba(212, 175, 55, 0.1)"
-                strokeWidth="0.5"
-                fill="transparent"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.3 }}
-                transition={{
-                  duration: 10,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-              />
-              <motion.path
-                d="M100,0 C200,150 300,50 400,200"
-                stroke="rgba(212, 175, 55, 0.1)"
-                strokeWidth="0.5"
-                fill="transparent"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.3 }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  delay: 2,
-                }}
-              />
-            </svg>
-          </motion.div>
+              {/* Animated connection lines */}
+              <svg className="absolute inset-0 w-full h-full">
+                <motion.path
+                  d="M0,100 C150,200 350,0 500,100"
+                  stroke="rgba(212, 175, 55, 0.1)"
+                  strokeWidth="0.5"
+                  fill="transparent"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 0.3 }}
+                  transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                />
+                <motion.path
+                  d="M100,0 C200,150 300,50 400,200"
+                  stroke="rgba(212, 175, 55, 0.1)"
+                  strokeWidth="0.5"
+                  fill="transparent"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 0.3 }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    delay: 2,
+                  }}
+                />
+              </svg>
+            </motion.div>
+          ) : (
+            // Static simple background for iOS
+            <div className="absolute w-full h-full bg-gradient-to-b from-amber-900/5 to-black/5"></div>
+          )}
         </div>
 
         {/* <BackgroundDecorations /> */}
@@ -1349,6 +1416,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </div>
         </section>
       )}
+      {/* iOS notice */}
     </div>
   );
 };
