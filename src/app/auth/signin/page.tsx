@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function SignIn() {
   const router = useRouter();
@@ -13,12 +12,35 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { status, data: session } = useSession();
+  const [isIOS, setIsIOS] = useState<boolean>(false);
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Check for mobile devices
+      const isMobile =
+        /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(
+          navigator.userAgent
+        );
 
+      // Check specifically for iOS devices
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setIsIOS(isIOS);
+      // Check for memory limitations (simple heuristic)
+
+      console.log(
+        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
+      );
+    }
+  }, []);
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/presale");
+      if (isIOS) {
+        router.push("/presale-ios");
+      } else {
+        router.push("/presale");
+      }
     }
-  }, [status, router, session]);
+  }, [status, router, session, isIOS]);
 
   const [needsVerification, setNeedsVerification] = useState(false);
 
@@ -33,7 +55,7 @@ export default function SignIn() {
         email,
         password,
         redirect: true,
-        callbackUrl: "/presale",
+        callbackUrl: isIOS ? "/presale-ios" : "/presale",
       });
 
       if (result?.error === "EMAIL_NOT_VERIFIED") {
@@ -41,7 +63,11 @@ export default function SignIn() {
       } else if (result?.error) {
         setError("Invalid email or password");
       } else if (result?.url) {
-        router.push("/presale");
+        if (isIOS) {
+          router.push("/presale-ios");
+        } else {
+          router.push("/presale");
+        }
       }
     } catch (error: any) {
       if (error.message === "EMAIL_NOT_VERIFIED") {

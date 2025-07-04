@@ -40,13 +40,35 @@ export default function SignUp() {
   >({});
   const [signupSuccess, setSignupSuccess] = useState(false);
   const { status } = useSession();
+  const [isIOS, setIsIOS] = useState<boolean>(false);
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      // Check for mobile devices
+      const isMobile =
+        /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(
+          navigator.userAgent
+        );
 
+      // Check specifically for iOS devices
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setIsIOS(isIOS);
+      // Check for memory limitations (simple heuristic)
+
+      console.log(
+        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
+      );
+    }
+  }, []);
   useEffect(() => {
     if (status === "authenticated") {
-      console.log("User is authenticated, redirecting to presale");
-      router.push("/presale");
+      if (isIOS) {
+        router.push("/presale-ios");
+      } else {
+        router.push("/presale");
+      }
     }
-  }, [status, router]);
+  }, [status, router, isIOS]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -114,10 +136,6 @@ export default function SignUp() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleGoogleSignUp = () => {
-    signIn("google", { callbackUrl: "/presale" });
   };
 
   return (
