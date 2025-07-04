@@ -25,8 +25,6 @@ import TransactionStatusModal from "./TransactionStatusModal";
 import { PendingTransactions } from "./PendingTransactions";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { solana, base, bsc } from "@reown/appkit/networks";
-import { getCookie } from "@/lib/cookies";
-import { getStoredReferralCode } from "@/lib/referral";
 import { useSession } from "next-auth/react";
 import { modal } from "@/components/providers/wallet-provider";
 import useReferralHandling from "./hooks/useReferralHandling";
@@ -470,8 +468,8 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       className={`bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10 ${className}`}
     >
       {/* Header */}{" "}
+      <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
         <div className="flex items-center gap-3">
           {/* Network selector with icons */}
           <div className="bg-black/30 rounded-md p-1 border border-primary/20">
