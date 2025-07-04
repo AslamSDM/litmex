@@ -294,15 +294,36 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const referralSectionRef = useRef<HTMLElement>(null);
   const faqSectionRef = useRef<HTMLElement>(null);
 
-  if (isIOS) {
-    <div className="relative w-full px-2 sm:px-4 md:px-6 lg:px-16 xl:px-24 min-h-screen overflow-hidden">
-      <div className="w-full">
-        <PresaleBuyForm
-          prices={formattedPrices}
-          className="backdrop-blur-xl border-primary/20 shadow-[0_0_10px] sm:shadow-[0_0_15px] md:shadow-[0_0_20px] rgba(212,175,55,0.2)"
-        />
+  if (isIOS || isLowMemoryDevice) {
+    return (
+      <div className="container mx-auto relative z-10 mt-24 sm:mt-16 md:mt-22">
+        <motion.div
+          initial={{ opacity: 0, y: isLowMemoryDevice ? 0 : -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: isLowMemoryDevice ? 0.3 : 0.6 }}
+          className="mb-8 sm:mb-12 md:mb-16"
+        >
+          <motion.div
+            className="overflow-hidden relative mb-3"
+            style={{ maxWidth: "100%", margin: "0 auto" }}
+          >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
+              <span className="text-primary">LITMEX Token Seed Round</span>
+            </h1>
+            <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-4">
+              Litmex seed round is now live Building Gamblifi for autonomous
+              onchain AI gambling . Join early as we reshape betting
+            </p>
+          </motion.div>
+        </motion.div>{" "}
+        <div className="w-full">
+          <PresaleBuyForm
+            prices={formattedPrices}
+            className="backdrop-blur-xl border-primary/20 shadow-[0_0_10px] sm:shadow-[0_0_15px] md:shadow-[0_0_20px] rgba(212,175,55,0.2)"
+          />
+        </div>
       </div>
-    </div>;
+    );
   }
 
   return (
