@@ -485,31 +485,6 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </svg>
         )}
 
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(212,175,55,0)" />
-            <stop offset="50%" stopColor="rgba(212,175,55,0.8)" />
-            <stop offset="100%" stopColor="rgba(212,175,55,0)" />
-          </linearGradient>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(147,51,234,0)" />
-            <stop offset="50%" stopColor="rgba(147,51,234,0.6)" />
-            <stop offset="100%" stopColor="rgba(147,51,234,0)" />
-          </linearGradient>
-        </defs>
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(212,175,55,0)" />
-            <stop offset="50%" stopColor="rgba(212,175,55,0.8)" />
-            <stop offset="100%" stopColor="rgba(212,175,55,0)" />
-          </linearGradient>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(147,51,234,0)" />
-            <stop offset="50%" stopColor="rgba(147,51,234,0.6)" />
-            <stop offset="100%" stopColor="rgba(147,51,234,0)" />
-          </linearGradient>
-        </defs>
-
         {/* Particle effects - Reduced or static for iOS/low memory devices */}
         {!isLowMemoryDevice ? (
           // Full particles for high-memory devices

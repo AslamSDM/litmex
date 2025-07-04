@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import PresaleClientContent from "./PresaleClientContent";
 import getPresaleData from "./getPresaleData";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 60; // Revalidate data every 60 seconds
+// export const dynamic = "force-dynamic";
+// export const revalidate = 600; // Revalidate data every 60 seconds
 
 export default async function PresalePage() {
   const presaleData = await getPresaleData();
