@@ -26,7 +26,12 @@ export function FluxDock() {
           </div>
         </DockIcon>
       </Link>
-      <Link href="/presale" className="block cursor-pointer">
+      <Link
+        href="/presale"
+        className="block cursor-pointer"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <DockIcon
           className={`flex flex-col items-center justify-center transition-all duration-300 p-3 cursor-pointer ${
             pathname === "/presale" ? "text-primary" : "hover:text-primary"
