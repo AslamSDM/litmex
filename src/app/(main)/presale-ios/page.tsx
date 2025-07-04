@@ -11,6 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Loader2, ChevronDown } from "lucide-react";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
 import { useRouter } from "next/navigation";
+import { useBscUsdtPresale } from "@/components/hooks/useBscUsdtPresale";
+import { useSolanaPresale } from "@/components/hooks/useSolanaPresale";
+import { useSolanaUsdtPresale } from "@/components/hooks/useSolanaUsdtPresale";
+import { useBscPresale } from "@/components/hooks/useBscPresale";
+import { useWalletBalances } from "@/components/hooks/useWalletBalances";
+import { MIN_BUY } from "@/lib/constants";
+import TransactionStatusModal from "@/components/TransactionStatusModal";
 
 // Network icons
 const NETWORK_ICONS = {
@@ -25,13 +32,16 @@ const CURRENCY_ICONS = {
   USDT: "/icons/usdt.svg",
 };
 
-const MIN_BUY = 50; // Minimum purchase amount in USD
-
 export default function SimplePresalePage() {
   // State for purchase amounts
   const [usdAmount, setUsdAmount] = useState<number>(500);
-  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const [tokenAmount, setTokenAmount] = useState<number>(35714.2857142857); // Derived from USD amount
   const [cryptoAmount, setCryptoAmount] = useState<number>(0);
+
+  const [showSolanaVerificationModal, setShowSolanaVerificationModal] =
+    useState(false);
+  const [showBSCVerificationModal, setShowBSCVerificationModal] =
+    useState(false);
 
   // Network and currency selection
   const [network, setNetwork] = useState<"bsc" | "solana">("bsc");
@@ -42,6 +52,7 @@ export default function SimplePresalePage() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();
   const { data: session, status } = useSession();
+  const user = session?.user;
   const router = useRouter();
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -63,7 +74,7 @@ export default function SimplePresalePage() {
 
   // Set currency symbol based on selected network and currency
   const currencySymbol = network === "bsc" ? bscCurrency : solanaCurrency;
-
+  const [needsUsdtApproval, setNeedsUsdtApproval] = useState<boolean>(false);
   // Handle network switch
   const handleNetworkChange = (newNetwork: "bsc" | "solana") => {
     switchNetwork(newNetwork === "bsc" ? bsc : solana);
@@ -107,6 +118,79 @@ export default function SimplePresalePage() {
     }
   };
 
+  // Use the appropriate hook based on selected network
+  const {
+    buyTokens: buyBscTokens,
+    isLoading: isBscBuying,
+    // Add these properties if they exist in the BSC hook, otherwise will be undefined
+    isModalOpen: isBscModalOpen = false,
+    closeModal: closeBscModal = () => {},
+    transactionStatus: bscTransactionStatus = {
+      steps: [],
+      currentStepId: null,
+      isComplete: false,
+      isError: false,
+    },
+    transactionSignature: bscTransactionSignature = null,
+  } = useBscPresale(tokenAmount, "");
+
+  // Use BSC USDT hook if BSC currency is USDT
+  const {
+    buyTokens: buyBscUsdtTokens,
+    approveUsdtSpending,
+    isUsdtApproved,
+    isApprovalMode,
+    approvalCompleted,
+    isLoading: isBscUsdtBuying,
+    isModalOpen: isBscUsdtModalOpen = false,
+    closeModal: closeBscUsdtModal = () => {},
+    transactionStatus: bscUsdtTransactionStatus = {
+      steps: [],
+      currentStepId: null,
+      isComplete: false,
+      isError: false,
+    },
+    transactionSignature: bscUsdtTransactionSignature = null,
+  } = useBscUsdtPresale(tokenAmount, "");
+
+  const {
+    buyTokens: buySolTokens,
+    isLoading: isSolBuying,
+    isModalOpen: isSolModalOpen = false,
+    closeModal: closeSolModal = () => {},
+    transactionStatus: solTransactionStatus = {
+      steps: [],
+      currentStepId: null,
+      isComplete: false,
+      isError: false,
+    },
+    transactionSignature: solTransactionSignature = null,
+  } = useSolanaPresale(tokenAmount, "");
+
+  const {
+    buyTokens: buySolUsdtTokens,
+    isLoading: isSolUsdtBuying,
+    isModalOpen: isSolUsdtModalOpen = false,
+    closeModal: closeSolUsdtModal = () => {},
+    transactionStatus: solUsdtTransactionStatus = {
+      steps: [],
+      currentStepId: null,
+      isComplete: false,
+      isError: false,
+    },
+    transactionSignature: solUsdtTransactionSignature = null,
+  } = useSolanaUsdtPresale(tokenAmount, "");
+  useEffect(() => {
+    const checkApprovalNeeded = async () => {
+      if (network === "bsc" && bscCurrency === "USDT" && hasWalletConnected) {
+        const approved = await isUsdtApproved();
+        setNeedsUsdtApproval(!approved);
+      }
+    };
+
+    checkApprovalNeeded();
+  }, [network, bscCurrency, tokenAmount, hasWalletConnected, isUsdtApproved]);
+
   // Run calculation when network changes or when prices update
   useEffect(() => {
     if (usdAmount > 0 && cryptoPrices && lmxPriceUsd) {
@@ -121,11 +205,66 @@ export default function SimplePresalePage() {
     lmxPriceUsd,
   ]);
 
+  // Use the appropriate values based on selected network and currency
+  const isLoading =
+    network === "bsc"
+      ? bscCurrency === "BNB"
+        ? isBscBuying
+        : isBscUsdtBuying
+      : solanaCurrency === "SOL"
+        ? isSolBuying
+        : isSolUsdtBuying;
+
+  const isModalOpen =
+    network === "bsc"
+      ? bscCurrency === "BNB"
+        ? isBscModalOpen
+        : isBscUsdtModalOpen
+      : solanaCurrency === "SOL"
+        ? isSolModalOpen
+        : isSolUsdtModalOpen;
+
+  const closeModal =
+    network === "bsc"
+      ? bscCurrency === "BNB"
+        ? closeBscModal
+        : closeBscUsdtModal
+      : solanaCurrency === "SOL"
+        ? closeSolModal
+        : closeSolUsdtModal;
+
+  const transactionStatus =
+    network === "bsc"
+      ? bscCurrency === "BNB"
+        ? bscTransactionStatus
+        : bscUsdtTransactionStatus
+      : solanaCurrency === "SOL"
+        ? solTransactionStatus
+        : solUsdtTransactionStatus;
+
+  const transactionSignature =
+    network === "bsc"
+      ? bscCurrency === "BNB"
+        ? bscTransactionSignature
+        : bscUsdtTransactionSignature
+      : solanaCurrency === "SOL"
+        ? solTransactionSignature
+        : solUsdtTransactionSignature;
+
+  // Make sure token amount is updated if LMX price changes
+  useEffect(() => {
+    if (usdAmount > 0 && lmxPriceUsd > 0) {
+      // Update token amount when LMX price changes
+      const newTokenAmount = usdAmount / lmxPriceUsd;
+      setTokenAmount(newTokenAmount);
+    }
+  }, [lmxPriceUsd, usdAmount]);
+
   // Handle USD amount change with validation
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
 
-    if (isNaN(value) || value < 0) {
+    if (value < 0) {
       setUsdAmount(0);
       setTokenAmount(0);
       setCryptoAmount(0);
@@ -136,24 +275,94 @@ export default function SimplePresalePage() {
     updateAmounts(value);
   };
 
-  // Handle purchase button click
-  const handleBuy = () => {
+  const {
+    solBalance,
+    usdtBalance,
+    bnbBalance,
+    bscUsdtBalance,
+    isLoadingBalances,
+    refreshBalances,
+  } = useWalletBalances();
+  // Handle purchase
+  const handleBuy = async () => {
+    console.log("Buying tokens...");
+    // Validate wallet connection based on selected network
     if (!hasWalletConnected) {
-      toast.error(`Please connect your wallet first`);
+      console.log(`Please connect your ${network.toUpperCase()} wallet first`);
+      toast.error(`Please connect your ${network.toUpperCase()} wallet first`);
       return;
     }
 
     if (usdAmount < MIN_BUY) {
+      console.log(`Minimum purchase amount is $${MIN_BUY} USD`);
       toast.error(`Minimum purchase amount is $${MIN_BUY.toFixed(2)} USD`);
       return;
     }
 
-    toast.success(
-      `Purchase initiated for ${tokenAmount.toFixed(2)} LMX tokens with ${cryptoAmount.toFixed(currencySymbol === "USDT" ? 2 : 6)} ${currencySymbol}`
-    );
-    // In a real implementation, you would call the appropriate buy function here
-  };
+    const currentBalance =
+      network === "bsc"
+        ? bscCurrency === "BNB"
+          ? bnbBalance
+          : bscUsdtBalance
+        : solanaCurrency === "SOL"
+          ? solBalance
+          : usdtBalance;
+    // Check if the user has enough balance for the purchase
+    if (currentBalance !== null) {
+      if (cryptoAmount > currentBalance) {
+        toast.error(
+          `Insufficient ${currencySymbol} balance. You have ${currentBalance.toFixed(
+            currencySymbol === "SOL"
+              ? 4
+              : currencySymbol === "USDT"
+                ? 2
+                : currencySymbol === "BNB"
+                  ? 4
+                  : 2
+          )} ${currencySymbol} but need ${cryptoAmount.toFixed(
+            currencySymbol === "SOL"
+              ? 4
+              : currencySymbol === "USDT"
+                ? 2
+                : currencySymbol === "BNB"
+                  ? 4
+                  : 2
+          )} ${currencySymbol}.`
+        );
+        return;
+      }
+    }
+    console.log(network, bscCurrency, solanaCurrency);
+    try {
+      // Execute purchase based on selected network and currency
+      if (network === "bsc") {
+        if (bscCurrency === "BNB") {
+          await buyBscTokens();
+        } else {
+          // For BSC USDT, check if approval is needed first
+          const approved = await isUsdtApproved();
+          if (!approved) {
+            toast.info("USDT approval required before purchase");
+            await approveUsdtSpending();
+            return; // Stop here, user needs to click Buy again after approval
+          }
 
+          // If we got here, USDT is approved and we can proceed with purchase
+          await buyBscUsdtTokens();
+        }
+      } else {
+        // For Solana, use the appropriate purchase method based on currency
+        if (solanaCurrency === "SOL") {
+          await buySolTokens();
+        } else {
+          await buySolUsdtTokens();
+        }
+      }
+    } catch (error) {
+      console.error("Error buying tokens:", error);
+      toast.error("Failed to purchase tokens");
+    }
+  };
   // Refresh price data
   //   const refreshPrices = async () => {
   //     toast.info("Refreshing cryptocurrency prices...");
@@ -318,7 +527,7 @@ export default function SimplePresalePage() {
                   disabled={usdAmount < MIN_BUY}
                   className="w-full py-3 bg-gradient-to-br from-indigo-600/90 to-violet-700 hover:from-indigo-600 hover:to-violet-600 border-indigo-400/30 text-white font-medium transition-all duration-200 rounded-md"
                 >
-                  ( `Buy ${tokenAmount.toFixed(2)} LMX` )
+                  Buy ${tokenAmount.toFixed(2)} LMX
                 </button>
               )}
 
@@ -337,6 +546,14 @@ export default function SimplePresalePage() {
             </div>
           </>
         )}
+        <TransactionStatusModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          status={transactionStatus}
+          title={`${network.toUpperCase()} Transaction Status`}
+          transactionSignature={transactionSignature || undefined}
+          network={network}
+        />
       </div>
     </div>
   );
