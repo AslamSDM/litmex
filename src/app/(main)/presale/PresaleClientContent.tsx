@@ -249,6 +249,11 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log("PresaleClientContent mounted", isIOS);
+  }, [isIOS]);
+
+  // Use useMemo for device detection calculations
+  React.useMemo(() => {
     // Only run on client side
     if (typeof window !== "undefined") {
       // Check for mobile devices
@@ -276,7 +281,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory optimization: ${isIOS ? "enabled" : "disabled"}`
       );
     }
-  }, []);
+  }, []); // Empty dependency array ensures it runs only once
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -294,7 +299,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const referralSectionRef = useRef<HTMLElement>(null);
   const faqSectionRef = useRef<HTMLElement>(null);
 
-  if (isIOS || isLowMemoryDevice) {
+  if (isIOS) {
     return (
       <div className="container mx-auto relative z-10 mt-24 sm:mt-16 md:mt-22">
         <motion.div
