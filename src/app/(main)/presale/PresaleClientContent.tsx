@@ -294,50 +294,16 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const referralSectionRef = useRef<HTMLElement>(null);
   const faqSectionRef = useRef<HTMLElement>(null);
 
-  // Audio effects similar to the homepage
-  const transitionSound = useAudioPlayer({
-    src: "/sounds/section-change.mp3",
-    volume: isIOS ? 0 : 0.2, // Disable audio on iOS to save memory
-  });
-
-  // Track scroll position and update active section
-  useEffect(() => {
-    const sectionRefs = [
-      statsSectionRef,
-      detailsSectionRef,
-      tokenomicsSectionRef,
-      whyInvestSectionRef,
-      referralSectionRef,
-      faqSectionRef,
-    ];
-
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 3;
-
-      // Find the active section based on scroll position
-      let newActiveSection = 0;
-      sectionRefs.forEach((sectionRef, index) => {
-        if (sectionRef.current) {
-          const { offsetTop, offsetHeight } = sectionRef.current;
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            newActiveSection = index;
-          }
-        }
-      });
-
-      // If active section changed, play transition sound
-      if (newActiveSection !== activeSection) {
-        transitionSound.play();
-        setActiveSection(newActiveSection);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [activeSection, transitionSound]);
+  if (isIOS) {
+    <div className="relative w-full px-2 sm:px-4 md:px-6 lg:px-16 xl:px-24 min-h-screen overflow-hidden">
+      <div className="w-full">
+        <PresaleBuyForm
+          prices={formattedPrices}
+          className="backdrop-blur-xl border-primary/20 shadow-[0_0_10px] sm:shadow-[0_0_15px] md:shadow-[0_0_20px] rgba(212,175,55,0.2)"
+        />
+      </div>
+    </div>;
+  }
 
   return (
     <div

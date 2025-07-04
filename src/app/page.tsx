@@ -17,7 +17,6 @@ import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
 import StakeEarnSection from "@/components/sections/StakeEarnSection";
 import SecuritySection from "@/components/sections/SecuritySection";
 import CtaSection from "@/components/sections/CtaSection";
-import { FakeHeader } from "@/components/FakeHeader";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
