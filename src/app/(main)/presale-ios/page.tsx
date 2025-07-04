@@ -155,7 +155,7 @@ export default function SimplePresalePage() {
   //   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black to-indigo-950">
+    <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
       <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">

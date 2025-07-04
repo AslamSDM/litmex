@@ -20,7 +20,7 @@ import useReferralHandling from "@/components/hooks/useReferralHandling";
 import "../components/sections/animation-utils.css"; // Ensure this path is correct
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
-// const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
+const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
 // const MAX_SPLINE_SCROLL_VALUE = 1000;
 
@@ -166,7 +166,7 @@ export default function HomePage() {
           transition={{ duration: 1.5 }}
         />
         <Suspense fallback={<div className="w-full h-full bg-gray-100" />}>
-          {/* <DynamicSpline
+          <DynamicSpline
             scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
             className="w-full h-full"
             // style={{
@@ -175,7 +175,7 @@ export default function HomePage() {
             // }}
             // Reduce quality on memory-limited devices
             // renderOnDemand={deviceInfo.memoryLimited}
-          /> */}
+          />
         </Suspense>
       </div>
 
