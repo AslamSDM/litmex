@@ -37,6 +37,7 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 import { LMX_PRICE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
+import { set } from "zod";
 
 // Tokenomics data
 const tokenomicsData = [
@@ -243,6 +244,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { status } = useSession();
   const router = useRouter();
+  const [loaded, setLoaded] = useState(false);
   const referralInfo = useReferralHandling();
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const [isLowMemoryDevice, setIsLowMemoryDevice] = useState<boolean>(false);
@@ -280,6 +282,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
       console.log(
         `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory optimization: ${isIOS ? "enabled" : "disabled"}`
       );
+      setLoaded(true);
     }
   }, []); // Empty dependency array ensures it runs only once
   useEffect(() => {
@@ -299,7 +302,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const referralSectionRef = useRef<HTMLElement>(null);
   const faqSectionRef = useRef<HTMLElement>(null);
 
-  if (isIOS) {
+  if (isIOS || !loaded) {
     return (
       <div className="container mx-auto relative z-10 mt-24 sm:mt-16 md:mt-22">
         <motion.div
@@ -367,15 +370,6 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-purple-900/20" />
 
         {/* Interactive Grid Pattern - Fixed positioning */}
-        {/* <div className="absolute inset-0">
-          <InteractiveGridPattern
-            width={40}
-            height={40}
-            squares={[20, 20]}
-            squaresClassName="fill-primary/5 stroke-primary/10 hover:fill-primary/20 transition-all duration-500"
-            className="opacity-30 [mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
-          />
-        </div> */}
 
         {/* Dot Pattern Overlay - Simplified for iOS */}
         {!isLowMemoryDevice ? (
@@ -390,7 +384,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             />
           </div>
         ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_1px,transparent_1px)] bg-[length:20px_20px] opacity-10"></div>
+          <></>
         )}
 
         {/* Animated floating orbs - conditionally rendered for non-iOS or high-memory devices */}

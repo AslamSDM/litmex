@@ -15,48 +15,14 @@ import IntroSection from "@/components/sections/IntroSection";
 import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
 import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
 import StakeEarnSection from "@/components/sections/StakeEarnSection";
-import SecuritySection from "@/components/sections/SecuritySection";
 import CtaSection from "@/components/sections/CtaSection";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
+import "../components/sections/animation-utils.css"; // Ensure this path is correct
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
-
-// SplineWrapper component to handle cleanup
-const SplineWrapper = () => {
-  const [splineInstance, setSplineInstance] = useState<any>(null);
-
-  // Cleanup function for Spline
-  useEffect(() => {
-    return () => {
-      if (splineInstance) {
-        // Clean up Spline resources
-        try {
-          splineInstance.dispose?.();
-          console.log("Spline instance disposed");
-        } catch (error) {
-          console.error("Error disposing Spline instance:", error);
-        }
-      }
-    };
-  }, [splineInstance]);
-
-  const handleSplineLoad = (spline: any) => {
-    setSplineInstance(spline);
-    console.log("Spline instance loaded and saved for cleanup");
-  };
-
-  return (
-    <Suspense fallback={<div className="w-full h-full bg-gray-100" />}>
-      <DynamicSpline
-        scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
-        className="w-full h-full"
-        onLoad={handleSplineLoad}
-      />
-    </Suspense>
-  );
-};
-
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
+
+// const MAX_SPLINE_SCROLL_VALUE = 1000;
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,8 +47,6 @@ export default function HomePage() {
       console.log(
         `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
       );
-
-      // We don't need a cleanup function here as we're just setting state once
     }
   }, []);
 
@@ -100,19 +64,9 @@ export default function HomePage() {
   });
 
   // const [useSplineFallback, setUseSplineFallback] = useState<boolean>(false);
-  // Set up the scroll event handler with cleanup
-  useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      setMappedScrollProgress(latest / 50);
-    });
-
-    // Return cleanup function
-    return () => {
-      unsubscribe();
-      console.log("Scroll event listener cleaned up");
-    };
-  }, [scrollY]);
-
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setMappedScrollProgress(latest / 50);
+  });
   // const navigateToSection = useCallback(
   //   (sectionIndex: number) => {
   //     try {
@@ -182,28 +136,7 @@ export default function HomePage() {
         )}`
       );
     }
-
-    // This effect doesn't add any event listeners that need cleanup
   }, [mappedScrollProgress, activeSection]);
-
-  // General cleanup effect for the component
-  useEffect(() => {
-    console.log("HomePage component mounted");
-
-    return () => {
-      console.log("HomePage component unmounting - cleaning up resources");
-      // Clean up any additional event listeners or resources here
-
-      // Force garbage collection hint (this doesn't guarantee GC will run)
-      if (window.gc) {
-        try {
-          window.gc();
-        } catch (e) {
-          console.log("Manual GC not available");
-        }
-      }
-    };
-  }, []);
 
   const sectionVisibility = [
     activeSection === 0,
@@ -216,8 +149,6 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* <FakeHeader /> */}
-
       {/* Referral indicator */}
       {/* {referralInfo.isValid && referralInfo.code && (
         <ReferralIndicator
@@ -234,7 +165,18 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
         />
-        <SplineWrapper />
+        <Suspense fallback={<div className="w-full h-full bg-gray-100" />}>
+          <DynamicSpline
+            scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
+            className="w-full h-full"
+            // style={{
+            //   // Optimize for mobile performance
+            //   willChange: deviceInfo.isMobile ? "auto" : "transform",
+            // }}
+            // Reduce quality on memory-limited devices
+            // renderOnDemand={deviceInfo.memoryLimited}
+          />
+        </Suspense>
       </div>
 
       {/* Sections container */}
