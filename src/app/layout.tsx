@@ -5,6 +5,7 @@ import { FluxDock } from "@/components/FluxDock";
 import { Footer } from "@/components/Footer";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +49,7 @@ export default function RootLayout({
       >
         <LoadingProvider>
           <AuthProvider>
+            <Toaster />
             {children}
             <FluxDock />
             <Footer />
