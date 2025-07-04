@@ -609,17 +609,19 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </div>
 
           <div className="mt-12">
-            <PresaleStats
-              contributors={contributorCount}
-              raised={Number(totalRaised.toFixed(0))}
-              usdRaised={Number(usdRaised.toFixed(0))}
-              daysLeft={Math.ceil(
-                (new Date("2025-06-30T23:59:59").getTime() -
-                  new Date().getTime()) /
-                  (1000 * 60 * 60 * 24)
-              )}
-              referralBonus="10%"
-            />
+            {!isLowMemoryDevice && (
+              <PresaleStats
+                contributors={contributorCount}
+                raised={Number(totalRaised.toFixed(0))}
+                usdRaised={Number(usdRaised.toFixed(0))}
+                daysLeft={Math.ceil(
+                  (new Date("2025-06-30T23:59:59").getTime() -
+                    new Date().getTime()) /
+                    (1000 * 60 * 60 * 24)
+                )}
+                referralBonus="10%"
+              />
+            )}
             {/* Direct Buy Section */}{" "}
             <motion.div
               initial={{ opacity: 0, y: isLowMemoryDevice ? 10 : 30 }}
@@ -750,68 +752,70 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         </div>
       </section>
       {/* Tokenomics section */}
-      <section
-        ref={tokenomicsSectionRef}
-        className="py-8 sm:py-12 md:py-16 px-4 bg-gradient-to-b from-background/80 via-background/60 to-black/80 relative"
-      >
-        <div className="container mx-auto">
-          <ScrollAnimationWrapper>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
-              <span className="text-primary">Token</span> Distribution
-            </h2>
-          </ScrollAnimationWrapper>
+      {!isLowMemoryDevice && (
+        <section
+          ref={tokenomicsSectionRef}
+          className="py-8 sm:py-12 md:py-16 px-4 bg-gradient-to-b from-background/80 via-background/60 to-black/80 relative"
+        >
+          <div className="container mx-auto">
+            <ScrollAnimationWrapper>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
+                <span className="text-primary">Token</span> Distribution
+              </h2>
+            </ScrollAnimationWrapper>
 
-          <div className=" gap-8 md:gap-12 items-center w-full">
-            <ScrollAnimationWrapper delay={300}>
-              <LuxuryCard
-                className="p-4 sm:p-6 md:p-8 transform hover:scale-[1.02] transition-all duration-300"
-                icon="diamond"
-                iconPosition="tr"
-              >
-                <div className="flex items-center mb-3 sm:mb-4 md:mb-6">
-                  <BarChart4 className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-primary mr-2 sm:mr-3 md:mr-4" />
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold">
-                    Token Allocation
-                  </h3>
-                </div>
-                <div className="space-y-4 md:space-y-6 w-full">
-                  {tokenomicsData.map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.1 * index }}
-                      className="w-full"
-                    >
-                      <div className="flex justify-between mb-1 sm:mb-2 items-center w-full">
-                        <div className="flex items-center">
-                          <div
-                            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${item.color} mr-1 sm:mr-2 border border-white/10`}
-                          ></div>
-                          <span className="text-primary/90 font-medium text-xs sm:text-sm md:text-base">
-                            {item.name}
+            <div className=" gap-8 md:gap-12 items-center w-full">
+              <ScrollAnimationWrapper delay={300}>
+                <LuxuryCard
+                  className="p-4 sm:p-6 md:p-8 transform hover:scale-[1.02] transition-all duration-300"
+                  icon="diamond"
+                  iconPosition="tr"
+                >
+                  <div className="flex items-center mb-3 sm:mb-4 md:mb-6">
+                    <BarChart4 className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-primary mr-2 sm:mr-3 md:mr-4" />
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold">
+                      Token Allocation
+                    </h3>
+                  </div>
+                  <div className="space-y-4 md:space-y-6 w-full">
+                    {tokenomicsData.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 * index }}
+                        className="w-full"
+                      >
+                        <div className="flex justify-between mb-1 sm:mb-2 items-center w-full">
+                          <div className="flex items-center">
+                            <div
+                              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${item.color} mr-1 sm:mr-2 border border-white/10`}
+                            ></div>
+                            <span className="text-primary/90 font-medium text-xs sm:text-sm md:text-base">
+                              {item.name}
+                            </span>
+                          </div>
+                          <span className="font-bold text-white text-xs sm:text-sm md:text-base">
+                            {item.percentage}%
                           </span>
                         </div>
-                        <span className="font-bold text-white text-xs sm:text-sm md:text-base">
-                          {item.percentage}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-black/50 h-2 sm:h-2.5 md:h-3 rounded-full p-[1px]">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${item.percentage}%` }}
-                          transition={{ duration: 1, delay: 0.5 }}
-                          className={`h-full rounded-full ${item.color} shadow-glow`}
-                        ></motion.div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </LuxuryCard>
-            </ScrollAnimationWrapper>
+                        <div className="w-full bg-black/50 h-2 sm:h-2.5 md:h-3 rounded-full p-[1px]">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${item.percentage}%` }}
+                            transition={{ duration: 1, delay: 0.5 }}
+                            className={`h-full rounded-full ${item.color} shadow-glow`}
+                          ></motion.div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </LuxuryCard>
+              </ScrollAnimationWrapper>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="py-8 sm:py-12 md:py-16 px-4  relative z-10">
         <ScrollAnimationWrapper delay={150}>
@@ -1069,101 +1073,115 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
       </section>
 
       {/* Why invest section */}
-      <section
-        ref={whyInvestSectionRef}
-        className="py-8 sm:py-12 md:py-16 px-4  backdrop-blur-sm relative z-10"
-      >
-        <div className="container mx-auto">
-          <ScrollAnimationWrapper>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
-              Why <span className="text-primary">Invest</span> in Litmex?
-            </h2>
-          </ScrollAnimationWrapper>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-            <ScrollAnimationWrapper delay={100}>
-              <LuxuryCard
-                className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
-                icon="diamond"
-                iconPosition="tr"
-                animate={true}
-              >
-                <div className="text-center mb-4 md:mb-6">
-                  <motion.div
-                    whileHover={{ rotate: 10, scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-500/30 to-amber-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(245,158,11,0.3)] border border-amber-400/30"
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    <Trophy className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold luxury-text">
-                    Premium Experiences
-                  </h3>
-                </div>
-                <p className="text-gray-300 text-center text-sm md:text-base">
-                  Access to exclusive games, luxury tournaments, and VIP
-                  experiences available only to token holders.
-                </p>
-              </LuxuryCard>
+      {!isLowMemoryDevice && (
+        <section
+          ref={whyInvestSectionRef}
+          className="py-8 sm:py-12 md:py-16 px-4  backdrop-blur-sm relative z-10"
+        >
+          <div className="container mx-auto">
+            <ScrollAnimationWrapper>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
+                Why <span className="text-primary">Invest</span> in Litmex?
+              </h2>
             </ScrollAnimationWrapper>
 
-            <ScrollAnimationWrapper delay={200}>
-              <LuxuryCard
-                className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
-                icon="crown"
-                iconPosition="tr"
-                animate={true}
-              >
-                <div className="text-center mb-4 md:mb-6">
-                  <motion.div
-                    whileHover={{ rotate: -10, scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-500/30 to-indigo-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-400/30"
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    <LockIcon className="w-6 h-6 md:w-8 md:h-8 text-indigo-400" />
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold luxury-text">
-                    Revenue Sharing
-                  </h3>
-                </div>
-                <p className="text-gray-300 text-center text-sm md:text-base">
-                  Token holders receive a portion of the platform&apos;s revenue
-                  through staking rewards and exclusive bonuses.
-                </p>
-              </LuxuryCard>
-            </ScrollAnimationWrapper>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+              <ScrollAnimationWrapper delay={100}>
+                <LuxuryCard
+                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
+                  icon="diamond"
+                  iconPosition="tr"
+                  animate={true}
+                >
+                  <div className="text-center mb-4 md:mb-6">
+                    <motion.div
+                      whileHover={{ rotate: 10, scale: 1.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-500/30 to-amber-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(245,158,11,0.3)] border border-amber-400/30"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      }}
+                    >
+                      <Trophy className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />
+                    </motion.div>
+                    <h3 className="text-lg md:text-xl font-bold luxury-text">
+                      Premium Experiences
+                    </h3>
+                  </div>
+                  <p className="text-gray-300 text-center text-sm md:text-base">
+                    Access to exclusive games, luxury tournaments, and VIP
+                    experiences available only to token holders.
+                  </p>
+                </LuxuryCard>
+              </ScrollAnimationWrapper>
 
-            <ScrollAnimationWrapper delay={300}>
-              <LuxuryCard
-                className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
-                icon="spade"
-                iconPosition="tr"
-                animate={true}
-              >
-                <div className="text-center mb-4 md:mb-6">
-                  <motion.div
-                    whileHover={{ rotate: 15, scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-primary/30"
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    <Diamond className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold luxury-text">
-                    Limited Supply
-                  </h3>
-                </div>
-                <p className="text-gray-300 text-center text-sm md:text-base">
-                  With a fixed supply and deflationary mechanics, LMX tokens are
-                  designed to increase in value as the platform grows.
-                </p>
-              </LuxuryCard>
-            </ScrollAnimationWrapper>
+              <ScrollAnimationWrapper delay={200}>
+                <LuxuryCard
+                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
+                  icon="crown"
+                  iconPosition="tr"
+                  animate={true}
+                >
+                  <div className="text-center mb-4 md:mb-6">
+                    <motion.div
+                      whileHover={{ rotate: -10, scale: 1.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-500/30 to-indigo-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-400/30"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      }}
+                    >
+                      <LockIcon className="w-6 h-6 md:w-8 md:h-8 text-indigo-400" />
+                    </motion.div>
+                    <h3 className="text-lg md:text-xl font-bold luxury-text">
+                      Revenue Sharing
+                    </h3>
+                  </div>
+                  <p className="text-gray-300 text-center text-sm md:text-base">
+                    Token holders receive a portion of the platform&apos;s
+                    revenue through staking rewards and exclusive bonuses.
+                  </p>
+                </LuxuryCard>
+              </ScrollAnimationWrapper>
+
+              <ScrollAnimationWrapper delay={300}>
+                <LuxuryCard
+                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
+                  icon="spade"
+                  iconPosition="tr"
+                  animate={true}
+                >
+                  <div className="text-center mb-4 md:mb-6">
+                    <motion.div
+                      whileHover={{ rotate: 15, scale: 1.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-primary/30"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      }}
+                    >
+                      <Diamond className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+                    </motion.div>
+                    <h3 className="text-lg md:text-xl font-bold luxury-text">
+                      Limited Supply
+                    </h3>
+                  </div>
+                  <p className="text-gray-300 text-center text-sm md:text-base">
+                    With a fixed supply and deflationary mechanics, LMX tokens
+                    are designed to increase in value as the platform grows.
+                  </p>
+                </LuxuryCard>
+              </ScrollAnimationWrapper>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       {/* Referral section */}
       <section
         ref={referralSectionRef}
