@@ -2,7 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import "../sections/animation-utils.css";
 
 interface StakeEarnSectionProps {
   isVisible: boolean;
