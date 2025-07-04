@@ -34,6 +34,7 @@ export default function HomePage() {
   //   isMobile: false,
   //   memoryLimited: false,
   // });
+  //
 
   const { scrollY } = useScroll({
     target: containerRef,
