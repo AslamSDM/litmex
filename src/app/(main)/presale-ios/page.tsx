@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ChevronDown } from "lucide-react";
 import { WalletConnectButton } from "@/components/WalletConnectButton";
+import { useRouter } from "next/navigation";
 
 // Network icons
 const NETWORK_ICONS = {
@@ -40,7 +41,13 @@ export default function SimplePresalePage() {
   // Access appkit hooks for wallet connection
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   const cryptoPrices = {
     bnb: 300, // Example price, replace with actual data
