@@ -120,9 +120,7 @@ const TrumpBalanceCard: React.FC<TrumpBalanceCardProps> = ({
             >
               $
               {referralStats
-                ? (
-                    parseFloat(referralStats.totalBonus) * trumpPrice
-                  ).toLocaleString("en-US", {
+                ? parseFloat(referralStats.totalBonus).toLocaleString("en-US", {
                     maximumFractionDigits: 2,
                   })
                 : "0.00"}
@@ -130,7 +128,9 @@ const TrumpBalanceCard: React.FC<TrumpBalanceCardProps> = ({
           </div>
           <p className="text-xs text-primary/70 mt-1">
             {referralStats
-              ? parseFloat(referralStats.totalBonus).toLocaleString("en-US", {
+              ? (
+                  parseFloat(referralStats.totalBonus) / trumpPrice
+                ).toLocaleString("en-US", {
                   maximumFractionDigits: 2,
                 })
               : "0"}{" "}

@@ -60,7 +60,7 @@ export default function SimpleProfileContent({
       <div className="bg-black/40 p-6 rounded-lg mb-6 border border-primary/30">
         <h2 className="text-xl font-bold mb-2">Referrals</h2>
         <p>Referral Count: {userData.referrals.count}</p>
-        <p>Total Bonus: {userData.referrals.totalBonus} TRUMP</p>
+        <p>Total Bonus: ${userData.referrals.totalBonus} </p>
         {userData.referrals.referralStats && (
           <>
             <p>

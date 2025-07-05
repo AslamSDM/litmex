@@ -60,7 +60,10 @@ interface UserData {
   };
 }
 
-async function getUserData(userId: string): Promise<UserData> {
+async function getUserData(
+  userId: string,
+  trumpPrice: number
+): Promise<UserData> {
   // Get user's purchase history
   const purchases = await prisma.purchase.findMany({
     where: {
@@ -150,7 +153,8 @@ async function getUserData(userId: string): Promise<UserData> {
           : parseFloat(purchase.pricePerLmxInUsdt || "0");
 
       const purchaseAmount = lmxAmount * pricePerLmx;
-      const referralEarnings = purchaseAmount * referralBonusPercentage;
+      const referralEarnings =
+        (purchaseAmount * referralBonusPercentage) / trumpPrice;
 
       return {
         ...purchase,
@@ -292,10 +296,15 @@ export default async function ProfileIOSPage() {
       },
     },
   };
-
+  // Your SPL token mint address
+  const TOKEN_MINT = new PublicKey(
+    "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
+  );
+  const trump = await getTokenDetails(TOKEN_MINT.toString());
+  const trumpPrice = Number(trump?.priceUsd) || 8;
   // Only fetch user data if the user is authenticated
   if (session?.user?.id) {
-    userData = await getUserData(session.user.id);
+    userData = await getUserData(session.user.id, trumpPrice);
 
     // Fetch additional referral stats for the ReferralCard
     if (session?.user?.referralCode) {
@@ -373,13 +382,6 @@ export default async function ProfileIOSPage() {
       referralStats: userData.referrals.referralStats,
     },
   };
-
-  // Your SPL token mint address
-  const TOKEN_MINT = new PublicKey(
-    "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
-  );
-  const trump = await getTokenDetails(TOKEN_MINT.toString());
-  const trumpPrice = Number(trump?.priceUsd) || 8;
 
   // Convert to JSON and back to ensure all values are serializable
   const jsonString = JSON.stringify(serializableUserData);
