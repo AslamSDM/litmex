@@ -504,17 +504,6 @@ export default function SimplePresalePage() {
               {/* Cost Breakdown */}
               <div className="mt-2 text-sm text-center text-white/70">
                 ≈ {isNaN(tokenAmount) ? "0.00" : tokenAmount.toFixed(2)} LMX
-                <span className="mx-2 text-white/40">|</span>
-                {isNaN(cryptoAmount)
-                  ? "0.00"
-                  : cryptoAmount.toFixed(
-                      currencySymbol === "USDT"
-                        ? 2
-                        : currencySymbol === "SOL"
-                          ? 4
-                          : 6
-                    )}{" "}
-                {currencySymbol}
               </div>
             </div>
 
