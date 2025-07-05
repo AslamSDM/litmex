@@ -404,7 +404,9 @@ export default async function ProfileIOSPage() {
               jsonSafeData.referrals.referralStats.totalPendingBonus,
           }
         : undefined,
+      referralPurchases: jsonSafeData.referrals.purchases,
     },
+    purchases: jsonSafeData.purchases,
   };
 
   return (

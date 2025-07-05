@@ -23,7 +23,35 @@ interface UserData {
       totalBonus: string;
       totalPendingBonus: string;
     };
+    referralPurchases: {
+      id: string;
+      amount: number;
+      status: string;
+      createdAt: string;
+      lmxTokensAllocated?: string;
+      network?: string;
+      pricePerLmxInUsdt?: string;
+      referralEarnings?: number;
+      transactionSignature?: string;
+      userEmail?: string;
+      userId?: string;
+      userName?: string;
+    }[];
   };
+  purchases: {
+    id: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+    lmxTokensAllocated?: string;
+    network?: string;
+    pricePerLmxInUsdt?: string;
+    referralEarnings?: number;
+    transactionSignature?: string;
+    userEmail?: string;
+    userId?: string;
+    userName?: string;
+  }[];
 }
 
 interface ProfileIOSClientProps {
@@ -179,6 +207,114 @@ export default function ProfileIOSClient({
           </div>
         </>
       )}
+
+      {/* Recent Purchases */}
+      {userData.purchases && userData.purchases.length > 0 && (
+        <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mt-5">
+          <h3 className="text-white font-medium mb-3">Your Purchases</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-white/80">
+              <thead className="text-xs uppercase bg-black/40 text-white/60">
+                <tr>
+                  <th className="px-3 py-2 text-left">Date</th>
+                  <th className="px-3 py-2 text-right">Amount</th>
+                  <th className="px-3 py-2 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userData.purchases.map((purchase) => (
+                  <tr key={purchase.id} className="border-t border-white/10">
+                    <td className="px-3 py-2">
+                      {new Date(purchase.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      {parseFloat(
+                        purchase.lmxTokensAllocated ?? "0"
+                      ).toLocaleString()}{" "}
+                      LMX{" "}
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <span
+                        className={`px-2 py-1 rounded text-xs ${
+                          purchase.status === "completed"
+                            ? "bg-green-900/30 text-green-400"
+                            : purchase.status === "pending"
+                              ? "bg-yellow-900/30 text-yellow-400"
+                              : "bg-gray-900/30 text-gray-400"
+                        }`}
+                      >
+                        {purchase.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Referral Purchases */}
+      {userData.referrals.referralPurchases &&
+        userData.referrals.referralPurchases.length > 0 && (
+          <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mt-5 mb-12">
+            <h3 className="text-white font-medium mb-3">Referral Purchases</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-white/80">
+                <thead className="text-xs uppercase bg-black/40 text-white/60">
+                  <tr>
+                    <th className="px-3 py-2 text-left">User</th>
+                    <th className="px-3 py-2 text-left">Date</th>
+                    <th className="px-3 py-2 text-right">Amount</th>
+                    <th className="px-3 py-2 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userData.referrals.referralPurchases.map((purchase) => (
+                    <tr key={purchase.id} className="border-t border-white/10">
+                      <td className="px-3 py-2">
+                        {purchase.userName ||
+                          purchase.userEmail?.split("@")[0] ||
+                          "Anonymous"}
+                      </td>
+                      <td className="px-3 py-2">
+                        {new Date(purchase.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        {purchase.lmxTokensAllocated && (
+                          <div className="text-xs text-white/50">
+                            {parseFloat(
+                              purchase.lmxTokensAllocated
+                            ).toLocaleString()}{" "}
+                            LMX
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <span
+                          className={`px-2 py-1 rounded text-xs ${
+                            purchase.status === "completed"
+                              ? "bg-green-900/30 text-green-400"
+                              : purchase.status === "pending"
+                                ? "bg-yellow-900/30 text-yellow-400"
+                                : "bg-gray-900/30 text-gray-400"
+                          }`}
+                        >
+                          {purchase.status}
+                        </span>
+                        {purchase.referralEarnings && (
+                          <div className="text-xs text-green-400 mt-1">
+                            +${purchase.referralEarnings.toFixed(2)}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
