@@ -28,10 +28,12 @@ interface UserData {
 
 interface ProfileIOSClientProps {
   initialUserData: UserData;
+  trumpPrice?: number; // Optional prop for TRUMP price
 }
 
 export default function ProfileIOSClient({
   initialUserData,
+  trumpPrice = 8, // Default price if not provided
 }: ProfileIOSClientProps) {
   const { data: session, status } = useSession();
   const { isConnected } = useAppKitAccount();
@@ -133,6 +135,10 @@ export default function ProfileIOSClient({
               <div className="bg-black/20 p-3 rounded-md">
                 <p className="text-xs text-white/60 mb-1">Total Earnings</p>
                 <p className="text-lg font-semibold text-primary">
+                  $
+                  {(userData.referrals.totalBonus * trumpPrice).toFixed(2)}{" "}
+                </p>
+                <p className="text-xs text-white/60 mt-1">
                   {userData.referrals.totalBonus.toFixed(2)} TRUMP
                 </p>
               </div>

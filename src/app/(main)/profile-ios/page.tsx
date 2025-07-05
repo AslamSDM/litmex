@@ -9,7 +9,7 @@ import ProfileIOSClient from "./ProfileIOSClient";
 
 // Use dynamic rendering to ensure data is always fresh
 export const dynamic = "force-dynamic";
-export const revalidate = 60; // Revalidate data every 60 seconds
+export const revalidate = 600; // Revalidate data every 60 seconds
 
 interface Purchase {
   id: string;
@@ -409,7 +409,10 @@ export default async function ProfileIOSPage() {
 
   return (
     <Suspense fallback={<div>Loading profile...</div>}>
-      <ProfileIOSClient initialUserData={clientUserData} />
+      <ProfileIOSClient
+        initialUserData={clientUserData}
+        trumpPrice={trumpPrice}
+      />
     </Suspense>
   );
 }

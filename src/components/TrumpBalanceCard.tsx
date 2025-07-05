@@ -118,23 +118,23 @@ const TrumpBalanceCard: React.FC<TrumpBalanceCardProps> = ({
               }}
               transition={{ duration: 3, repeat: Infinity }}
             >
+              $
               {referralStats
-                ? parseFloat(referralStats.totalBonus).toLocaleString("en-US", {
+                ? (
+                    parseFloat(referralStats.totalBonus) * trumpPrice
+                  ).toLocaleString("en-US", {
                     maximumFractionDigits: 2,
                   })
-                : "0"}{" "}
-              <span className="text-primary">TRUMP</span>
+                : "0.00"}
             </motion.div>
           </div>
           <p className="text-xs text-primary/70 mt-1">
-            Value: $
             {referralStats
-              ? (
-                  parseFloat(referralStats.totalBonus) * trumpPrice
-                ).toLocaleString("en-US", {
+              ? parseFloat(referralStats.totalBonus).toLocaleString("en-US", {
                   maximumFractionDigits: 2,
                 })
-              : "0.00"}
+              : "0"}{" "}
+            <span className="text-primary">TRUMP</span>
           </p>
         </div>
 
