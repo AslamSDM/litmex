@@ -195,35 +195,6 @@ const RoadmapTimeline: React.FC = () => {
           ))}
         </div>
       </div>
-
-      {/* Scroll hint - only for desktop since mobile uses vertical layout */}
-      <div className="hidden md:flex text-center text-xs text-gray-400 mt-2 mb-4 items-center justify-center">
-        <motion.div
-          animate={{ x: [-5, 5, -5] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="mr-2"
-        >
-          ←
-        </motion.div>
-        Scroll to view more
-        <motion.div
-          animate={{ x: [5, -5, 5] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="ml-2"
-        >
-          →
-        </motion.div>
-      </div>
-
-      {/* Decorative Element */}
-      <motion.div
-        className="w-full flex justify-center mt-4"
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-      </motion.div>
     </div>
   );
 };
