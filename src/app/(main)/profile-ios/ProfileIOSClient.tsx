@@ -133,26 +133,7 @@ export default function ProfileIOSClient({
               <div className="bg-black/20 p-3 rounded-md">
                 <p className="text-xs text-white/60 mb-1">Total Earnings</p>
                 <p className="text-lg font-semibold text-primary">
-                  {userData.referrals.totalBonus.toFixed(2)} LMX
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-black/20 p-3 rounded-md">
-                <p className="text-xs text-white/60 mb-1">Paid Rewards</p>
-                <p className="text-lg font-semibold text-green-400">
-                  {userData.referrals.paymentStats.totalPaidAmount.toFixed(2)}{" "}
-                  LMX
-                </p>
-              </div>
-              <div className="bg-black/20 p-3 rounded-md">
-                <p className="text-xs text-white/60 mb-1">Pending</p>
-                <p className="text-lg font-semibold text-amber-400">
-                  {userData.referrals.paymentStats.totalPendingAmount.toFixed(
-                    2
-                  )}{" "}
-                  LMX
+                  {userData.referrals.totalBonus.toFixed(2)} TRUMP
                 </p>
               </div>
             </div>
