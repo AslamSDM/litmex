@@ -91,12 +91,6 @@ export async function GET(req: NextRequest) {
           },
         },
       }),
-      prisma.user.update({
-        where: { id: referrer.id },
-        data: {
-          referrerId: user.id, // Set the referrerId on the referrer
-        },
-      }),
     ]);
 
     // Return information about the referrer (excluding sensitive data)
