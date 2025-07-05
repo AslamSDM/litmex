@@ -64,6 +64,7 @@ export async function GET(req: NextRequest) {
         username: true,
         walletAddress: true,
         verified: true,
+        referrerId: true, // Include referrerId if needed
       },
     });
 
@@ -72,6 +73,12 @@ export async function GET(req: NextRequest) {
         success: false,
         message: "Invalid referral code",
       });
+    }
+    if (referrer.referrerId === user.id) {
+      return NextResponse.json(
+        { error: "You cannot refer your referrer" },
+        { status: 400 }
+      );
     }
 
     // Add the referrer ID to the current user's record
