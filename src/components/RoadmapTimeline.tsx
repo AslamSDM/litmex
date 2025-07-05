@@ -84,17 +84,24 @@ const RoadmapTimeline: React.FC = () => {
     <div className="w-full max-w-7xl mx-auto">
       {/* Main timeline container */}
       <div className="relative">
-        {/* Timeline phases */}
+        {/* Horizontal timeline for desktop, vertical for mobile */}
 
-        {/* Timeline phases */}
-        <div className="flex flex-nowrap space-x-4 pb-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 md:px-2 md:justify-center">
+        {/* Timeline phases - horizontal for md+ screens, vertical for mobile */}
+        <div className="flex md:flex-row flex-col md:space-x-4 space-y-10 md:space-y-0 pb-8 md:overflow-x-auto overflow-visible md:snap-x md:snap-mandatory scrollbar-hide px-4 md:px-2 md:justify-center">
           {roadmapData.map((phase, index) => (
             <ScrollAnimationWrapper key={phase.title} delay={index * 0.2}>
               <div
-                className={`relative snap-center flex-shrink-0 w-[250px] xs:w-[280px] sm:w-[320px] md:w-[350px]`}
+                className={`relative md:snap-center flex-shrink-0 md:w-[250px] md:xs:w-[280px] md:sm:w-[320px] md:w-[350px] w-full`}
               >
-                {/* Phase node on timeline */}
-                <div className="absolute left-1/2 top-[80px] -translate-x-1/2 z-10">
+                {/* Vertical connecting line for mobile */}
+                {index < roadmapData.length - 1 && (
+                  <div className="absolute md:hidden left-[20px] top-[110px] w-[2px] h-[40px] bg-gradient-to-b from-primary/50 to-primary/20" />
+                )}
+
+                {/* Phase node - on horizontal timeline for desktop, at left for mobile */}
+                <div
+                  className={`absolute md:left-1/2 left-[20px] md:top-[80px] top-[64px] md:-translate-x-1/2 z-10`}
+                >
                   <motion.div
                     className={`w-6 h-6 rounded-full flex items-center justify-center ${
                       phase.isCompleted
@@ -110,8 +117,8 @@ const RoadmapTimeline: React.FC = () => {
                   </motion.div>
                 </div>
 
-                {/* Timeline labels */}
-                <div className="flex flex-col items-center mb-16">
+                {/* Timeline labels - centered for desktop, left-aligned with indent for mobile */}
+                <div className="flex flex-col md:items-center mb-16 md:mb-16 ml-12 md:ml-0">
                   <span
                     className={`text-base font-medium ${phase.isCompleted ? "text-primary" : "text-gray-400"}`}
                   >
@@ -124,17 +131,17 @@ const RoadmapTimeline: React.FC = () => {
                   </h3>
                 </div>
 
-                {/* Content card */}
+                {/* Content card - positioned below for desktop, indented for mobile */}
                 <div
-                  className={`mt-12 bg-black/40 backdrop-blur-sm border mt-2 ${
+                  className={`md:mt-12 bg-black/40 backdrop-blur-sm border mt-2 ${
                     phase.isCompleted ? "border-primary/30" : "border-white/10"
-                  } rounded-lg p-5 relative group hover:border-primary/50 transition-all min-h-[280px]`}
+                  } rounded-lg p-5 relative group hover:border-primary/50 transition-all min-h-[240px] md:min-h-[280px] ml-12 md:ml-0`}
                 >
-                  {/* Icon */}
+                  {/* Icon - centered on top for desktop, top-left for mobile */}
                   <div
-                    className={`absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center ${
+                    className={`absolute md:-top-5 -top-4 md:left-1/2 left-0 md:-translate-x-1/2 md:translate-y-0 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center ${
                       phase.isCompleted ? "bg-primary/20" : "bg-white/5"
-                    } border ${phase.isCompleted ? "border-primary/30" : "border-white/10"} mt-2`}
+                    } border ${phase.isCompleted ? "border-primary/30" : "border-white/10"}`}
                   >
                     <motion.div
                       whileHover={{ rotate: 15, scale: 1.1 }}
@@ -188,6 +195,35 @@ const RoadmapTimeline: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Scroll hint - only for desktop since mobile uses vertical layout */}
+      <div className="hidden md:flex text-center text-xs text-gray-400 mt-2 mb-4 items-center justify-center">
+        <motion.div
+          animate={{ x: [-5, 5, -5] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="mr-2"
+        >
+          ←
+        </motion.div>
+        Scroll to view more
+        <motion.div
+          animate={{ x: [5, -5, 5] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="ml-2"
+        >
+          →
+        </motion.div>
+      </div>
+
+      {/* Decorative Element */}
+      <motion.div
+        className="w-full flex justify-center mt-4"
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+      </motion.div>
     </div>
   );
 };
