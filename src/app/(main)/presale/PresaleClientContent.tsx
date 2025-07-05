@@ -23,6 +23,7 @@ import PresaleStats from "@/components/PresaleStats";
 import { ReferralCard } from "@/components/ReferralCard";
 import PresaleBuyForm from "@/components/PresaleBuyForm";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import RoadmapTimeline from "@/components/RoadmapTimeline";
 
 import useAudioPlayer from "@/components/hooks/useAudioPlayer";
 import ScrollIndicator from "@/components/ScrollIndicator";
@@ -37,7 +38,6 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 import { LMX_PRICE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
-import { set } from "zod";
 
 // Tokenomics data
 const tokenomicsData = [
@@ -300,6 +300,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const tokenomicsSectionRef = useRef<HTMLElement>(null);
   const whyInvestSectionRef = useRef<HTMLElement>(null);
   const referralSectionRef = useRef<HTMLElement>(null);
+  const roadmapSectionRef = useRef<HTMLElement>(null);
   const faqSectionRef = useRef<HTMLElement>(null);
 
   if (isIOS || !loaded) {
@@ -1073,7 +1074,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
               <ScrollAnimationWrapper delay={100}>
                 <LuxuryCard
-                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
+                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1 "
                   icon="diamond"
                   iconPosition="tr"
                   animate={true}
@@ -1370,6 +1371,21 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </ScrollAnimationWrapper>
         </div>
       </section>
+
+      {/* Roadmap Section */}
+      {!isLowMemoryDevice && (
+        <section
+          ref={roadmapSectionRef}
+          className="py-8 sm:py-12 md:py-20 relative overflow-hidden"
+        >
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 lg:mb-12 text-center font-display">
+            Project <span className="text-primary">Roadmap</span>
+          </h2>
+
+          <RoadmapTimeline />
+        </section>
+      )}
+
       {/* FAQ Section */}
       {!isIOS && (
         <section
