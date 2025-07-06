@@ -45,9 +45,9 @@ export const PresaleStats: React.FC<PresaleStatsProps> = ({
 
     {
       icon: <User className="w-6 h-6 text-rose-400" />,
-      value: userBalance.toLocaleString(undefined, {
+      value: `${userBalance.toLocaleString(undefined, {
         maximumFractionDigits: 2,
-      }),
+      })} LMX`,
       label: "Your Balance",
       formatter: (val: string) => val,
       isString: true,
