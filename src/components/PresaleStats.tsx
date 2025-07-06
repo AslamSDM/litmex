@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Users, Database, Clock, Gift } from "lucide-react";
+import { Users, Database, Clock, Gift, User } from "lucide-react";
 
 interface PresaleStatsProps {
   contributors: number;
@@ -10,6 +10,7 @@ interface PresaleStatsProps {
   usdRaised?: number;
   daysLeft: number;
   referralBonus: string;
+  userBalance: number;
   className?: string;
 }
 
@@ -18,6 +19,7 @@ export const PresaleStats: React.FC<PresaleStatsProps> = ({
   raised,
   usdRaised,
   daysLeft,
+  userBalance,
   referralBonus,
   className = "",
 }) => {
@@ -42,9 +44,11 @@ export const PresaleStats: React.FC<PresaleStatsProps> = ({
     },
 
     {
-      icon: <Gift className="w-6 h-6 text-rose-400" />,
-      value: referralBonus,
-      label: "Trump Bonus",
+      icon: <User className="w-6 h-6 text-rose-400" />,
+      value: userBalance.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      }),
+      label: "Your Balance",
       formatter: (val: string) => val,
       isString: true,
     },

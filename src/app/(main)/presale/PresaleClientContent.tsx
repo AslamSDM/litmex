@@ -222,6 +222,8 @@ interface PresaleClientContentProps {
   contributorCount: number;
   totalRaised: number;
   usdRaised: number;
+  userBalance?: number; // User's balance in LMX tokens
+  initialSession?: any; // Session information
   prices?: {
     bnb?: number;
     sol?: number;
@@ -232,6 +234,8 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   contributorCount,
   totalRaised,
   usdRaised,
+  userBalance = 0,
+  initialSession,
   prices = { bnb: 600, sol: 150 }, // Default prices if not provided
 }) => {
   // Ensure prices object has the required properties and correct types
@@ -587,6 +591,17 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                   {presaleNetwork === "solana" ? "Solana" : "BSC"} Wallet
                   Connected
                 </p>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-xs sm:text-sm opacity-80">
+                    Your LMX Balance:
+                  </span>
+                  <span className="text-sm sm:text-base font-semibold text-primary">
+                    {userBalance.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    LMX
+                  </span>
+                </div>
                 <p className="text-xs sm:text-sm opacity-80">
                   You can now participate in the Seed Round
                 </p>
@@ -600,6 +615,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 contributors={contributorCount}
                 raised={Number(totalRaised.toFixed(0))}
                 usdRaised={Number(usdRaised.toFixed(0))}
+                userBalance={userBalance}
                 daysLeft={Math.ceil(
                   (new Date("2025-06-30T23:59:59").getTime() -
                     new Date().getTime()) /
@@ -1371,7 +1387,6 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           </ScrollAnimationWrapper>
         </div>
       </section>
-
       {/* Roadmap Section */}
       {!isLowMemoryDevice && (
         <section
