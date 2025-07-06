@@ -24,6 +24,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ReferralCard from "@/components/ReferralCard";
 import TrumpBalanceCard from "@/components/TrumpBalanceCard";
+import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 
 interface Purchase {
   id: string;
@@ -298,7 +299,9 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-primary/20">
                       <span className="text-white/70">Status</span>
-                      <span className="text-green-400">Connected</span>
+                      <span className="text-green-400">
+                        <UnifiedWalletButton />
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center py-2 border-b border-primary/20">
@@ -401,14 +404,15 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         {userData.referrals.totalBonus} LMX
                       </motion.span> */}
                     </div>
-                    <Button
-                      onClick={handleDisconnect}
-                      variant="outline"
-                      className="w-full mt-4 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                      disabled={loading}
-                    >
-                      {loading ? "Disconnecting..." : "Disconnect Wallet"}
-                    </Button>
+                    {connected && (
+                      <Button
+                        onClick={handleDisconnect}
+                        variant="outline"
+                        className="w-full mt-4 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      >
+                        {"Disconnect Wallet"}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
