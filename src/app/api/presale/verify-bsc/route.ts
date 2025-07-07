@@ -257,7 +257,7 @@ export async function POST(req: NextRequest) {
           "bsc",
           user.referrerId
         );
-        referralPaid = referralPaid || false;
+        referralPaid = sent || false;
         referralTxn = referraltxn || null;
       }
     }
