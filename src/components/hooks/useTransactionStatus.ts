@@ -135,6 +135,23 @@ export function useTransactionStatus(initialSteps: TransactionStep[]) {
     }));
   };
 
+  // Clear all errors in the transaction
+  const clearErrors = () => {
+    setStatus((prevStatus) => {
+      const updatedSteps = prevStatus.steps.map((step) =>
+        step.status === "error"
+          ? { ...step, status: "success" as const, errorMessage: undefined }
+          : step
+      );
+
+      return {
+        ...prevStatus,
+        steps: updatedSteps,
+        isError: false,
+      };
+    });
+  };
+
   // Reset the transaction status
   const resetStatus = () => {
     setStatus({
@@ -154,6 +171,7 @@ export function useTransactionStatus(initialSteps: TransactionStep[]) {
     updateStep,
     setCurrentStep,
     nextStep,
+    clearErrors,
     currentStep: status.currentStepId ? currentStep : null,
     completeTransaction,
     setError,

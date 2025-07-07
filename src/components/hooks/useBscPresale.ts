@@ -72,6 +72,7 @@ export function useBscPresale(tokenAmount: number, referrer?: string) {
     nextStep,
     completeTransaction,
     setError,
+    clearErrors,
     resetStatus,
   } = useTransactionStatus(initialTransactionSteps);
 
@@ -194,6 +195,7 @@ export function useBscPresale(tokenAmount: number, referrer?: string) {
 
           // Step 5: Save allocation in database
           setCurrentStep("save-allocation");
+          clearErrors(); // Clear any previous errors
           nextStep(); // Move to next step
           completeTransaction(); // Mark transaction as complete
           toast.success(`Successfully purchased ${tokenAmount} LMX tokens!`);
