@@ -23,6 +23,12 @@ interface UserData {
       totalBonus: string;
       totalPendingBonus: string;
     };
+    referredUsers?: Array<{
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      createdAt: string;
+    }>;
     referralPurchases: {
       id: string;
       amount: number;
@@ -206,7 +212,76 @@ export default function ProfileIOSClient({
           </div>
         </>
       )}
+      {/* Referred Users */}
+      {userData.referrals.referredUsers &&
+        userData.referrals.referredUsers.length > 0 && (
+          <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-white/70 text-sm">Referred Users</p>
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+            </div>
 
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-white/80">
+                <thead className="text-xs uppercase bg-black/40 text-white/60">
+                  <tr>
+                    <th className="px-3 py-2 text-left">User</th>
+                    <th className="px-3 py-2 text-left">Email</th>
+                    <th className="px-3 py-2 text-right">Joined Date</th>
+                    <th className="px-3 py-2 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userData.referrals.referredUsers.map((user) => {
+                    // Convert the createdAt string to a Date object
+                    const joinedDate = new Date(user.createdAt);
+                    // Format the date as a readable string
+                    const formattedDate = joinedDate.toLocaleDateString();
+
+                    // Check if this user has made a purchase
+                    const hasPurchase =
+                      userData.referrals.referralPurchases?.some(
+                        (purchase) =>
+                          purchase.userEmail === user.email ||
+                          purchase.userId === user.id
+                      );
+
+                    return (
+                      <tr key={user.id} className="border-t border-white/10">
+                        <td className="px-3 py-2">
+                          {user.name || "Anonymous"}
+                        </td>
+                        <td className="px-3 py-2">
+                          {user.email
+                            ? user.email.length > 15
+                              ? `${user.email.substring(0, 6)}...${user.email.substring(user.email.indexOf("@"))}`
+                              : user.email
+                            : "No email"}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          {formattedDate}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          {hasPurchase ? (
+                            <span className="px-2 py-1 rounded text-xs bg-green-900/30 text-green-400">
+                              Purchased
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded text-xs bg-yellow-900/30 text-yellow-400">
+                              No Purchase
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       {/* Recent Purchases */}
       {userData.purchases && userData.purchases.length > 0 && (
         <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mt-5">

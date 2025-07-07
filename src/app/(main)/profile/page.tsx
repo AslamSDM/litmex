@@ -47,6 +47,12 @@ interface UserData {
     totalBonus: number;
     purchases: ReferredUserPurchase[];
     paymentStats: ReferralPaymentStats;
+    referredUsers?: Array<{
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      createdAt: string;
+    }>;
     referralStats?: {
       totalBonus: string;
       totalPendingBonus: string;
@@ -105,6 +111,8 @@ async function getUserData(
     select: {
       id: true,
       email: true,
+      username: true,
+      createdAt: true,
     },
   });
 
@@ -190,6 +198,14 @@ async function getUserData(
   // Get referral payment stats
   const referralPaymentStats = await getReferralPaymentStats(userId);
 
+  // Transform referredUsers to match the format we need
+  const processedReferredUsers = referredUsers.map((user) => ({
+    id: user.id,
+    email: user.email,
+    name: user.username,
+    createdAt: user.createdAt.toISOString(),
+  }));
+
   return {
     purchases,
     balance,
@@ -199,6 +215,7 @@ async function getUserData(
       totalBonus: parseFloat(totalReferralBonus.toFixed(2)),
       purchases: referredUsersPurchases,
       paymentStats: referralPaymentStats,
+      referredUsers: processedReferredUsers, // Adding all referred users
     },
   };
 }

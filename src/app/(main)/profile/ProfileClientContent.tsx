@@ -63,6 +63,12 @@ interface UserData {
         pending: number;
       };
     };
+    referredUsers?: Array<{
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      createdAt: string;
+    }>;
   };
 }
 
@@ -790,6 +796,177 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         paymentStats={userData.referrals.paymentStats}
                         serverRenderedStats={userData.referrals.referralStats}
                       />
+
+                      {/* Referrals Table with Emails and Joined Dates */}
+                      <div className="mt-6">
+                        <h4 className="text-primary font-medium mb-4">
+                          All Referred Users
+                          {userData.referrals.count > 0 && (
+                            <span className="text-sm text-white/70 ml-2">
+                              ({userData.referrals.count} total)
+                            </span>
+                          )}
+                        </h4>
+
+                        {userData.referrals.count > 0 ? (
+                          <div className="overflow-auto max-h-96">
+                            <table className="w-full min-w-full">
+                              <thead className="bg-primary/10 border-b border-primary/20">
+                                <tr>
+                                  <th className="text-left py-3 px-4 text-sm font-medium text-primary">
+                                    User
+                                  </th>
+                                  <th className="text-left py-3 px-4 text-sm font-medium text-primary">
+                                    Email
+                                  </th>
+                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                    Joined Date
+                                  </th>
+                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                    Purchase Status
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-primary/10">
+                                {userData.referrals.referredUsers
+                                  ? // If we have all referred users data, use that
+                                    userData.referrals.referredUsers.map(
+                                      (user) => {
+                                        // Convert the createdAt string to a Date object
+                                        const joinedDate = new Date(
+                                          user.createdAt
+                                        );
+                                        // Format the date as a readable string
+                                        const formattedDate =
+                                          joinedDate.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                              year: "numeric",
+                                              month: "short",
+                                              day: "numeric",
+                                            }
+                                          );
+
+                                        // Find if this user has any purchases
+                                        const userPurchase =
+                                          userData.referrals.purchases.find(
+                                            (purchase) =>
+                                              (purchase.userEmail &&
+                                                user.email &&
+                                                purchase.userEmail ===
+                                                  user.email) ||
+                                              purchase.id === user.id
+                                          );
+
+                                        const hasMadePurchase = !!userPurchase;
+
+                                        return (
+                                          <tr
+                                            key={user.id}
+                                            className="hover:bg-primary/5 transition-colors"
+                                          >
+                                            <td className="py-3 px-4 text-sm text-white/90">
+                                              {user.name || "User"}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-white/90">
+                                              {user.email ||
+                                                "No email provided"}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-right text-white/90">
+                                              {formattedDate}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-right">
+                                              {hasMadePurchase ? (
+                                                <span className="text-green-400 font-medium">
+                                                  Purchased
+                                                </span>
+                                              ) : (
+                                                <span className="text-amber-400">
+                                                  No purchase yet
+                                                </span>
+                                              )}
+                                            </td>
+                                          </tr>
+                                        );
+                                      }
+                                    )
+                                  : // Fall back to just the purchases data if referredUsers isn't available
+                                    userData.referrals.purchases.map(
+                                      (purchase) => {
+                                        // Convert the createdAt string to a Date object
+                                        const joinedDate = new Date(
+                                          purchase.createdAt
+                                        );
+                                        // Format the date as a readable string
+                                        const formattedDate =
+                                          joinedDate.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                              year: "numeric",
+                                              month: "short",
+                                              day: "numeric",
+                                            }
+                                          );
+
+                                        return (
+                                          <tr
+                                            key={purchase.id}
+                                            className="hover:bg-primary/5 transition-colors"
+                                          >
+                                            <td className="py-3 px-4 text-sm text-white/90">
+                                              {purchase.userName ||
+                                                "Anonymous User"}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-white/90">
+                                              {purchase.userEmail ||
+                                                "No email provided"}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-right text-white/90">
+                                              {formattedDate}
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-right">
+                                              <span className="text-green-400 font-medium">
+                                                Purchased
+                                              </span>
+                                            </td>
+                                          </tr>
+                                        );
+                                      }
+                                    )}
+
+                                {/* For users who haven't made any purchases yet but are referred */}
+                                {/* Only show this message if we don't have referredUsers but we know there are more users than purchases */}
+                                {!userData.referrals.referredUsers &&
+                                  userData.referrals.count >
+                                    userData.referrals.purchases.length && (
+                                    <tr className="hover:bg-primary/5 transition-colors bg-amber-900/10">
+                                      <td
+                                        colSpan={4}
+                                        className="py-3 px-4 text-sm text-center text-amber-400"
+                                      >
+                                        <span className="flex items-center justify-center gap-2">
+                                          <AlertCircle className="h-4 w-4" />
+                                          {userData.referrals.count -
+                                            userData.referrals.purchases
+                                              .length}{" "}
+                                          more referred users not yet fetched
+                                          from server
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  )}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div className="p-6 text-center bg-black/20 rounded-lg">
+                            <p className="text-white/70">
+                              You haven't referred any users yet.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
                       {userData.referrals.purchases.length > 0 && (
                         <div className="mt-6">
                           <h4 className="text-primary font-medium mb-4">
@@ -822,7 +999,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                     <>
                                       <tr
                                         key={purchase.id}
-                                        className={`border-b border-primary/10 hover:bg-primary/5 transition-colors ${index % 2 === 0 ? "bg-black/20" : "bg-black/10"}`}
+                                        className={`border-b border-primary/10 hover:bg-primary/5 transition-colors ${
+                                          index % 2 === 0
+                                            ? "bg-black/20"
+                                            : "bg-black/10"
+                                        }`}
                                       >
                                         <td className="py-3 px-4 text-sm text-white/90">
                                           {purchase.userName ||
