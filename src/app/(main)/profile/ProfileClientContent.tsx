@@ -217,7 +217,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
       transition: { duration: isLowMemoryDevice ? 0.3 : 0.5 },
     },
   };
-
+  console.log(userData);
   return (
     <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
       {/* Optimized background for iOS devices */}
@@ -828,111 +828,67 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-primary/10">
-                                {userData.referrals.referredUsers
-                                  ? // If we have all referred users data, use that
-                                    userData.referrals.referredUsers.map(
-                                      (user) => {
-                                        // Convert the createdAt string to a Date object
-                                        const joinedDate = new Date(
-                                          user.createdAt
+                                {userData.referrals.referredUsers ? (
+                                  // If we have all referred users data, use that
+                                  userData.referrals.referredUsers.map(
+                                    (user) => {
+                                      // Convert the createdAt string to a Date object
+                                      const joinedDate = new Date(
+                                        user.createdAt
+                                      );
+                                      // Format the date as a readable string
+                                      const formattedDate =
+                                        joinedDate.toLocaleDateString("en-US", {
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric",
+                                        });
+
+                                      // Find if this user has any purchases
+                                      const userPurchase =
+                                        userData.referrals.purchases.find(
+                                          (purchase) =>
+                                            (purchase.userEmail &&
+                                              user.email &&
+                                              purchase.userEmail ===
+                                                user.email) ||
+                                            purchase.id === user.id
                                         );
-                                        // Format the date as a readable string
-                                        const formattedDate =
-                                          joinedDate.toLocaleDateString(
-                                            "en-US",
-                                            {
-                                              year: "numeric",
-                                              month: "short",
-                                              day: "numeric",
-                                            }
-                                          );
 
-                                        // Find if this user has any purchases
-                                        const userPurchase =
-                                          userData.referrals.purchases.find(
-                                            (purchase) =>
-                                              (purchase.userEmail &&
-                                                user.email &&
-                                                purchase.userEmail ===
-                                                  user.email) ||
-                                              purchase.id === user.id
-                                          );
+                                      const hasMadePurchase = !!userPurchase;
 
-                                        const hasMadePurchase = !!userPurchase;
-
-                                        return (
-                                          <tr
-                                            key={user.id}
-                                            className="hover:bg-primary/5 transition-colors"
-                                          >
-                                            <td className="py-3 px-4 text-sm text-white/90">
-                                              {user.name || "User"}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-white/90">
-                                              {user.email ||
-                                                "No email provided"}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-right text-white/90">
-                                              {formattedDate}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-right">
-                                              {hasMadePurchase ? (
-                                                <span className="text-green-400 font-medium">
-                                                  Purchased
-                                                </span>
-                                              ) : (
-                                                <span className="text-amber-400">
-                                                  No purchase yet
-                                                </span>
-                                              )}
-                                            </td>
-                                          </tr>
-                                        );
-                                      }
-                                    )
-                                  : // Fall back to just the purchases data if referredUsers isn't available
-                                    userData.referrals.purchases.map(
-                                      (purchase) => {
-                                        // Convert the createdAt string to a Date object
-                                        const joinedDate = new Date(
-                                          purchase.createdAt
-                                        );
-                                        // Format the date as a readable string
-                                        const formattedDate =
-                                          joinedDate.toLocaleDateString(
-                                            "en-US",
-                                            {
-                                              year: "numeric",
-                                              month: "short",
-                                              day: "numeric",
-                                            }
-                                          );
-
-                                        return (
-                                          <tr
-                                            key={purchase.id}
-                                            className="hover:bg-primary/5 transition-colors"
-                                          >
-                                            <td className="py-3 px-4 text-sm text-white/90">
-                                              {purchase.userName ||
-                                                "Anonymous User"}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-white/90">
-                                              {purchase.userEmail ||
-                                                "No email provided"}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-right text-white/90">
-                                              {formattedDate}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-right">
+                                      return (
+                                        <tr
+                                          key={user.id}
+                                          className="hover:bg-primary/5 transition-colors"
+                                        >
+                                          <td className="py-3 px-4 text-sm text-white/90">
+                                            {user.name || "User"}
+                                          </td>
+                                          <td className="py-3 px-4 text-sm text-white/90">
+                                            {user.email || "No email provided"}
+                                          </td>
+                                          <td className="py-3 px-4 text-sm text-right text-white/90">
+                                            {formattedDate}
+                                          </td>
+                                          <td className="py-3 px-4 text-sm text-right">
+                                            {hasMadePurchase ? (
                                               <span className="text-green-400 font-medium">
                                                 Purchased
                                               </span>
-                                            </td>
-                                          </tr>
-                                        );
-                                      }
-                                    )}
+                                            ) : (
+                                              <span className="text-amber-400">
+                                                No purchase yet
+                                              </span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      );
+                                    }
+                                  )
+                                ) : (
+                                  <></>
+                                )}
 
                                 {/* For users who haven't made any purchases yet but are referred */}
                                 {/* Only show this message if we don't have referredUsers but we know there are more users than purchases */}

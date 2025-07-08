@@ -394,6 +394,7 @@ export default async function ProfilePage() {
       }),
       paymentStats: userData.referrals.paymentStats,
       referralStats: userData.referrals.referralStats,
+      referredUsers: userData.referrals.referredUsers,
     },
   };
   // Your SPL token mint address
