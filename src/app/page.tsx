@@ -7,10 +7,6 @@ import {
   AnimatePresence,
   useMotionValueEvent,
 } from "framer-motion";
-// import useReferralHandling from "@/components/hooks/useReferralHandling";
-// import ReferralIndicator from "@/components/ReferralIndicator";
-
-// Import section components
 import IntroSection from "@/components/sections/IntroSection";
 import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
 import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
@@ -18,6 +14,7 @@ import StakeEarnSection from "@/components/sections/StakeEarnSection";
 import CtaSection from "@/components/sections/CtaSection";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
 import "../components/sections/animation-utils.css"; // Ensure this path is correct
+import Image from "next/image";
 
 const TOTAL_SCROLL_ANIMATION_UNITS = 100;
 const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
@@ -34,19 +31,11 @@ export default function HomePage() {
     // Only run on client side
     if (typeof window !== "undefined") {
       // Check for mobile devices
-      const isMobile =
-        /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(
-          navigator.userAgent
-        );
 
       // Check specifically for iOS devices
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       setIsIOS(isIOS);
       // Check for memory limitations (simple heuristic)
-
-      console.log(
-        `Device detected: ${isMobile ? "Mobile" : "Desktop"}, iOS: ${isIOS}, Memory limited: `
-      );
     }
   }, []);
 
@@ -67,42 +56,6 @@ export default function HomePage() {
   useMotionValueEvent(scrollY, "change", (latest) => {
     setMappedScrollProgress(latest / 50);
   });
-  // const navigateToSection = useCallback(
-  //   (sectionIndex: number) => {
-  //     try {
-  //       const targetSection = Math.max(0, Math.min(sectionIndex, 5));
-  //       let targetScrollPercentage: number;
-
-  //       if (targetSection === 0) {
-  //         targetScrollPercentage = 0;
-  //       } else {
-  //         const sectionThresholds = [
-  //           TOTAL_SCROLL_ANIMATION_UNITS * (1 / 6),
-  //           TOTAL_SCROLL_ANIMATION_UNITS * (2 / 6),
-  //           TOTAL_SCROLL_ANIMATION_UNITS * (3 / 6),
-  //           TOTAL_SCROLL_ANIMATION_UNITS * (4 / 6),
-  //           TOTAL_SCROLL_ANIMATION_UNITS * (5 / 6),
-  //         ];
-
-  //         targetScrollPercentage =
-  //           (sectionThresholds[targetSection - 1] + 1) /
-  //           TOTAL_SCROLL_ANIMATION_UNITS;
-  //       }
-
-  //       const scrollHeight =
-  //         document.documentElement.scrollHeight - window.innerHeight;
-  //       const targetScrollPosition = scrollHeight * targetScrollPercentage;
-
-  //       window.scrollTo({
-  //         top: targetScrollPosition,
-  //         behavior: "smooth",
-  //       });
-  //     } catch (error) {
-  //       console.error("Error navigating to section:", error);
-  //     }
-  //   },
-  //   [useSplineFallback]
-  // );
 
   // Section change detection
   useEffect(() => {
@@ -149,14 +102,6 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* Referral indicator */}
-      {/* {referralInfo.isValid && referralInfo.code && (
-        <ReferralIndicator
-          referralCode={referralInfo.code}
-          referrerUsername={referralInfo.referrerUsername}
-        />
-      )} */}
-
       {/* Main 3D scene container */}
       <div className="sticky top-0 left-0 w-full h-screen z-0 overflow-hidden">
         <motion.div
@@ -165,17 +110,26 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
         />
-        <Suspense fallback={<div className="w-full h-full bg-gray-100" />}>
-          <DynamicSpline
-            scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
-            className="w-full h-full"
-            // style={{
-            //   // Optimize for mobile performance
-            //   willChange: deviceInfo.isMobile ? "auto" : "transform",
-            // }}
-            // Reduce quality on memory-limited devices
-            // renderOnDemand={deviceInfo.memoryLimited}
-          />
+
+        <Suspense
+          fallback={
+            <div className="absolute inset-0 w-full h-full">
+              <Image
+                src={"/bg_2.webp"}
+                fill
+                priority
+                alt="Loading background"
+                className="object-cover"
+              />
+            </div>
+          }
+        >
+          <div className="absolute inset-0 w-full h-full">
+            <DynamicSpline
+              scene="https://prod.spline.design/ypLMYfb0s1KZPBHq/scene.splinecode"
+              className="w-full h-full"
+            />
+          </div>
         </Suspense>
       </div>
 

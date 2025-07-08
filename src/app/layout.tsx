@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Bruno_Ace } from "next/font/google";
 import "./globals.css";
-import { FluxDock } from "@/components/FluxDock";
-import { Footer } from "@/components/Footer";
+import dynamic from "next/dynamic";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
 import { Toaster } from "sonner";
+import { FluxDock } from "@/components/FluxDock";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
