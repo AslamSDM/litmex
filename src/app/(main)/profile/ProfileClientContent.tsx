@@ -142,6 +142,26 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
       );
     }
   }, []);
+  const [balance, setBalance] = useState<number>(userData.balance || 0);
+
+  useEffect(() => {
+    async function fetchBalance() {
+      if (initialSession?.user?.id) {
+        try {
+          const response = await fetch("/api/user/balance");
+          if (!response.ok) {
+            throw new Error("Failed to fetch balance");
+          }
+          const data = await response.json();
+          setBalance(data.balance || 0);
+        } catch (error) {
+          console.error("Error fetching user balance:", error);
+        }
+      }
+    }
+
+    fetchBalance();
+  }, []);
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
@@ -359,7 +379,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                             : {}
                         }
                       >
-                        {userData.balance.toFixed(2)}
+                        {balance.toFixed(2)}
                       </motion.span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-primary/20">
@@ -601,17 +621,17 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                       )}
                     </div>
 
-                    <div className="bg-black/40 backdrop-blur-sm p-6 rounded-lg border border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.05)] transform transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                    {/* <div className="bg-black/40 backdrop-blur-sm p-6 rounded-lg border border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.05)] transform transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
                       <div className="flex items-center mb-4">
                         <Award className="h-6 w-6 text-primary mr-2 animate-pulse-slow" />
                         <h3 className="text-lg font-medium luxury-text">
                           LMX Balance
                         </h3>
-                      </div>
+                      </div> */}
 
-                      {/* Add the UserBalanceDisplay component */}
-                      <UserBalanceDisplay balance={userData.balance} />
-                    </div>
+                    {/* Add the UserBalanceDisplay component */}
+                    {/* <UserBalanceDisplay balance={balance} />
+                    </div> */}
                   </motion.div>
 
                   {/* Trump Balance Card */}
@@ -807,7 +827,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                             </span>
                           )}
                         </h4>
-
                         {userData.referrals.count > 0 ? (
                           <div className="overflow-auto max-h-96">
                             <table className="w-full min-w-full">
@@ -823,7 +842,10 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                     Joined Date
                                   </th>
                                   <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Purchase Status
+                                    Status
+                                  </th>
+                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                    Total Earned
                                   </th>
                                 </tr>
                               </thead>
@@ -844,9 +866,9 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                           day: "numeric",
                                         });
 
-                                      // Find if this user has any purchases
-                                      const userPurchase =
-                                        userData.referrals.purchases.find(
+                                      // Find all purchases by this user
+                                      const userPurchases =
+                                        userData.referrals.purchases.filter(
                                           (purchase) =>
                                             (purchase.userEmail &&
                                               user.email &&
@@ -855,7 +877,17 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                             purchase.id === user.id
                                         );
 
-                                      const hasMadePurchase = !!userPurchase;
+                                      const hasMadePurchase =
+                                        userPurchases.length > 0;
+
+                                      // Calculate total TRUMP earnings from this user's purchases
+                                      const totalEarnings =
+                                        userPurchases.reduce(
+                                          (sum, purchase) =>
+                                            sum +
+                                            (purchase.referralEarnings || 0),
+                                          0
+                                        );
 
                                       return (
                                         <tr
@@ -882,6 +914,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               </span>
                                             )}
                                           </td>
+                                          <td className="py-3 px-4 text-sm text-right text-green-400 font-medium">
+                                            {totalEarnings > 0
+                                              ? `${totalEarnings.toFixed(2)} $TRUMP`
+                                              : "-"}
+                                          </td>
                                         </tr>
                                       );
                                     }
@@ -897,7 +934,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                     userData.referrals.purchases.length && (
                                     <tr className="hover:bg-primary/5 transition-colors bg-amber-900/10">
                                       <td
-                                        colSpan={4}
+                                        colSpan={5}
                                         className="py-3 px-4 text-sm text-center text-amber-400"
                                       >
                                         <span className="flex items-center justify-center gap-2">
@@ -923,89 +960,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         )}
                       </div>
 
-                      {userData.referrals.purchases.length > 0 && (
-                        <div className="mt-6">
-                          <h4 className="text-primary font-medium mb-4">
-                            Referred Users Purchases
-                          </h4>
-                          <div className="overflow-auto max-h-96">
-                            <table className="w-full min-w-full">
-                              <thead className="bg-primary/10 border-b border-primary/20">
-                                <tr>
-                                  <th className="text-left py-3 px-4 text-sm font-medium text-primary">
-                                    User
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Amount
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Network
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Date
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Earnings
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {userData.referrals.purchases.map(
-                                  (purchase, index) => (
-                                    <>
-                                      <tr
-                                        key={purchase.id}
-                                        className={`border-b border-primary/10 hover:bg-primary/5 transition-colors ${
-                                          index % 2 === 0
-                                            ? "bg-black/20"
-                                            : "bg-black/10"
-                                        }`}
-                                      >
-                                        <td className="py-3 px-4 text-sm text-white/90">
-                                          {purchase.userName ||
-                                            (purchase.userEmail
-                                              ? `${purchase.userEmail.substring(0, 3)}...${purchase.userEmail.substring(purchase.userEmail.indexOf("@"))}`
-                                              : "Anonymous User")}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right text-primary">
-                                          {Number(
-                                            purchase.lmxTokensAllocated
-                                          ).toFixed(2)}{" "}
-                                          LMX
-                                        </td>
-
-                                        <td className="py-3 px-4 text-sm text-right text-white/70 capitalize">
-                                          {purchase.network.toLowerCase()}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right text-white/70">
-                                          {new Date(
-                                            purchase.createdAt
-                                          ).toLocaleDateString()}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right text-green-400">
-                                          {purchase.referralEarnings
-                                            ? `${purchase.referralEarnings.toFixed(2)} $TRUMP`
-                                            : "N/A"}
-                                        </td>
-                                      </tr>
-                                    </>
-                                  )
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                          {userData.referrals.purchases.length > 5 && (
-                            <div className="mt-3 text-center">
-                              <span className="text-sm text-primary/80">
-                                Showing {userData.referrals.purchases.length}{" "}
-                                referred purchases
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Only show wallet signing section for Solana wallets since that's what the backend supports */}
                       {connected && currentWalletType === "solana" ? (
                         <div className="bg-black/20 p-6 rounded-lg mt-8"></div>
                       ) : connected ? (

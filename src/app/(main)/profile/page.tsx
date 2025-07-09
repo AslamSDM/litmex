@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
 import ProfileClientContent from "./ProfileClientContent";
-import { parse } from "path";
 import SimpleProfileContent from "./SimpleProfileContent";
 import ErrorBoundary from "./ErrorBoundary";
 import { PublicKey } from "@solana/web3.js";
@@ -74,24 +73,38 @@ async function getUserData(
   trumpPrice: number
 ): Promise<UserData> {
   // Get user's purchase history
-  const purchases = await prisma.purchase.findMany({
-    where: {
-      userId: userId,
-      status: "COMPLETED",
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      createdAt: true,
-      lmxTokensAllocated: true,
-      pricePerLmxInUsdt: true,
-      status: true,
-      network: true,
-      transactionSignature: true,
-    },
-  });
+  const [purchases, referredUsers, referralPaymentStats] = await Promise.all([
+    prisma.purchase.findMany({
+      where: {
+        userId: userId,
+        status: "COMPLETED",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        lmxTokensAllocated: true,
+        pricePerLmxInUsdt: true,
+        status: true,
+        network: true,
+        transactionSignature: true,
+      },
+    }),
+    prisma.user.findMany({
+      where: {
+        referrerId: userId,
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        createdAt: true,
+      },
+    }),
+    getReferralPaymentStats(userId),
+  ]);
 
   // Calculate total LMX balance from completed purchases
   const balance = purchases.reduce((total, purchase) => {
@@ -104,17 +117,17 @@ async function getUserData(
   }, 0);
 
   // Get referral data - users who have this user as their referrer
-  const referredUsers = await prisma.user.findMany({
-    where: {
-      referrerId: userId,
-    },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      createdAt: true,
-    },
-  });
+  // const referredUsers = await prisma.user.findMany({
+  //   where: {
+  //     referrerId: userId,
+  //   },
+  //   select: {
+  //     id: true,
+  //     email: true,
+  //     username: true,
+  //     createdAt: true,
+  //   },
+  // });
 
   // Get purchases made by referred users to calculate actual bonus
   let totalReferralBonus = 0;
@@ -196,7 +209,7 @@ async function getUserData(
   }
 
   // Get referral payment stats
-  const referralPaymentStats = await getReferralPaymentStats(userId);
+  // const referralPaymentStats = await getReferralPaymentStats(userId);
 
   // Transform referredUsers to match the format we need
   const processedReferredUsers = referredUsers.map((user) => ({
@@ -226,20 +239,28 @@ async function getReferralPaymentStats(
   try {
     // Use type assertion to work around Prisma client not having the new model yet
     // Get completed referral payments
-    const completedPayments = await (prisma as any).referralPayment.findMany({
-      where: {
-        referrerId: userId,
-        status: "COMPLETED",
-      },
-    });
+    const [completedPayments, pendingPayments] = await Promise.all([
+      (prisma as any).referralPayment.findMany({
+        where: {
+          referrerId: userId,
+          status: "COMPLETED",
+        },
+      }),
+      (prisma as any).referralPayment.findMany({
+        where: {
+          referrerId: userId,
+          status: "PENDING",
+        },
+      }),
+    ]);
 
     // Get pending referral payments
-    const pendingPayments = await (prisma as any).referralPayment.findMany({
-      where: {
-        referrerId: userId,
-        status: "PENDING",
-      },
-    });
+    // const pendingPayments = await (prisma as any).referralPayment.findMany({
+    //   where: {
+    //     referrerId: userId,
+    //     status: "PENDING",
+    //   },
+    // });
 
     // Calculate total paid amount
     const totalPaidAmount = completedPayments.reduce(
@@ -293,9 +314,12 @@ export default async function ProfilePage() {
   const TOKEN_MINT = new PublicKey(
     "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
   );
-  const trump = await getTokenDetails(TOKEN_MINT.toString());
-  const trumpPrice = Number(trump?.priceUsd) || 8;
   const session = await getServerSession(authOptions);
+
+  const [trump] = await Promise.all([getTokenDetails(TOKEN_MINT.toString())]);
+
+  const trumpPrice = Number(trump?.priceUsd) || 8;
+  // const session = await getServerSession(authOptions);
   let userData: UserData = {
     purchases: [],
     balance: 0,
@@ -317,13 +341,10 @@ export default async function ProfilePage() {
 
   // Only fetch user data if the user is authenticated
   if (session?.user?.id) {
-    userData = await getUserData(session.user.id, trumpPrice);
+    const userDataPromise = getUserData(session.user.id, trumpPrice);
 
-    // Fetch additional referral stats for the ReferralCard
-    if (session?.user?.referralCode) {
-      try {
-        // Simulate the API call that would be made on the client
-        const referralUser = await prisma.user.findUnique({
+    const referralUserPromise = session?.user?.referralCode
+      ? prisma.user.findUnique({
           where: { id: session.user.id },
           select: {
             id: true,
@@ -331,7 +352,29 @@ export default async function ProfilePage() {
             solanaVerified: true,
             solanaAddress: true,
           },
-        });
+        })
+      : Promise.resolve(null);
+
+    const [fetchedUserData, referralUser] = await Promise.all([
+      userDataPromise,
+      referralUserPromise,
+    ]);
+
+    userData = fetchedUserData;
+
+    // Fetch additional referral stats for the ReferralCard
+    if (referralUser) {
+      try {
+        // Simulate the API call that would be made on the client
+        // const referralUser = await prisma.user.findUnique({
+        //   where: { id: session.user.id },
+        //   select: {
+        //     id: true,
+        //     referralCode: true,
+        //     solanaVerified: true,
+        //     solanaAddress: true,
+        //   },
+        // });
 
         // We'll add this data to the userData we pass to the client
         userData.referrals.referralStats = {
