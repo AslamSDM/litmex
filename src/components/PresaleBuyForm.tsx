@@ -24,7 +24,7 @@ import { useWalletBalances } from "./hooks/useWalletBalances";
 import TransactionStatusModal from "./TransactionStatusModal";
 import { PendingTransactions } from "./PendingTransactions";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
-import { solana, base, bsc } from "@reown/appkit/networks";
+import { solana, bsc } from "@reown/appkit/networks";
 import { useSession } from "next-auth/react";
 import { modal } from "@/components/providers/wallet-provider";
 import useReferralHandling from "./hooks/useReferralHandling";
@@ -124,7 +124,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
   const presaleStatus = true;
 
   // Define currency type for BSC
-  const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("BNB");
+  const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("USDT");
 
   // Use the appropriate hook based on selected network
   const {
@@ -524,7 +524,11 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
                 if (network === "solana") {
                   setSolanaCurrency(solanaCurrency === "SOL" ? "USDT" : "SOL");
                 } else {
-                  setBscCurrency(bscCurrency === "BNB" ? "USDT" : "BNB");
+                  // Comment out BNB currency option
+                  // setBscCurrency(bscCurrency === "BNB" ? "USDT" : "BNB");
+
+                  // Always set to USDT for BSC
+                  setBscCurrency("USDT");
                 }
               }}
             >
@@ -544,7 +548,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
                 className="rounded-full"
               />
               <span>{network === "solana" ? solanaCurrency : bscCurrency}</span>
-              <ChevronDown className="h-3 w-3 ml-1" />
+              {network === "solana" && <ChevronDown className="h-3 w-3 ml-1" />}
             </div>
 
             {/* Dropdown menu for currency selection */}
