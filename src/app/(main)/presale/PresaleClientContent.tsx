@@ -253,6 +253,26 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const [isLowMemoryDevice, setIsLowMemoryDevice] = useState<boolean>(false);
   const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>(userBalance);
+
+  useEffect(() => {
+    async function fetchBalance() {
+      if (initialSession?.user?.id) {
+        try {
+          const response = await fetch("/api/user/balance");
+          if (!response.ok) {
+            throw new Error("Failed to fetch balance");
+          }
+          const data = await response.json();
+          setBalance(data.balance || 0);
+        } catch (error) {
+          console.error("Error fetching user balance:", error);
+        }
+      }
+    }
+
+    fetchBalance();
+  }, []);
 
   useEffect(() => {
     console.log("PresaleClientContent mounted", isIOS);
@@ -596,7 +616,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     Your LMX Balance:
                   </span>
                   <span className="text-sm sm:text-base font-semibold text-primary">
-                    {userBalance.toLocaleString(undefined, {
+                    {balance.toLocaleString(undefined, {
                       maximumFractionDigits: 2,
                     })}{" "}
                     LMX
@@ -615,7 +635,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 contributors={contributorCount}
                 raised={Number(totalRaised.toFixed(0))}
                 usdRaised={Number(usdRaised.toFixed(0))}
-                userBalance={userBalance}
+                userBalance={balance}
                 daysLeft={Math.ceil(
                   (new Date("2025-06-30T23:59:59").getTime() -
                     new Date().getTime()) /
