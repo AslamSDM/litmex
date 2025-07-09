@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, cache } from "react";
 import PresaleClientContent from "./PresaleClientContent";
 import getPresaleData from "./getPresaleData";
 import { Header } from "@/components/Header";
@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 // export const dynamic = "force-dynamic";
 // export const revalidate = 600; // Revalidate data every 60 seconds
 
-async function getUserBalance(userId: string): Promise<number> {
+const getUserBalance = cache(async (userId: string): Promise<number> => {
   // Get user's purchase history
   const purchases = await prisma.purchase.findMany({
     where: {
@@ -30,7 +30,7 @@ async function getUserBalance(userId: string): Promise<number> {
         : parseFloat(purchase.lmxTokensAllocated || "0");
     return total + amount;
   }, 0);
-}
+});
 
 export default async function PresalePage() {
   const presaleData = await getPresaleData();
@@ -38,9 +38,9 @@ export default async function PresalePage() {
 
   // Get user balance if user is logged in
   let userBalance = 0;
-  if (session?.user?.id) {
-    userBalance = await getUserBalance(session.user.id);
-  }
+  // if (session?.user?.id) {
+  //   userBalance = await getUserBalance(session.user.id);
+  // }
 
   return (
     <Suspense fallback={<div>Loading presale...</div>}>
