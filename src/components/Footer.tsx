@@ -120,6 +120,22 @@ export function Footer() {
                   Whitepaper
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="https://www.cyberscope.io/audits/lmx"
+                  className="text-white/70 hover:text-primary transition-colors"
+                >
+                  Audit
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://github.com/cyberscope-io/audits/blob/main/lmx/audit.pdf"
+                  className="text-white/70 hover:text-primary transition-colors"
+                >
+                  Audit Report{" "}
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
