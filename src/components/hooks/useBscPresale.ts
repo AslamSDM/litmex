@@ -2,6 +2,7 @@ import {
   useWriteContract,
   useReadContract,
   useWaitForTransactionReceipt,
+  usePrepareTransactionRequest,
 } from "wagmi";
 import { presaleAbi } from "@/lib/abi";
 import { parseEther } from "viem";
@@ -15,7 +16,6 @@ import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { useTransactionStatus, TransactionStep } from "./useTransactionStatus";
 import { BSC_PRESALE_CONTRACT_ADDRESS } from "@/lib/constants";
-import { set } from "zod";
 
 // API endpoint for recording purchases in the database
 
@@ -312,7 +312,7 @@ export function useBscPresale(tokenAmount: number, referrer?: string) {
       try {
         // Send transaction
         console.log("Transaction parameters:", txParams);
-        const hash = await writeContract(txParams);
+        const hash = writeContract(txParams);
         console.log("Transaction sent, hash:", hash);
       } catch (txError) {
         console.error("Transaction error:", txError);
