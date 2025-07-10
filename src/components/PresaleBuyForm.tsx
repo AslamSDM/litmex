@@ -470,7 +470,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       {/* Header */}{" "}
       <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-left gap-3">
           {/* Network selector with icons */}
           <div className="bg-black/30 rounded-md p-1 border border-primary/20">
             <div className="flex items-center gap-1">
@@ -511,63 +511,75 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
             </div>
           </div>
 
-          {/* Currency selector dropdown */}
-          <div className="relative">
-            <div
-              className={`flex items-center gap-1 px-3 py-1 bg-black/30 rounded-md cursor-pointer border border-primary/20 hover:bg-black/40 transition-colors text-sm ${
-                (network === "solana" && solanaCurrency === "USDT") ||
-                (network === "bsc" && bscCurrency === "USDT")
-                  ? "text-white"
-                  : "text-white"
-              }`}
-              onClick={() => {
-                if (network === "solana") {
-                  setSolanaCurrency(solanaCurrency === "SOL" ? "USDT" : "SOL");
-                } else {
-                  // Comment out BNB currency option
-                  // setBscCurrency(bscCurrency === "BNB" ? "USDT" : "BNB");
-
-                  // Always set to USDT for BSC
-                  setBscCurrency("USDT");
-                }
-              }}
-            >
+          {/* Currency selector with both options visible for Solana */}
+          {network === "solana" ? (
+            <div className="bg-black/30 rounded-md p-1 border border-primary/20">
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setSolanaCurrency("SOL")}
+                  className={`px-3 py-1 rounded-md text-sm transition-colors flex items-center gap-1 ${
+                    solanaCurrency === "SOL"
+                      ? "bg-primary/30 text-white"
+                      : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  <Image
+                    src={CURRENCY_ICONS.SOL}
+                    alt="SOL"
+                    width={16}
+                    height={16}
+                    className="rounded-full"
+                  />
+                  <span>SOL</span>
+                </button>
+                <button
+                  onClick={() => setSolanaCurrency("USDT")}
+                  className={`px-3 py-1 rounded-md text-sm transition-colors flex items-center gap-1 ${
+                    solanaCurrency === "USDT"
+                      ? "bg-primary/30 text-white"
+                      : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  <Image
+                    src={CURRENCY_ICONS.USDT}
+                    alt="USDT"
+                    width={16}
+                    height={16}
+                    className="rounded-full"
+                  />
+                  <span>USDT</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex w-1/2 gap-1 px-3 py-1 bg-black/30 rounded-md border border-primary/20 text-sm text-white">
               <Image
-                src={
-                  network === "solana"
-                    ? solanaCurrency === "SOL"
-                      ? CURRENCY_ICONS.SOL
-                      : CURRENCY_ICONS.USDT
-                    : bscCurrency === "BNB"
-                      ? CURRENCY_ICONS.BNB
-                      : CURRENCY_ICONS.USDT
-                }
-                alt="Currency"
+                src={CURRENCY_ICONS.USDT}
+                alt="USDT"
                 width={16}
                 height={16}
                 className="rounded-full"
               />
-              <span>{network === "solana" ? solanaCurrency : bscCurrency}</span>
-              {network === "solana" && <ChevronDown className="h-3 w-3 ml-1" />}
+              <span>USDT</span>
             </div>
+          )}
 
-            {/* Dropdown menu for currency selection */}
-            {/* We can implement a full dropdown later if needed */}
-          </div>
-
-          <button
-            onClick={refreshPrices}
-            className="text-primary hover:text-primary/80 transition-colors"
-            title="Refresh cryptocurrency prices"
-            disabled={isLoadingPrices}
-          >
-            {isLoadingPrices ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <RefreshCcw className="h-5 w-5" />
-            )}
-          </button>
+          {/* Dropdown menu for currency selection */}
+          {/* We can implement a full dropdown later if needed */}
         </div>
+
+        <button
+          onClick={refreshPrices}
+          className="text-primary hover:text-primary/80 transition-colors"
+          title="Refresh cryptocurrency prices"
+          disabled={isLoadingPrices}
+        >
+          {isLoadingPrices ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <RefreshCcw className="h-5 w-5" />
+          )}
+        </button>
       </div>
       {/* Loading state */}
       {isLoadingPrices && !cryptoPrices ? (
