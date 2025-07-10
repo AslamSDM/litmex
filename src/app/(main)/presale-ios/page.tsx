@@ -34,10 +34,12 @@ export default async function PresaleIOS() {
   const cryptoPrices = await getServerSideData();
 
   return (
-    <SimplePresalePage
-      bnb={cryptoPrices.bnb}
-      sol={cryptoPrices.sol}
-      usdt={cryptoPrices.usdt}
-    />
+    <>
+      <SimplePresalePage
+        bnb={cryptoPrices.bnb}
+        sol={cryptoPrices.sol}
+        usdt={cryptoPrices.usdt}
+      />
+    </>
   );
 }
