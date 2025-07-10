@@ -51,7 +51,7 @@ export default function SimplePresalePage(cryptoPrices: {
 
   // Network and currency selection
   const [network, setNetwork] = useState<"bsc" | "solana">("bsc");
-  const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("BNB");
+  const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("USDT");
   const [solanaCurrency, setSolanaCurrency] = useState<"SOL" | "USDT">("SOL");
   const refer = useReferralHandling();
   // Access appkit hooks for wallet connection
