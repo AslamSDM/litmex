@@ -9,8 +9,9 @@ import { authOptions } from "@/lib/next-auth";
 // export const revalidate = 600; // Revalidate data every 60 seconds
 
 export default async function PresalePage() {
-  const presaleData = await getPresaleData();
+  // const presaleData = await getPresaleData();
   const session = await getServerSession(authOptions);
+  const presaleData = await cache(getPresaleData)();
 
   // Get user balance if user is logged in
   let userBalance = 0;
