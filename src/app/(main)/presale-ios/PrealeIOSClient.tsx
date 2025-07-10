@@ -379,7 +379,7 @@ export default function SimplePresalePage(cryptoPrices: {
         {/* Header */}
         <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
         <div className="flex justify-between items-center mb-6 mt-2">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-left gap-3">
             {/* Network selector with icons */}
             <div className="bg-black/30 rounded-sm p-1 border border-primary/20">
               <div className="flex items-center gap-1">
@@ -422,37 +422,80 @@ export default function SimplePresalePage(cryptoPrices: {
 
             {/* Currency selector dropdown */}
             <div className="relative">
-              <div
-                className="flex items-center gap-1 px-3 py-1 bg-black/30 rounded-md cursor-pointer border border-primary/20 hover:bg-black/40 transition-colors text-sm text-white"
-                onClick={() => {
-                  if (network === "solana") {
-                    setSolanaCurrency(
-                      solanaCurrency === "SOL" ? "USDT" : "SOL"
-                    );
-                  } else {
-                    setBscCurrency(bscCurrency === "BNB" ? "USDT" : "BNB");
-                  }
-                }}
-              >
-                <Image
-                  src={
-                    network === "solana"
-                      ? solanaCurrency === "SOL"
-                        ? CURRENCY_ICONS.SOL
-                        : CURRENCY_ICONS.USDT
-                      : bscCurrency === "BNB"
-                        ? CURRENCY_ICONS.BNB
-                        : CURRENCY_ICONS.USDT
-                  }
-                  alt="Currency"
-                  width={16}
-                  height={16}
-                  className="rounded-full"
-                />
-                <span>
-                  {network === "solana" ? solanaCurrency : bscCurrency}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1" />
+              <div className="flex items-left gap-1 px-3 py-1 ">
+                {network === "solana" ? (
+                  // Solana currency options
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setSolanaCurrency("SOL")}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                        solanaCurrency === "SOL"
+                          ? "bg-primary/30"
+                          : "bg-black/20 opacity-70"
+                      }`}
+                    >
+                      <Image
+                        src={CURRENCY_ICONS.SOL}
+                        alt="SOL"
+                        width={16}
+                        height={16}
+                        className="rounded-full"
+                      />
+                      <span>SOL</span>
+                    </button>
+                    <button
+                      onClick={() => setSolanaCurrency("USDT")}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                        solanaCurrency === "USDT"
+                          ? "bg-primary/30"
+                          : "bg-black/20 opacity-70"
+                      }`}
+                    >
+                      <Image
+                        src={CURRENCY_ICONS.USDT}
+                        alt="USDT"
+                        width={16}
+                        height={16}
+                        className="rounded-full"
+                      />
+                      <span>USDT</span>
+                    </button>
+                  </div>
+                ) : (
+                  // BSC currency options
+                  <div className="flex gap-1 w-1/2">
+                    {/* BNB option (disabled/commented out)
+                    <button
+                      onClick={() => setBscCurrency("BNB")}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                        bscCurrency === "BNB" ? "bg-primary/30" : "bg-black/20 opacity-70"
+                      }`}
+                    >
+                      <Image
+                        src={CURRENCY_ICONS.BNB}
+                        alt="BNB"
+                        width={16}
+                        height={16}
+                        className="rounded-full"
+                      />
+                      <span>BNB</span>
+                    </button>
+                    */}
+                    <button
+                      onClick={() => setBscCurrency("USDT")}
+                      className={`flex  items-center gap-1 px-2 py-1 rounded-sm text-xs bg-primary/30`}
+                    >
+                      <Image
+                        src={CURRENCY_ICONS.USDT}
+                        alt="USDT"
+                        width={16}
+                        height={16}
+                        className="rounded-full"
+                      />
+                      <span>USDT</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
