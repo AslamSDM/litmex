@@ -131,7 +131,6 @@ export function UnifiedWalletButton({
       // Clear timeout if wallet gets connected
       clearTimeout(connectionTimeout);
       setConnectionTimeout(null);
-      setShowTrustWalletPrompt(false);
     }
   }, [isConnected, connectionTimeout]);
 
@@ -289,7 +288,7 @@ export function UnifiedWalletButton({
       {/* Trust Wallet Prompt Modal */}
       <Dialog
         open={showTrustWalletPrompt}
-        onOpenChange={handleTrustWalletPromptClose}
+        // onOpenChange={handleTrustWalletPromptClose}
       >
         <DialogContent className="bg-black border border-white/10 text-white max-w-md">
           <DialogHeader className="text-center">
@@ -308,13 +307,31 @@ export function UnifiedWalletButton({
                   "https://link.trustwallet.com/open_url?coin_id=20000714&url=https://litmexpresale.com",
                   "_blank"
                 );
-                handleTrustWalletPromptClose();
+                setShowTrustWalletPrompt(false);
+                // handleTrustWalletPromptClose();
               }}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
             >
               <ExternalLink size={16} className="mr-2" />
               Open in Trust Wallet
             </Button>
+            <Button
+              variant={
+                variant === "minimal" ? "ghost" : (buttonContent.variant as any)
+              }
+              size={size}
+              className={`${buttonContent.style} ${className} ${
+                variant === "minimal" ? "p-1.5 h-auto" : ""
+              }`}
+              onClick={buttonContent.onClick}
+            >
+              {buttonContent.icon}
+              {variant !== "minimal" && (
+                <span className={size === "sm" ? "text-xs" : ""}>
+                  {buttonContent.text}
+                </span>
+              )}
+            </Button>{" "}
             <p className="text-xs text-gray-400">
               📱 Make sure to open it on your mobile outside of Trust Wallet
             </p>
