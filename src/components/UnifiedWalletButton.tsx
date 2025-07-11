@@ -13,6 +13,7 @@ import {
 import { modal } from "@/components/providers/wallet-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { SolanaWalletPrompt } from "./SolanaWalletPrompt";
+import { getCookie, setCookie } from "@/lib/cookies";
 
 interface UnifiedWalletButtonProps {
   variant?: "default" | "ghost" | "outline" | "secondary" | "minimal";
@@ -34,10 +35,20 @@ export function UnifiedWalletButton({
   const [showBSCVerificationModal, setShowBSCVerificationModal] =
     useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
-  const [showTrustWalletPrompt, setShowTrustWalletPrompt] = useState(false);
   const [showMobileWalletPrompt, setShowMobileWalletPrompt] = useState(false);
   const [connectionTimeout, setConnectionTimeout] =
     useState<NodeJS.Timeout | null>(null);
+  const urlParams = new URLSearchParams(window.location.search);
+  const wallet = urlParams.get("wallet");
+  const isWallet = getCookie("wallet") === "true";
+  const referrerCode = urlParams.get("ref") || getCookie("referralCode");
+  useEffect(() => {
+    if (isWallet) return;
+    // If a specific wallet is requested via URL, handle it
+    if (wallet) {
+      setCookie("wallet", "true");
+    }
+  }, [wallet]);
 
   // Mobile detection
   const isMobile = () => {
@@ -52,12 +63,13 @@ export function UnifiedWalletButton({
   // Check if already in wallet browser
   const isInWalletBrowser = () => {
     if (typeof window === "undefined") return false;
-    const userAgent = navigator.userAgent.toLowerCase();
-    return (
-      userAgent.includes("trustwallet") ||
-      userAgent.includes("metamask") ||
-      userAgent.includes("phantom")
-    );
+    // const userAgent = navigator.userAgent.toLowerCase();
+    return isWallet;
+    // return (
+    //   userAgent.includes("trustwallet") ||
+    //   userAgent.includes("metamask") ||
+    //   userAgent.includes("phantom")
+    // );
   };
 
   // Determine wallet state
@@ -179,14 +191,6 @@ export function UnifiedWalletButton({
     if (connectionTimeout) {
       clearTimeout(connectionTimeout);
     }
-
-    // Set timeout to show Trust Wallet prompt if not connected within 3 seconds
-    if (!isConnected) {
-      const timeout = setTimeout(() => {
-        setShowTrustWalletPrompt(true);
-      }, 3000);
-      setConnectionTimeout(timeout);
-    }
   };
 
   const handleVerifyWallet = () => {
@@ -220,15 +224,6 @@ export function UnifiedWalletButton({
     }
   };
 
-  // Handle Trust Wallet prompt close
-  const handleTrustWalletPromptClose = () => {
-    setShowTrustWalletPrompt(false);
-    if (connectionTimeout) {
-      clearTimeout(connectionTimeout);
-      setConnectionTimeout(null);
-    }
-  };
-
   // Handle mobile wallet selection
   const handleWalletSelection = (
     walletType: "trustwallet" | "metamask" | "phantom"
@@ -238,13 +233,13 @@ export function UnifiedWalletButton({
 
     switch (walletType) {
       case "trustwallet":
-        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}`;
+        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "metamask":
-        deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+        deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "phantom":
-        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=phantom`;
+        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
     }
 
@@ -450,60 +445,6 @@ export function UnifiedWalletButton({
                 </div>
               </>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Trust Wallet Prompt Modal */}
-      <Dialog
-        open={showTrustWalletPrompt}
-        // onOpenChange={handleTrustWalletPromptClose}
-      >
-        <DialogContent className="bg-black border border-white/10 text-white max-w-md">
-          <DialogHeader className="text-center">
-            <DialogTitle className="text-xl font-bold text-center mb-2">
-              🚀 Join the Litmex Token Presale now!
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-center">
-            <p className="text-sm text-gray-300">
-              Tap this link to open the presale page directly in Trust Wallet's
-              browser for smooth wallet connection and token purchase:
-            </p>
-            <Button
-              onClick={() => {
-                window.open(
-                  "https://link.trustwallet.com/open_url?coin_id=20000714&url=https://litmexpresale.com/presale-ios",
-                  "_blank"
-                );
-                setShowTrustWalletPrompt(false);
-                // handleTrustWalletPromptClose();
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
-            >
-              <ExternalLink size={16} className="mr-2" />
-              Open in Trust Wallet
-            </Button>
-            <Button
-              variant={
-                variant === "minimal" ? "ghost" : (buttonContent.variant as any)
-              }
-              size={size}
-              className={`${buttonContent.style} ${className} ${
-                variant === "minimal" ? "p-1.5 h-auto" : ""
-              }`}
-              onClick={buttonContent.onClick}
-            >
-              {buttonContent.icon}
-              {variant !== "minimal" && (
-                <span className={size === "sm" ? "text-xs" : ""}>
-                  {buttonContent.text}
-                </span>
-              )}
-            </Button>{" "}
-            <p className="text-xs text-gray-400">
-              📱 Make sure to open it on your mobile outside of Trust Wallet
-            </p>
           </div>
         </DialogContent>
       </Dialog>
