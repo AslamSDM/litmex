@@ -525,7 +525,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
       </div>
       {/* Spline 3D background - with lower opacity and responsive display - completely disabled for iOS and low memory devices */}
       <div className="fixed inset-0 w-full h-full z-[1] pointer-events-none opacity-20 sm:opacity-25 md:opacity-30 overflow-hidden">
-        {!isLowMemoryDevice && !isIOS && (
+        {/* {!isLowMemoryDevice && !isIOS && (
           <Suspense
             fallback={
               <div className="w-full h-full flex items-center justify-center">
@@ -538,7 +538,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               className="w-full h-full absolute inset-0 z-0 object-cover"
             />
           </Suspense>
-        )}
+        )} */}
       </div>
       {/* Scroll indicator at bottom - improved responsiveness */}
       <div className="fixed bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none w-full max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
