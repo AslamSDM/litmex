@@ -333,7 +333,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         <motion.div
           initial={{ opacity: 0, y: isLowMemoryDevice ? 0 : -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isLowMemoryDevice ? 0.3 : 0.6 }}
+          transition={{ duration: isLowMemoryDevice ? 0.2 : 0.3 }}
           className="mb-8 sm:mb-12 md:mb-16"
         >
           <motion.div
@@ -371,7 +371,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             className="fixed inset-0 z-50 mt-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.4 }}
           >
             <motion.div
               animate={
@@ -380,7 +380,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                   : { scale: [0.9, 1, 0.9], opacity: [0.5, 1, 0.5] }
               }
               transition={
-                isLowMemoryDevice ? {} : { repeat: Infinity, duration: 2 }
+                isLowMemoryDevice ? {} : { repeat: Infinity, duration: 1.5 }
               }
               className="text-4xl text-primary font-display"
             >
@@ -423,7 +423,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 opacity: [0.3, 0.6, 0.3],
                 scale: [1, 1.2, 0.8, 1],
               }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
               style={{ left: "10%", top: "20%" }}
             />
 
@@ -436,10 +436,10 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 scale: [1, 0.8, 1.3, 1],
               }}
               transition={{
-                duration: 25,
+                duration: 12,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 5,
+                delay: 2.5,
               }}
               style={{ right: "15%", top: "40%" }}
             />
@@ -453,10 +453,10 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 scale: [1, 1.1, 0.9, 1],
               }}
               transition={{
-                duration: 18,
+                duration: 9,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 10,
+                delay: 5,
               }}
               style={{ left: "60%", bottom: "20%" }}
             />
@@ -476,7 +476,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               fill="transparent"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 8, repeat: Infinity, repeatType: "loop" }}
+              transition={{ duration: 4, repeat: Infinity, repeatType: "loop" }}
             />
             <motion.path
               d="M0,400 Q25%,300 50%,400 T100%,400"
@@ -486,10 +486,10 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
               transition={{
-                duration: 10,
+                duration: 5,
                 repeat: Infinity,
                 repeatType: "loop",
-                delay: 2,
+                delay: 1,
               }}
             />
           </svg>
@@ -498,7 +498,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
         {/* Particle effects - Reduced or static for iOS/low memory devices */}
         {!isLowMemoryDevice ? (
           // Full particles for high-memory devices
-          Array.from({ length: 30 }).map((_, i) => (
+          Array.from({ length: 15 }).map((_, i) => (
             <motion.div
               key={`particle-${i}`}
               className="absolute w-1 h-1 bg-primary/40 rounded-full"
@@ -512,9 +512,9 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                 scale: [0, 1, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 4,
+                duration: 1.5 + Math.random() * 2,
                 repeat: Infinity,
-                delay: Math.random() * 5,
+                delay: Math.random() * 2.5,
                 ease: "easeInOut",
               }}
             />
@@ -558,7 +558,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               opacity: [0.3, 0.6, 0.3],
             }}
             transition={{
-              duration: 6,
+              duration: 3,
               repeat: Infinity,
               repeatType: "reverse",
             }}
@@ -574,7 +574,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           <motion.div
             initial={{ opacity: 0, y: isLowMemoryDevice ? 0 : -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: isLowMemoryDevice ? 0.3 : 0.6 }}
+            transition={{ duration: isLowMemoryDevice ? 0.2 : 0.3 }}
             className="mb-8 sm:mb-12 md:mb-16"
           >
             <motion.div
@@ -604,7 +604,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.2 }}
                 className="bg-primary/10 border border-primary/20 rounded-lg p-3 sm:p-4 text-center backdrop-blur-sm w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto"
               >
                 <p className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">
@@ -648,7 +648,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             <motion.div
               initial={{ opacity: 0, y: isLowMemoryDevice ? 10 : 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: isLowMemoryDevice ? 0.3 : 0.5 }}
+              transition={{ duration: isLowMemoryDevice ? 0.2 : 0.3 }}
               className="mt-6 lg:max-w-2xl mx-auto relative px-0"
             >
               <div className="w-full">
@@ -678,8 +678,8 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               initial={{ opacity: 0, y: isLowMemoryDevice ? 5 : 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: isLowMemoryDevice ? 0.3 : 0.5,
-                delay: isLowMemoryDevice ? 0.1 : 0.2,
+                duration: isLowMemoryDevice ? 0.2 : 0.3,
+                delay: isLowMemoryDevice ? 0.1 : 0.1,
               }}
               className="flex flex-col sm:flex-row justify-center items-stretch gap-4 sm:gap-6 mt-6 sm:mt-8 md:mt-10 flex-wrap"
             >
@@ -705,7 +705,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                         "0px 0px 2px rgba(55, 128, 212, 0.3)",
                       ],
                     }}
-                    transition={{ duration: 3, repeat: Infinity }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
                   >
                     {LMX_PRICE}
                   </motion.p>
@@ -734,7 +734,11 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                         "0px 0px 2px rgba(55, 128, 212, 0.3)",
                       ],
                     }}
-                    transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: 0.25,
+                    }}
                   >
                     10% TRUMP
                   </motion.p>
@@ -763,7 +767,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                         "0px 0px 2px rgba(55, 128, 212, 0.3)",
                       ],
                     }}
-                    transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
                   >
                     1 B
                   </motion.p>
@@ -780,14 +784,14 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
           className="py-8 sm:py-12 md:py-16 px-4 bg-gradient-to-b from-background/80 via-background/60 to-black/80 relative"
         >
           <div className="container mx-auto">
-            <ScrollAnimationWrapper>
+            <div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
                 <span className="text-primary">Token</span> Distribution
               </h2>
-            </ScrollAnimationWrapper>
+            </div>
 
             <div className=" gap-8 md:gap-12 items-center w-full">
-              <ScrollAnimationWrapper delay={300}>
+              <div>
                 <LuxuryCard
                   className="p-4 sm:p-6 md:p-8 transform hover:scale-[1.02] transition-all duration-300"
                   icon="diamond"
@@ -833,14 +837,14 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     ))}
                   </div>
                 </LuxuryCard>
-              </ScrollAnimationWrapper>
+              </div>
             </div>
           </div>
         </section>
       )}
 
       <section className="py-8 sm:py-12 md:py-16 px-4  relative z-10">
-        <ScrollAnimationWrapper delay={150}>
+        <div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
             <span className="text-primary"> Backed </span> by Industry Leaders
           </h2>
@@ -857,13 +861,12 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                         x: {
                           repeat: Infinity,
                           repeatType: "loop",
-                          duration: 30,
+                          duration: 15,
                           ease: "linear",
                         },
                       }
                 }
               >
-                {" "}
                 <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
                   <Image
                     src="/logos/a16zcrypto_Logo.svg"
@@ -946,264 +949,105 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                     className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
                   />
                 </div>
-                {!isIOS && (
-                  <>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/paradigm-logo-removebg-preview.png"
-                        alt="Paradigm"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/animoca-removebg-preview.png"
-                        alt="Animoca Brands"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/dragonfly-removebg-preview.png"
-                        alt="Dragonfly Capital"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                  <Image
-                    src="/logos/cbventures-removebg-preview.png"
-                    alt="CB Ventures"
-                    width={160}
-                    height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain scale-150 filter brightness-0 invert"
-                  />
-                </div> */}
-                    {/* Duplicate logos for seamless loop */}
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/a16zcrypto_Logo.svg"
-                        alt="a16z Crypto"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/paradigm-logo-removebg-preview.png"
-                        alt="Paradigm"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/animoca-removebg-preview.png"
-                        alt="Animoca Brands"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/a16zcrypto_Logo.svg"
-                        alt="a16z Crypto"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
 
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/paradigm-logo-removebg-preview.png"
-                        alt="Paradigm"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/animoca-removebg-preview.png"
-                        alt="Animoca Brands"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/dragonfly-removebg-preview.png"
-                        alt="Dragonfly Capital"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    {/* <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
                   <Image
-                    src="/logos/cbventures-removebg-preview.png"
-                    alt="CB Ventures"
+                    src="/logos/a16zcrypto_Logo.svg"
+                    alt="a16z Crypto"
                     width={160}
                     height={80}
-                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain scale-150 filter brightness-0 invert"
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
                   />
-                </div> */}
-                    {/* Duplicate logos for seamless loop */}
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/a16zcrypto_Logo.svg"
-                        alt="a16z Crypto"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/paradigm-logo-removebg-preview.png"
-                        alt="Paradigm"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                    <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
-                      <Image
-                        src="/logos/animoca-removebg-preview.png"
-                        alt="Animoca Brands"
-                        width={160}
-                        height={80}
-                        className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
-                      />
-                    </div>
-                  </>
-                )}
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/paradigm-logo-removebg-preview.png"
+                    alt="Paradigm"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/animoca-removebg-preview.png"
+                    alt="Animoca Brands"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/a16zcrypto_Logo.svg"
+                    alt="a16z Crypto"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/paradigm-logo-removebg-preview.png"
+                    alt="Paradigm"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/animoca-removebg-preview.png"
+                    alt="Animoca Brands"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/dragonfly-removebg-preview.png"
+                    alt="Dragonfly Capital"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/a16zcrypto_Logo.svg"
+                    alt="a16z Crypto"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/paradigm-logo-removebg-preview.png"
+                    alt="Paradigm"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                  <Image
+                    src="/logos/animoca-removebg-preview.png"
+                    alt="Animoca Brands"
+                    width={160}
+                    height={80}
+                    className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                  />
+                </div>
               </motion.div>
             </div>
           </div>
-        </ScrollAnimationWrapper>
+        </div>
       </section>
 
-      {/* Why invest section */}
-      {!isLowMemoryDevice && (
-        <section
-          ref={whyInvestSectionRef}
-          className="py-8 sm:py-12 md:py-16 px-4  backdrop-blur-sm relative z-10"
-        >
-          <div className="container mx-auto">
-            <ScrollAnimationWrapper>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-12 text-center font-display">
-                Why <span className="text-primary">Invest</span> in Litmex?
-              </h2>
-            </ScrollAnimationWrapper>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-              <ScrollAnimationWrapper delay={100}>
-                <LuxuryCard
-                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1 "
-                  icon="diamond"
-                  iconPosition="tr"
-                  animate={true}
-                >
-                  <div className="text-center mb-4 md:mb-6">
-                    <motion.div
-                      whileHover={{ rotate: 10, scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-500/30 to-amber-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(245,158,11,0.3)] border border-amber-400/30"
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 10,
-                      }}
-                    >
-                      <Trophy className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />
-                    </motion.div>
-                    <h3 className="text-lg md:text-xl font-bold luxury-text">
-                      Premium Experiences
-                    </h3>
-                  </div>
-                  <p className="text-gray-300 text-center text-sm md:text-base">
-                    Access to exclusive games, luxury tournaments, and VIP
-                    experiences available only to token holders.
-                  </p>
-                </LuxuryCard>
-              </ScrollAnimationWrapper>
-
-              <ScrollAnimationWrapper delay={200}>
-                <LuxuryCard
-                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
-                  icon="crown"
-                  iconPosition="tr"
-                  animate={true}
-                >
-                  <div className="text-center mb-4 md:mb-6">
-                    <motion.div
-                      whileHover={{ rotate: -10, scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-500/30 to-indigo-500/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-400/30"
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 10,
-                      }}
-                    >
-                      <LockIcon className="w-6 h-6 md:w-8 md:h-8 text-indigo-400" />
-                    </motion.div>
-                    <h3 className="text-lg md:text-xl font-bold luxury-text">
-                      Revenue Sharing
-                    </h3>
-                  </div>
-                  <p className="text-gray-300 text-center text-sm md:text-base">
-                    Token holders receive a portion of the platform&apos;s
-                    revenue through staking rewards and exclusive bonuses.
-                  </p>
-                </LuxuryCard>
-              </ScrollAnimationWrapper>
-
-              <ScrollAnimationWrapper delay={300}>
-                <LuxuryCard
-                  className="p-4 md:p-6 lg:p-8 h-full transform transition-all hover:scale-105 hover:-translate-y-1"
-                  icon="spade"
-                  iconPosition="tr"
-                  animate={true}
-                >
-                  <div className="text-center mb-4 md:mb-6">
-                    <motion.div
-                      whileHover={{ rotate: 15, scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mx-auto mb-3 md:mb-4 shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-primary/30"
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 10,
-                      }}
-                    >
-                      <Diamond className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-                    </motion.div>
-                    <h3 className="text-lg md:text-xl font-bold luxury-text">
-                      Limited Supply
-                    </h3>
-                  </div>
-                  <p className="text-gray-300 text-center text-sm md:text-base">
-                    With a fixed supply and deflationary mechanics, LMX tokens
-                    are designed to increase in value as the platform grows.
-                  </p>
-                </LuxuryCard>
-              </ScrollAnimationWrapper>
-            </div>
-          </div>
-        </section>
-      )}
       {/* Referral section */}
       <section
         ref={referralSectionRef}
