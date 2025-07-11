@@ -16,7 +16,7 @@ import { useSolanaPresale } from "@/components/hooks/useSolanaPresale";
 import { useSolanaUsdtPresale } from "@/components/hooks/useSolanaUsdtPresale";
 import { useBscPresale } from "@/components/hooks/useBscPresale";
 import { useWalletBalances } from "@/components/hooks/useWalletBalances";
-import { MIN_BUY } from "@/lib/constants";
+import { LMX_PRICE, MIN_BUY } from "@/lib/constants";
 import TransactionStatusModal from "@/components/TransactionStatusModal";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ export default function SimplePresalePage(cryptoPrices: {
     }
   }, [status, router]);
 
-  const lmxPriceUsd = 0.014; // Example LMX price in USD, replace with actual data
+  const lmxPriceUsd = LMX_PRICE; // Example LMX price in USD, replace with actual data
 
   // Get presale functionality from the usePresale hook
 
@@ -375,242 +375,255 @@ export default function SimplePresalePage(cryptoPrices: {
   //   };
 
   return (
-    <>
-      <header className="flex justify-between items-center shadow-sm mt-4 px-4">
-        <div className="flex items-center">
-          <img src="/lit_logo.png" alt="Logo" className="h-8 w-auto" />
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-1.5 h-auto text-red-400 hover:bg-red-500/10"
-          onClick={() => {
-            // Add your logout logic here
-            signOut({ callbackUrl: "/" }); // Redirect to home after logout
-          }}
-        >
-          <LogOut size={16} />
-        </Button>
-      </header>
-      <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen relative mt-12 overflow-hidden">
-        <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
-          {/* Header */}
-          <h2 className="text-2xl font-semibold text-white">Buy LMX Tokens</h2>
-          <div className="flex justify-between items-center mb-6 mt-2">
-            <div className="flex flex-col items-left gap-3">
-              {/* Network selector with icons */}
-              <div className="bg-black/30 rounded-sm p-1 border border-primary/20">
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => handleNetworkChange("bsc")}
-                    className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
-                      network === "bsc"
-                        ? "bg-primary/30 text-white"
-                        : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    <Image
-                      src={NETWORK_ICONS.BSC}
-                      alt="BSC"
-                      width={16}
-                      height={16}
-                      className="rounded-full"
-                    />
-                    <span>BSC</span>
-                  </button>
-                  <button
-                    onClick={() => handleNetworkChange("solana")}
-                    className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
-                      network === "solana"
-                        ? "bg-primary/30 text-white"
-                        : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    <Image
-                      src={NETWORK_ICONS.SOLANA}
-                      alt="Solana"
-                      width={16}
-                      height={16}
-                      className="rounded-full"
-                    />
-                    <span>Solana</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Currency selector dropdown */}
-              <div className="relative">
-                <div className="flex items-left gap-1 px-3 py-1 ">
-                  {network === "solana" ? (
-                    // Solana currency options
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => setSolanaCurrency("SOL")}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
-                          solanaCurrency === "SOL"
-                            ? "bg-primary/30"
-                            : "bg-black/20 opacity-70"
-                        }`}
-                      >
-                        <Image
-                          src={CURRENCY_ICONS.SOL}
-                          alt="SOL"
-                          width={16}
-                          height={16}
-                          className="rounded-full"
-                        />
-                        <span>SOL</span>
-                      </button>
-                      <button
-                        onClick={() => setSolanaCurrency("USDT")}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
-                          solanaCurrency === "USDT"
-                            ? "bg-primary/30"
-                            : "bg-black/20 opacity-70"
-                        }`}
-                      >
-                        <Image
-                          src={CURRENCY_ICONS.USDT}
-                          alt="USDT"
-                          width={16}
-                          height={16}
-                          className="rounded-full"
-                        />
-                        <span>USDT</span>
-                      </button>
-                    </div>
-                  ) : (
-                    // BSC currency options
-                    <div className="flex gap-1 w-1/2">
-                      {/* BNB option (disabled/commented out)
+    <div className="relative min-h-screen">
+      <div
+        className="absolute inset-0 w-full h-full bg-cover bg-center opacity-10"
+        style={{ backgroundImage: "url(/bg_2.webp)" }}
+      ></div>
+      <div className="relative z-10">
+        <header className="flex justify-between items-center shadow-sm mt-4 px-4">
+          <div className="flex items-center">
+            <img src="/lit_logo.png" alt="Logo" className="h-8 w-auto" />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-1.5 h-auto text-red-400 hover:bg-red-500/10"
+            onClick={() => {
+              // Add your logout logic here
+              signOut({ callbackUrl: "/" }); // Redirect to home after logout
+            }}
+          >
+            <LogOut size={16} />
+          </Button>
+        </header>
+        <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen mt-12 overflow-hidden">
+          <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
+            {/* Header */}
+            <h2 className="text-2xl font-semibold text-white">
+              Buy LMX Tokens
+            </h2>
+            <div className="flex justify-between items-center mb-6 mt-2">
+              <div className="flex flex-col items-left gap-3">
+                {/* Network selector with icons */}
+                <div className="bg-black/30 rounded-sm p-1 border border-primary/20">
+                  <div className="flex items-center gap-1">
                     <button
-                      onClick={() => setBscCurrency("BNB")}
-                      className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
-                        bscCurrency === "BNB" ? "bg-primary/30" : "bg-black/20 opacity-70"
+                      onClick={() => handleNetworkChange("bsc")}
+                      className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
+                        network === "bsc"
+                          ? "bg-primary/30 text-white"
+                          : "text-white/70 hover:text-white"
                       }`}
                     >
                       <Image
-                        src={CURRENCY_ICONS.BNB}
-                        alt="BNB"
+                        src={NETWORK_ICONS.BSC}
+                        alt="BSC"
                         width={16}
                         height={16}
                         className="rounded-full"
                       />
-                      <span>BNB</span>
+                      <span>BSC</span>
                     </button>
-                    */}
+                    <button
+                      onClick={() => handleNetworkChange("solana")}
+                      className={`px-3 py-1 rounded-sm text-sm transition-colors flex items-center gap-1 ${
+                        network === "solana"
+                          ? "bg-primary/30 text-white"
+                          : "text-white/70 hover:text-white"
+                      }`}
+                    >
+                      <Image
+                        src={NETWORK_ICONS.SOLANA}
+                        alt="Solana"
+                        width={16}
+                        height={16}
+                        className="rounded-full"
+                      />
+                      <span>Solana</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Currency selector dropdown */}
+                <div className="relative">
+                  <div className="flex items-left gap-1 px-3 py-1 ">
+                    {network === "solana" ? (
+                      // Solana currency options
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => setSolanaCurrency("SOL")}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                            solanaCurrency === "SOL"
+                              ? "bg-primary/30"
+                              : "bg-black/20 opacity-70"
+                          }`}
+                        >
+                          <Image
+                            src={CURRENCY_ICONS.SOL}
+                            alt="SOL"
+                            width={16}
+                            height={16}
+                            className="rounded-full"
+                          />
+                          <span>SOL</span>
+                        </button>
+                        <button
+                          onClick={() => setSolanaCurrency("USDT")}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                            solanaCurrency === "USDT"
+                              ? "bg-primary/30"
+                              : "bg-black/20 opacity-70"
+                          }`}
+                        >
+                          <Image
+                            src={CURRENCY_ICONS.USDT}
+                            alt="USDT"
+                            width={16}
+                            height={16}
+                            className="rounded-full"
+                          />
+                          <span>USDT</span>
+                        </button>
+                      </div>
+                    ) : (
+                      // BSC currency options
+                      <div className="flex gap-1 w-1/2">
+                        {/* BNB option (disabled/commented out)
                       <button
-                        onClick={() => setBscCurrency("USDT")}
-                        className={`flex  items-center gap-1 px-2 py-1 rounded-sm text-xs bg-primary/30`}
+                        onClick={() => setBscCurrency("BNB")}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-sm text-xs ${
+                          bscCurrency === "BNB" ? "bg-primary/30" : "bg-black/20 opacity-70"
+                        }`}
                       >
                         <Image
-                          src={CURRENCY_ICONS.USDT}
-                          alt="USDT"
+                          src={CURRENCY_ICONS.BNB}
+                          alt="BNB"
                           width={16}
                           height={16}
                           className="rounded-full"
                         />
-                        <span>USDT</span>
+                        <span>BNB</span>
                       </button>
-                    </div>
-                  )}
+                      */}
+                        <button
+                          onClick={() => setBscCurrency("USDT")}
+                          className={`flex  items-center gap-1 px-2 py-1 rounded-sm text-xs bg-primary/30`}
+                        >
+                          <Image
+                            src={CURRENCY_ICONS.USDT}
+                            alt="USDT"
+                            width={16}
+                            height={16}
+                            className="rounded-full"
+                          />
+                          <span>USDT</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Loading state */}
-          {!cryptoPrices ? (
-            <div className="py-8 flex flex-col items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-              <p className="text-primary/70 text-center">
-                Loading price data...
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Current Price Information */}
-              <div className="mb-6 p-3 bg-black/40 rounded-lg border border-primary/10">
-                <div className="text-sm font-medium text-white/80 mb-2">
-                  Token Price Information:
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-green-400 font-bold">
-                    ${lmxPriceUsd?.toFixed(4) || "0.014"} per LMX
-                  </span>
-                  <span className="text-xs text-white/60">Fixed USD Price</span>
-                </div>
+            {/* Loading state */}
+            {!cryptoPrices ? (
+              <div className="py-8 flex flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                <p className="text-primary/70 text-center">
+                  Loading price data...
+                </p>
               </div>
-
-              {/* USD Amount Input */}
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <Label htmlFor="usdAmount" className="text-sm text-white/70">
-                    Amount in USD
-                  </Label>
-                </div>
-
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="usdAmount"
-                    type="number"
-                    value={usdAmount}
-                    onChange={handleUsdAmountChange}
-                    className="bg-black/30 border border-primary/20 text-white"
-                    step="1"
-                    placeholder="500"
-                    min="50"
-                  />
-                  <div className="bg-black/40 px-3 py-2 rounded-md text-white/80">
-                    USD
+            ) : (
+              <>
+                {/* Current Price Information */}
+                <div className="mb-6 p-3 bg-black/40 rounded-lg border border-primary/10">
+                  <div className="text-sm font-medium text-white/80 mb-2">
+                    Token Price Information:
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-green-400 font-bold">
+                      ${lmxPriceUsd?.toFixed(4) || "0.014"} per LMX
+                    </span>
+                    <span className="text-xs text-white/60">
+                      Fixed USD Price
+                    </span>
                   </div>
                 </div>
 
-                {/* Cost Breakdown */}
-                <div className="mt-2 text-sm text-center text-white/70">
-                  ≈ {isNaN(tokenAmount) ? "0.00" : tokenAmount.toFixed(2)} LMX
+                {/* USD Amount Input */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <Label
+                      htmlFor="usdAmount"
+                      className="text-sm text-white/70"
+                    >
+                      Amount in USD
+                    </Label>
+                  </div>
+
+                  <div className="flex gap-2 items-center">
+                    <Input
+                      id="usdAmount"
+                      type="number"
+                      value={usdAmount}
+                      onChange={handleUsdAmountChange}
+                      className="bg-black/30 border border-primary/20 text-white"
+                      step="1"
+                      placeholder="500"
+                      min="50"
+                    />
+                    <div className="bg-black/40 px-3 py-2 rounded-md text-white/80">
+                      USD
+                    </div>
+                  </div>
+
+                  {/* Cost Breakdown */}
+                  <div className="mt-2 text-sm text-center text-white/70">
+                    ≈ {isNaN(tokenAmount) ? "0.00" : tokenAmount.toFixed(2)} LMX
+                  </div>
                 </div>
-              </div>
 
-              {/* Buy Button */}
-              <div className="mb-4">
-                {!hasWalletConnected ? (
-                  <WalletConnectButton className="w-full py-3" />
-                ) : (
-                  <button
-                    onClick={handleBuy}
-                    disabled={usdAmount < MIN_BUY}
-                    className="w-full py-3 bg-gradient-to-br from-indigo-600/90 to-violet-700 hover:from-indigo-600 hover:to-violet-600 border-indigo-400/30 text-white font-medium transition-all duration-200 rounded-md"
-                  >
-                    Buy ${tokenAmount.toFixed(2)} LMX
-                  </button>
-                )}
-
-                {/* Wallet status indicators */}
-                <div
-                  className={`mt-2 text-sm text-center ${
-                    hasWalletConnected ? "text-green-400" : "text-amber-400"
-                  }`}
-                >
-                  {hasWalletConnected ? (
-                    <span>Wallet Connected</span>
+                {/* Buy Button */}
+                <div className="mb-4">
+                  {!hasWalletConnected ? (
+                    <WalletConnectButton className="w-full py-3" />
                   ) : (
-                    <span>Connect your wallet to buy</span>
+                    <button
+                      onClick={handleBuy}
+                      disabled={usdAmount < MIN_BUY}
+                      className="w-full py-3 bg-gradient-to-br from-indigo-600/90 to-violet-700 hover:from-indigo-600 hover:to-violet-600 border-indigo-400/30 text-white font-medium transition-all duration-200 rounded-md"
+                    >
+                      Buy ${tokenAmount.toFixed(2)} LMX
+                    </button>
                   )}
+
+                  {/* Wallet status indicators */}
+                  <div
+                    className={`mt-2 text-sm text-center ${
+                      hasWalletConnected ? "text-green-400" : "text-amber-400"
+                    }`}
+                  >
+                    {hasWalletConnected ? (
+                      <span>Wallet Connected</span>
+                    ) : (
+                      <span>Connect your wallet to buy</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-          <TransactionStatusModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            status={transactionStatus}
-            title={`${network.toUpperCase()} Transaction Status`}
-            transactionSignature={transactionSignature || undefined}
-            network={network}
-          />
+              </>
+            )}
+            <TransactionStatusModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              status={transactionStatus}
+              title={`${network.toUpperCase()} Transaction Status`}
+              transactionSignature={transactionSignature || undefined}
+              network={network}
+            />
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
