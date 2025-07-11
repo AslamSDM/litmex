@@ -35,8 +35,30 @@ export function UnifiedWalletButton({
     useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
   const [showTrustWalletPrompt, setShowTrustWalletPrompt] = useState(false);
+  const [showMobileWalletPrompt, setShowMobileWalletPrompt] = useState(false);
   const [connectionTimeout, setConnectionTimeout] =
     useState<NodeJS.Timeout | null>(null);
+
+  // Mobile detection
+  const isMobile = () => {
+    if (typeof window === "undefined") return false;
+    return (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768
+    );
+  };
+
+  // Check if already in wallet browser
+  const isInWalletBrowser = () => {
+    if (typeof window === "undefined") return false;
+    const userAgent = navigator.userAgent.toLowerCase();
+    return (
+      userAgent.includes("trustwallet") ||
+      userAgent.includes("metamask") ||
+      userAgent.includes("phantom")
+    );
+  };
 
   // Determine wallet state
   const isAuthenticated = status === "authenticated";
@@ -143,6 +165,12 @@ export function UnifiedWalletButton({
   };
 
   const handleConnect = () => {
+    // On mobile, show wallet selection first unless already in wallet browser
+    if (isMobile() && !isInWalletBrowser()) {
+      setShowMobileWalletPrompt(true);
+      return;
+    }
+
     // Reset local state when opening the modal
     setIsModalOpened(false);
     modal.open();
@@ -199,6 +227,42 @@ export function UnifiedWalletButton({
       clearTimeout(connectionTimeout);
       setConnectionTimeout(null);
     }
+  };
+
+  // Handle mobile wallet selection
+  const handleWalletSelection = (
+    walletType: "trustwallet" | "metamask" | "phantom"
+  ) => {
+    const currentUrl = window.location.href;
+    let deepLink = "";
+
+    switch (walletType) {
+      case "trustwallet":
+        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}`;
+        break;
+      case "metamask":
+        deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+        break;
+      case "phantom":
+        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=phantom`;
+        break;
+    }
+
+    // Try to open the deeplink
+    window.open(deepLink, "_blank");
+
+    // Close the modal after a delay
+    setTimeout(() => {
+      setShowMobileWalletPrompt(false);
+    }, 1000);
+  };
+
+  // Proceed with connection if already in wallet browser
+  const handleProceedToConnect = () => {
+    setShowMobileWalletPrompt(false);
+    // Reset local state when opening the modal
+    setIsModalOpened(false);
+    modal.open();
   };
 
   // Determine button appearance and behavior
@@ -284,6 +348,111 @@ export function UnifiedWalletButton({
           </span>
         )}
       </Button>
+
+      {/* Mobile Wallet Selection Modal */}
+      <Dialog
+        open={showMobileWalletPrompt}
+        onOpenChange={setShowMobileWalletPrompt}
+      >
+        <DialogContent className="bg-black border border-white/10 text-white max-w-md">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-xl font-bold text-center mb-2">
+              Choose Your Wallet
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {isInWalletBrowser() ? (
+              <div className="text-center space-y-4">
+                <p className="text-sm text-gray-300">
+                  You're already in a wallet browser! You can proceed to
+                  connect.
+                </p>
+                <Button
+                  onClick={handleProceedToConnect}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
+                >
+                  <Wallet size={16} className="mr-2" />
+                  Connect Wallet
+                </Button>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-gray-300 text-center mb-4">
+                  Select a wallet to open and connect:
+                </p>
+                <div className="flex flex-col gap-4">
+                  <Button
+                    onClick={() => handleWalletSelection("trustwallet")}
+                    variant="outline"
+                    className="w-full h-16 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                  >
+                    <div className="w-8 h-8 mr-3 flex items-center justify-center">
+                      <img
+                        src="/icons/wallets/trust-wallet.png"
+                        alt="Trust Wallet"
+                        className="w-8 h-8 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233375BB'><rect width='24' height='24' rx='4' fill='%233375BB'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='white'>T</text></svg>";
+                        }}
+                      />
+                    </div>
+                    <span className="flex-1 text-center">Trust Wallet</span>
+                  </Button>
+
+                  <Button
+                    onClick={() => handleWalletSelection("metamask")}
+                    variant="outline"
+                    className="w-full h-16 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                  >
+                    <div className="w-8 h-8 mr-3 flex items-center justify-center">
+                      <img
+                        src="/icons/wallets/metamask.svg"
+                        alt="MetaMask"
+                        className="w-8 h-8 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='4' fill='%23f6851b'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='white'>M</text></svg>";
+                        }}
+                      />
+                    </div>
+                    <span className="flex-1 text-center">MetaMask</span>
+                  </Button>
+
+                  <Button
+                    onClick={() => handleWalletSelection("phantom")}
+                    variant="outline"
+                    className="w-full h-16 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                  >
+                    <div className="w-8 h-8 mr-3 flex items-center justify-center">
+                      <img
+                        src="/icons/wallets/phantom.svg"
+                        alt="Phantom"
+                        className="w-8 h-8 object-contain rounded-full"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='12' fill='%23551bbf'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='white'>P</text></svg>";
+                        }}
+                      />
+                    </div>
+                    <span className="flex-1 text-center">Phantom</span>
+                  </Button>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <Button
+                    onClick={handleProceedToConnect}
+                    variant="outline"
+                    className="w-full border-white/20 text-gray-300 hover:bg-white/10"
+                  >
+                    Skip & Connect Directly
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Trust Wallet Prompt Modal */}
       <Dialog
