@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { Wallet, CheckCircle, AlertTriangle } from "lucide-react";
+import { Wallet, CheckCircle, AlertTriangle, ExternalLink } from "lucide-react";
 import {
   useAppKitAccount,
   useAppKitState,
@@ -34,6 +34,9 @@ export function UnifiedWalletButton({
   const [showBSCVerificationModal, setShowBSCVerificationModal] =
     useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
+  const [showTrustWalletPrompt, setShowTrustWalletPrompt] = useState(false);
+  const [connectionTimeout, setConnectionTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Determine wallet state
   const isAuthenticated = status === "authenticated";
@@ -122,6 +125,16 @@ export function UnifiedWalletButton({
     appKitState?.open,
   ]);
 
+  // Effect to monitor connection status and show Trust Wallet prompt
+  useEffect(() => {
+    if (isConnected && connectionTimeout) {
+      // Clear timeout if wallet gets connected
+      clearTimeout(connectionTimeout);
+      setConnectionTimeout(null);
+      setShowTrustWalletPrompt(false);
+    }
+  }, [isConnected, connectionTimeout]);
+
   // Display address helper
   const getDisplayAddress = () => {
     if (address) {
@@ -134,6 +147,19 @@ export function UnifiedWalletButton({
     // Reset local state when opening the modal
     setIsModalOpened(false);
     modal.open();
+
+    // Clear any existing timeout
+    if (connectionTimeout) {
+      clearTimeout(connectionTimeout);
+    }
+
+    // Set timeout to show Trust Wallet prompt if not connected within 3 seconds
+    if (!isConnected) {
+      const timeout = setTimeout(() => {
+        setShowTrustWalletPrompt(true);
+      }, 3000);
+      setConnectionTimeout(timeout);
+    }
   };
 
   const handleVerifyWallet = () => {
@@ -164,6 +190,15 @@ export function UnifiedWalletButton({
     if (!isOpen && hasEvmAddress !== !!session?.user?.evmAddress) {
       // If modal was closed and the verification status might have changed, refresh the session
       update();
+    }
+  };
+
+  // Handle Trust Wallet prompt close
+  const handleTrustWalletPromptClose = () => {
+    setShowTrustWalletPrompt(false);
+    if (connectionTimeout) {
+      clearTimeout(connectionTimeout);
+      setConnectionTimeout(null);
     }
   };
 
@@ -250,6 +285,42 @@ export function UnifiedWalletButton({
           </span>
         )}
       </Button>
+
+      {/* Trust Wallet Prompt Modal */}
+      <Dialog
+        open={showTrustWalletPrompt}
+        onOpenChange={handleTrustWalletPromptClose}
+      >
+        <DialogContent className="bg-black border border-white/10 text-white max-w-md">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-xl font-bold text-center mb-2">
+              🚀 Join the Litmex Token Presale now!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-center">
+            <p className="text-sm text-gray-300">
+              Tap this link to open the presale page directly in Trust Wallet's
+              browser for smooth wallet connection and token purchase:
+            </p>
+            <Button
+              onClick={() => {
+                window.open(
+                  "https://link.trustwallet.com/open_url?coin_id=20000714&url=https://litmexpresale.com",
+                  "_blank"
+                );
+                handleTrustWalletPromptClose();
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
+            >
+              <ExternalLink size={16} className="mr-2" />
+              Open in Trust Wallet
+            </Button>
+            <p className="text-xs text-gray-400">
+              📱 Make sure to open it on your mobile outside of Trust Wallet
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Solana Wallet Verification Modal */}
       <Dialog
