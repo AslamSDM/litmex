@@ -30,6 +30,7 @@ import { modal } from "@/components/providers/wallet-provider";
 import useReferralHandling from "./hooks/useReferralHandling";
 import { MIN_BUY, NETWORK_ICONS, CURRENCY_ICONS } from "@/lib/constants";
 import Image from "next/image";
+import { UnifiedWalletButton } from "./UnifiedWalletButton";
 
 // Extended type for our session with referredBy field
 interface CustomSessionUser {
@@ -761,7 +762,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
               {/* Buy/Approve Button */}
               <div className="mb-4">
                 {!hasWalletConnected ? (
-                  <WalletConnectButton className="w-full py-3" />
+                  <UnifiedWalletButton className="w-full py-3" />
                 ) : network === "bsc" && bscCurrency === "USDT" ? (
                   // Special handling for USDT on BSC to show approval button when needed
                   <div>
