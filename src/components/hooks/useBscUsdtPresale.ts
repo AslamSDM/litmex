@@ -149,6 +149,7 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
     completeTransaction,
     setError,
     resetStatus,
+    completeAllSteps,
   } = useTransactionStatus(
     displayedMode === "approval" ? initialApprovalSteps : initialPurchaseSteps
   );
@@ -251,6 +252,7 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
         setCurrentStep("confirm-approval");
         nextStep();
         completeTransaction();
+        completeAllSteps();
         resetStatus();
         setDisplayedMode("purchase"); // Switch to purchase mode after approval
 
@@ -320,6 +322,7 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
             setCurrentStep("save-allocation");
             nextStep();
             completeTransaction();
+            completeAllSteps();
             toast.success(
               `Successfully purchased ${tokenAmount} LMX tokens with USDT!`
             );

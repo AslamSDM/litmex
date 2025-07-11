@@ -161,7 +161,24 @@ export function useTransactionStatus(initialSteps: TransactionStep[]) {
       isError: false,
     });
   };
+  // Complete all steps in the transaction
+  const completeAllSteps = () => {
+    setStatus((prevStatus) => {
+      const updatedSteps = prevStatus.steps.map((step) => ({
+        ...step,
+        status: "success" as const,
+        errorMessage: undefined,
+      }));
 
+      return {
+        ...prevStatus,
+        steps: updatedSteps,
+        isComplete: true,
+        isError: false,
+        currentStepId: updatedSteps[updatedSteps.length - 1]?.id || null,
+      };
+    });
+  };
   // Get the current active step
   const currentStep =
     status.steps.find((step) => step.id === status.currentStepId) || null;
@@ -174,6 +191,7 @@ export function useTransactionStatus(initialSteps: TransactionStep[]) {
     clearErrors,
     currentStep: status.currentStepId ? currentStep : null,
     completeTransaction,
+    completeAllSteps,
     setError,
     resetStatus,
   };
