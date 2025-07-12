@@ -186,6 +186,7 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
     writeContract: approveUsdt,
     data: approvalHash,
     isPending: isApprovePending,
+    isSuccess: isApproveSuccess,
     error: approveError,
     reset: resetApproval,
   } = useWriteContract();
@@ -267,6 +268,8 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
     }
   }, [
     isApprovalConfirmed,
+    isApproveSuccess,
+    approvalHash,
     approvalCompleted,
     isApprovalMode,
     refetchUsdtAllowance,
