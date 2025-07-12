@@ -71,9 +71,34 @@ export default function IntroSection({
         </p>
       </motion.div>
       <Link href={isIos ? "/presale-ios" : "/presale"}>
-        <button className=" absolute bottom-24 left-1/2 text-center justify-center transform -translate-x-1/2 text-center z-40 bg-primary hover:bg-primary/90 text-primary-foreground w-1/2 h-12 px-3 py-3 rounded-xl text-lg font-medium transition-colors duration-300 flex items-center mr-[300px]">
-          Presale Live <span className="ml-1">&gt;</span>
-        </button>
+        <motion.button
+          className="absolute top-6 right-6 z-40 bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1 rounded-xl text-sm font-medium transition-colors duration-300 flex items-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{
+            opacity: isVisible ? 1 : 0,
+            y: isVisible ? 0 : -10,
+
+            // Bounce animation
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 0.4,
+            y: {
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 3,
+              ease: "easeInOut",
+            },
+            opacity: { duration: 0.6, delay: 0.4 },
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <div className="relative overflow-hidden">
+            Presale Live <span className="ml-1">&gt;</span>
+            {/* Shine effect */}
+          </div>
+        </motion.button>
       </Link>
 
       {/* Additional floating elements - scattered along the sides */}
