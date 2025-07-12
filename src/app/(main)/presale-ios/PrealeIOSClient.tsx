@@ -20,7 +20,7 @@ import TransactionStatusModal from "@/components/TransactionStatusModal";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
 import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
-
+import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -376,10 +376,16 @@ export default function SimplePresalePage(cryptoPrices: {
 
   return (
     <div className="relative min-h-screen">
-      <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center opacity-10"
-        style={{ backgroundImage: "url(/bg_2.webp)" }}
-      ></div>
+      <FlickeringGrid
+        className="absolute inset-0 z-0 size-full"
+        squareSize={4}
+        gridGap={6}
+        color="#7001a5"
+        maxOpacity={0.5}
+        flickerChance={0.1}
+        height={1200}
+        width={800}
+      />
       <div className="relative z-10">
         <header className="flex justify-between items-center shadow-sm mt-4 px-4">
           <div className="flex items-center">
