@@ -384,7 +384,7 @@ export default function SimplePresalePage(cryptoPrices: {
         maxOpacity={0.5}
         flickerChance={0.1}
         height={1200}
-        width={800}
+        width={400}
       />
       <div className="relative z-10">
         <header className="flex justify-between items-center shadow-sm mt-4 px-4">
