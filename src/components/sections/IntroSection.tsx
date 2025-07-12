@@ -2,12 +2,17 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface IntroSectionProps {
   isVisible: boolean;
+  isIos?: boolean; // Optional prop for iOS detection
 }
 
-export default function IntroSection({ isVisible }: IntroSectionProps) {
+export default function IntroSection({
+  isVisible,
+  isIos = false,
+}: IntroSectionProps) {
   return (
     <motion.div
       className="sticky top-0 left-0 w-screen h-screen z-50 overflow-hidden "
@@ -65,6 +70,11 @@ export default function IntroSection({ isVisible }: IntroSectionProps) {
           scale.
         </p>
       </motion.div>
+      <Link href={isIos ? "/presale-ios" : "/presale"}>
+        <button className=" absolute bottom-24 left-1/2 text-center justify-center transform -translate-x-1/2 text-center z-40 bg-primary hover:bg-primary/90 text-primary-foreground w-1/2 h-12 px-3 py-3 rounded-xl text-lg font-medium transition-colors duration-300 flex items-center mr-[300px]">
+          Presale Live <span className="ml-1">&gt;</span>
+        </button>
+      </Link>
 
       {/* Additional floating elements - scattered along the sides */}
     </motion.div>

@@ -137,7 +137,7 @@ export default function HomePage() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <AnimatePresence mode="wait">
           {sectionVisibility[0] && (
-            <IntroSection isVisible={true} key="intro" />
+            <IntroSection isVisible={true} key="intro" isIos={isIOS} />
           )}
           {sectionVisibility[1] && (
             <FutureGamblingSection isVisible={true} key="future" />
