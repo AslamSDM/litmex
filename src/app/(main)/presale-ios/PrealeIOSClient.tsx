@@ -21,6 +21,7 @@ import useReferralHandling from "@/components/hooks/useReferralHandling";
 import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
+import RoadmapTimeline from "@/components/RoadmapTimeline";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -383,7 +384,7 @@ export default function SimplePresalePage(cryptoPrices: {
         color="#7001a5"
         maxOpacity={0.5}
         flickerChance={0.1}
-        height={1200}
+        height={2000}
         width={400}
       />
       <div className="relative z-10">
@@ -670,6 +671,12 @@ export default function SimplePresalePage(cryptoPrices: {
                   <span className="text-amber-400 font-medium">Unlimited</span>
                 </div>
               </div>
+            </div>
+            <div className="mt-12">
+              <h3 className="text-lg sm:text-xl font-bold text-amber-400 mb-4 flex items-center">
+                Road map
+              </h3>
+              <RoadmapTimeline />
             </div>
             <TransactionStatusModal
               isOpen={isModalOpen}
