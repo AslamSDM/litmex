@@ -72,7 +72,7 @@ export default function IntroSection({
       </motion.div>
       <Link href={isIos ? "/presale-ios" : "/presale"}>
         <motion.button
-          className="absolute top-6 right-6 z-40 bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1 rounded-xl text-sm font-medium transition-colors duration-300 flex items-center"
+          className="absolute top-6 right-6 z-40 bg-black hover:bg-primary text-primary-foreground px-3 py-1 rounded-xl text-sm font-medium transition-colors duration-300 flex items-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{
             opacity: isVisible ? 1 : 0,
