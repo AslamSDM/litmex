@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ChevronDown, LogOut } from "lucide-react";
-import { WalletConnectButton } from "@/components/WalletConnectButton";
 import { useRouter } from "next/navigation";
 import { useBscUsdtPresale } from "@/components/hooks/useBscUsdtPresale";
 import { useSolanaPresale } from "@/components/hooks/useSolanaPresale";
@@ -20,6 +19,7 @@ import { LMX_PRICE, MIN_BUY } from "@/lib/constants";
 import TransactionStatusModal from "@/components/TransactionStatusModal";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
 import { Button } from "@/components/ui/button";
+import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 
 // Network icons
 const NETWORK_ICONS = {
@@ -587,7 +587,7 @@ export default function SimplePresalePage(cryptoPrices: {
                 {/* Buy Button */}
                 <div className="mb-4">
                   {!hasWalletConnected ? (
-                    <WalletConnectButton className="w-full py-3" />
+                    <UnifiedWalletButton className="w-full py-3" />
                   ) : (
                     <button
                       onClick={handleBuy}
@@ -613,6 +613,58 @@ export default function SimplePresalePage(cryptoPrices: {
                 </div>
               </>
             )}
+            <div className="p-6 md:p-8 mt-12 rounded-xl bg-gradient-to-br from-amber-500/10 to-black/80 relative overflow-hidden">
+              {/* Background image with overlay */}
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src="/logos/trumpimage.webp"
+                  alt="President Trump"
+                  fill
+                  className="object-cover opacity-25"
+                  priority
+                />
+                {/* <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-amber-900/20 to-black/20 z-1"></div> */}
+              </div>
+
+              <div className="relative z-10 ">
+                <h3 className="text-lg sm:text-xl font-bold text-amber-400 mb-4 flex items-center">
+                  Trump Token Referral Rewards
+                </h3>
+              </div>
+
+              <div className="flex items-center justify-center mb-6 mt-[150px]">
+                <div className="bg-white/5 backdrop-filter backdrop-blur-lg border border-amber-400/20 p-6 sm:p-8 rounded-xl flex flex-col items-center justify-center text-center w-64">
+                  <span className="text-amber-400 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2">
+                    10%
+                  </span>
+                  <span className="text-sm sm:text-base md:text-lg text-amber-300/80">
+                    REFERRAL BONUS
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-left">
+                {/* <p className="text-sm sm:text-base text-gray-300 mb-3">
+                                  Direct referrers will receive{" "}
+                                  <span className="text-amber-400 font-medium">
+                                    10% Trump Tokens
+                                  </span>{" "}
+                                  in Solana immediately upon successful referral purchase.
+                                  World Liberty Finance Treasury rewards your patriotism.
+                                </p> */}
+
+                <div className="flex items-center text-xs sm:text-sm bg-amber-500/10 p-3 rounded mb-3">
+                  <span className="text-amber-300">
+                    💰 Rewards immediately transferred to your Solana wallet
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm border-t border-white/10 pt-3">
+                  <span className="text-gray-300">Referral Limit</span>
+                  <span className="text-amber-400 font-medium">Unlimited</span>
+                </div>
+              </div>
+            </div>
             <TransactionStatusModal
               isOpen={isModalOpen}
               onClose={closeModal}

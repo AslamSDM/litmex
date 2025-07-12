@@ -4,33 +4,24 @@ import React, { Suspense, useState, useEffect, useRef } from "react";
 
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Diamond,
-  Trophy,
-  Coins,
-  Timer,
-  ChevronRight,
-  Lock as LockIcon,
-  BarChart4,
-} from "lucide-react";
+import { ChevronRight, Lock as LockIcon, BarChart4 } from "lucide-react";
 import LuxuryCard from "@/components/LuxuryCard";
 import { DecorativeIcon } from "@/components/DecorativeElements";
 import ScrollAnimationWrapper from "@/components/ScrollAnimationWrapper";
-import BackgroundDecorations from "@/components/BackgroundDecorations";
+// import BackgroundDecorations from "@/components/BackgroundDecorations";
 import TokenProgressBar from "@/components/TokenProgressBar";
 import CountdownTimer from "@/components/CountdownTimer";
 import PresaleStats from "@/components/PresaleStats";
 import { ReferralCard } from "@/components/ReferralCard";
 import PresaleBuyForm from "@/components/PresaleBuyForm";
-import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+// import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
 
-import useAudioPlayer from "@/components/hooks/useAudioPlayer";
 import ScrollIndicator from "@/components/ScrollIndicator";
 import { useSession } from "next-auth/react";
 
 // Use the /next import for Spline with React.lazy
-const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
+// const DynamicSpline = React.lazy(() => import("@splinetool/react-spline"));
 
 import usePresale from "@/components/hooks/usePresale";
 import { cn } from "@/lib/utils";
