@@ -727,6 +727,52 @@ export default function SimplePresalePage(cryptoPrices: {
                 />
               </div>
             </div>
+
+            {/* Footer Section */}
+            <div className="mt-12 pt-8 border-t ">
+              <div className="text-center mb-8">
+                <h3 className="text-white text-lg font-medium mb-4">
+                  Resources
+                </h3>
+                <ul className="space-y-3">
+                  <li>
+                    <a
+                      href="https://github.com/Litmexprotocol/Litmex-Whitepaper/blob/main/LItmex%20Protocol%20Whitepaper.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                    >
+                      📄 Whitepaper
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.cyberscope.io/audits/lmx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                    >
+                      🔍 Audit
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/cyberscope-io/audits/blob/main/lmx/audit.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                    >
+                      📋 Audit Report
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="text-center text-xs text-white/50 pb-8">
+                <p>&copy; 2025 Litmex Protocol. All rights reserved.</p>
+              </div>
+            </div>
+
             <TransactionStatusModal
               isOpen={isModalOpen}
               onClose={closeModal}

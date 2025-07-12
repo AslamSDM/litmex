@@ -144,8 +144,7 @@ export function Footer() {
         <div className="mt-8 pt-4 border-t border-white/10">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-white/50">
-              &copy; {new Date().getFullYear()} Litmex Protocol. All rights
-              reserved.
+              &copy; 2025 Litmex Protocol. All rights reserved.
             </p>
           </div>
         </div>
