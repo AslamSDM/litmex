@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
+import { Footer } from "@/components/Footer";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -404,7 +405,14 @@ export default function SimplePresalePage(cryptoPrices: {
             <LogOut size={16} />
           </Button>
         </header>
-        <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen mt-12 overflow-hidden">
+        <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen  overflow-hidden">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
+            <span className="text-primary">LITMEX Token Seed Round</span>
+          </h1>
+          <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-4">
+            Litmex seed round is now live Building Gamblifi for autonomous
+            onchain AI gambling . Join early as we reshape betting
+          </p>
           <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
             {/* Header */}
             <h2 className="text-2xl font-semibold text-white">
@@ -673,10 +681,51 @@ export default function SimplePresalePage(cryptoPrices: {
               </div>
             </div>
             <div className="mt-12">
-              <h3 className="text-lg sm:text-xl font-bold text-amber-400 mb-4 flex items-center">
+              <h3 className="text-lg sm:text-xl font-bold text-primary mb-4 flex items-center">
                 Road map
               </h3>
               <RoadmapTimeline />
+            </div>
+            <div className="mt-12 flex items-center justify-center gap-4 flex-wrap">
+              <h3 className="text-lg sm:text-xl font-bold text-primary mb-4 flex items-center">
+                Backed by Industry Leaders{" "}
+              </h3>
+              <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                <Image
+                  src="/logos/a16zcrypto_Logo.svg"
+                  alt="a16z Crypto"
+                  width={160}
+                  height={80}
+                  className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                />
+              </div>
+              <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                <Image
+                  src="/logos/paradigm-logo-removebg-preview.png"
+                  alt="Paradigm"
+                  width={160}
+                  height={80}
+                  className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                />
+              </div>
+              <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                <Image
+                  src="/logos/animoca-removebg-preview.png"
+                  alt="Animoca Brands"
+                  width={160}
+                  height={80}
+                  className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                />
+              </div>
+              <div className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[70px] md:h-[80px] flex items-center justify-center">
+                <Image
+                  src="/logos/dragonfly-removebg-preview.png"
+                  alt="Dragonfly Capital"
+                  width={160}
+                  height={80}
+                  className="max-h-[60px] sm:max-h-[70px] md:max-h-[80px] max-w-full object-contain filter brightness-0 invert"
+                />
+              </div>
             </div>
             <TransactionStatusModal
               isOpen={isModalOpen}
