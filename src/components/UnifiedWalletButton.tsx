@@ -233,13 +233,13 @@ export function UnifiedWalletButton({
 
     switch (walletType) {
       case "trustwallet":
-        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
+        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "metamask":
         deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "phantom":
-        deepLink = `https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
+        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=https%3A%2F%2F${window.location.host}&wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
     }
 
