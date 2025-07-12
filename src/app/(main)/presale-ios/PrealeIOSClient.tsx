@@ -87,7 +87,7 @@ export default function SimplePresalePage(cryptoPrices: {
     if (network === "solana") {
       setSolanaCurrency("SOL");
     } else {
-      setBscCurrency("BNB");
+      setBscCurrency("USDT");
     }
   }, [network]);
 
