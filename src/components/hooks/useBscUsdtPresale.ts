@@ -131,7 +131,7 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
   const [isApprovalMode, setIsApprovalMode] = useState(false);
   // This controls which transaction steps to show in the modal
   const [displayedMode, setDisplayedMode] = useState<"approval" | "purchase">(
-    "approval"
+    "purchase"
   );
   const [transactionSignature, setTransactionSignature] = useState<
     string | null

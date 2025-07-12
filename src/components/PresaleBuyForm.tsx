@@ -430,7 +430,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
           await buyBscTokens();
         } else {
           // For BSC USDT, check if approval is needed first
-          // const approved = await isUsdtApproved();
+          const approved = await isUsdtApproved();
           // if (!approved) {
           //   toast.info("USDT approval required before purchase");
           //   await approveUsdtSpending();
