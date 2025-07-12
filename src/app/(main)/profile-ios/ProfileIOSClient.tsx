@@ -159,6 +159,31 @@ export default function ProfileIOSClient({
             </div>
           ) : (
             <>
+              {/* User Info Card */}
+              <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-white/70 text-sm">Account Info</p>
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <LogIn className="h-4 w-4 text-primary" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="bg-black/20 p-3 rounded-md">
+                    <p className="text-xs text-white/60 mb-1">Email</p>
+                    <p className="text-sm font-medium text-white">
+                      {session?.user?.email || "Not provided"}
+                    </p>
+                  </div>
+                  <div className="bg-black/20 p-3 rounded-md">
+                    <p className="text-xs text-white/60 mb-1">Username</p>
+                    <p className="text-sm font-medium text-white">
+                      {session?.user?.name || "Not provided"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Balance Card */}
               <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5 flex items-center justify-between">
                 <div>
