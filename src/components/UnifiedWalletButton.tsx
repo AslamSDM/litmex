@@ -233,13 +233,13 @@ export function UnifiedWalletButton({
 
     switch (walletType) {
       case "trustwallet":
-        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
+        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "metamask":
         deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
       case "phantom":
-        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
+        deepLink = `https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&ref=${referrerCode}` : ""}`;
         break;
     }
 
@@ -333,7 +333,7 @@ export function UnifiedWalletButton({
         size={size}
         className={`${buttonContent.style} ${className} ${
           variant === "minimal" ? "p-1.5 h-auto" : ""
-        }`}
+        } bg-[#AD00FF] text-white font-medium flex items-center justify-center gap-2`}
         onClick={buttonContent.onClick}
       >
         {buttonContent.icon}
