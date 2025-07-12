@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export function Footer() {
   const pathname = usePathname();
-  if (pathname != "/presale" && pathname != "/profile") return null; // Hide footer on the homepage
+  // if (pathname != "/presale" && pathname != "/profile") return null; // Hide footer on the homepage
   return (
     <footer className="w-full bg-black/50 border-t border-white/10 backdrop-blur-lg z-[9999]">
       <div className="container mx-auto px-4 py-8">
@@ -78,35 +78,39 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="col-span-1">
-            <h3 className="text-white text-lg font-medium mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="text-white/70 hover:text-primary transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/presale"
-                  className="text-white/70 hover:text-primary transition-colors"
-                >
-                  Presale
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/profile"
-                  className="text-white/70 hover:text-primary transition-colors"
-                >
-                  Profile
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {!(pathname != "/presale" && pathname != "/profile") && (
+            <div className="col-span-1">
+              <h3 className="text-white text-lg font-medium mb-4">
+                Quick Links
+              </h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/"
+                    className="text-white/70 hover:text-primary transition-colors"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/presale"
+                    className="text-white/70 hover:text-primary transition-colors"
+                  >
+                    Presale
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/profile"
+                    className="text-white/70 hover:text-primary transition-colors"
+                  >
+                    Profile
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
 
           {/* Resources */}
           <div className="col-span-1">
