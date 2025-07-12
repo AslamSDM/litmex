@@ -588,8 +588,14 @@ export function useBscUsdtPresale(tokenAmount: number, referrer?: string) {
     const currentAllowance = usdtAllowance as bigint;
 
     if (!currentAllowance || currentAllowance < dynamicCost) {
-      toast.warning("USDT spending not approved yet. Please approve first.");
-      return false; // Return false to indicate approval is needed
+      await approveUsdt({
+        address: BSC_USDT_ADDRESS as `0x${string}`,
+        abi: usdtAbi,
+        functionName: "approve",
+        args: [BSC_PRESALE_CONTRACT_ADDRESS, dynamicCost * BigInt(2)], // Approve 2x for future transactions
+      });
+      setTimeout(() => {}, 3000);
+      // return false; // Return false to indicate approval is needed
     }
 
     // Reset purchase-related states

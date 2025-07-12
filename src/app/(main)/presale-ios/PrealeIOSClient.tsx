@@ -138,7 +138,7 @@ export default function SimplePresalePage(cryptoPrices: {
   // Use BSC USDT hook if BSC currency is USDT
   const {
     buyTokens: buyBscUsdtTokens,
-    approveUsdtSpending,
+    // approveUsdtSpending,
     isUsdtApproved,
     isApprovalMode,
     approvalCompleted,
@@ -345,11 +345,11 @@ export default function SimplePresalePage(cryptoPrices: {
         } else {
           // For BSC USDT, check if approval is needed first
           const approved = await isUsdtApproved();
-          if (!approved) {
-            toast.info("USDT approval required before purchase");
-            await approveUsdtSpending();
-            return; // Stop here, user needs to click Buy again after approval
-          }
+          // if (!approved) {
+          //   toast.info("USDT approval required before purchase");
+          //   await approveUsdtSpending();
+          //   return; // Stop here, user needs to click Buy again after approval
+          // }
 
           // If we got here, USDT is approved and we can proceed with purchase
           await buyBscUsdtTokens();
