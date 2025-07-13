@@ -14,7 +14,7 @@ export function generateReferralUrl(referralCode: string): string {
   // Add the referral code as a query parameter
   return `${
     process.env.NEXT_PUBLIC_APP_URL || window.location.origin
-  }?ref=${referralCode}`;
+  }?referral=${referralCode}`;
 }
 
 /**
@@ -27,7 +27,7 @@ export function extractReferralCodeFromUrl(): string | null {
 
   // Get the 'ref' query parameter from the URL
   const urlParams = new URLSearchParams(window.location.search);
-  const referralCode = urlParams.get("ref");
+  const referralCode = urlParams.get("referral");
   return referralCode;
 }
 
