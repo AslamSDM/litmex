@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { extractReferralCodeFromUrl } from "@/lib/referral";
-import { setCookie, getCookie } from "@/lib/cookies";
+import { getCookie } from "@/lib/cookies";
 import { useSession } from "next-auth/react";
 
 interface ReferralInfo {
@@ -281,27 +281,11 @@ export default function useReferralHandling(): ReferralInfo {
     try {
       // First try URL parameters
       const urlParams = new URLSearchParams(window.location.search);
-      const referrerCode =
-        urlParams.get("referral") || getCookie("referralCode");
-
-      // Fallback to extractReferralCodeFromUrl if no URL param
-      const code = referrerCode || extractReferralCodeFromUrl();
+      console.log(referralCode, "Referral Code from store");
+      const code = urlParams.get("referral") || referralCode;
 
       // Basic validation
       if (code) {
-        // Check for minimum length and basic format
-        if (code.length < 3 || code.length > 50) {
-          console.warn("Invalid referral code format:", code);
-          return null;
-        }
-
-        // Sanitize code (remove potentially harmful characters)
-        const sanitizedCode = code.replace(/[^a-zA-Z0-9_-]/g, "");
-        if (sanitizedCode !== code) {
-          console.warn("Referral code contained invalid characters");
-          return sanitizedCode;
-        }
-
         return code;
       }
 
@@ -312,11 +296,6 @@ export default function useReferralHandling(): ReferralInfo {
       return null;
     }
   }, [isClient]);
-
-  // Memoized current referral code from URL
-  const urlReferralCode = useMemo(() => {
-    return getCurrentReferralCode();
-  }, [getCurrentReferralCode]);
 
   // Handle referral API success
   const handleReferralSuccess = useCallback(
@@ -414,99 +393,101 @@ export default function useReferralHandling(): ReferralInfo {
   );
 
   // Process referral code with enhanced error handling
-  const processReferralCode = useCallback(
-    async (code: string) => {
-      if (!code || isLoading) return;
+  const processReferralCode = useCallback(async () => {
+    const code = getCurrentReferralCode();
+    console.log("Processing referral code:", code, "Loading:", isLoading);
+    if (!code || isLoading) return;
 
-      // Skip if already processed or failed recently
-      if (isCodeProcessed(code)) return;
+    // Skip if already processed or failed recently
+    console.log(
+      "Checking if code is processed or failed:",
+      isCodeProcessed(code)
+    );
 
-      // Check if code failed recently (implement basic rate limiting)
-      if (isCodeFailed(code)) {
-        const retryCount = retryCountRef.current.get(code) || 0;
-        if (retryCount >= MAX_RETRY_ATTEMPTS) {
-          setError("Referral code validation failed. Please try again later.");
-          return;
-        }
+    // Check if code failed recently (implement basic rate limiting)
+    if (isCodeFailed(code)) {
+      const retryCount = retryCountRef.current.get(code) || 0;
+      if (retryCount >= MAX_RETRY_ATTEMPTS) {
+        setError("Referral code validation failed. Please try again later.");
+        return;
       }
+    }
 
-      setIsLoading(true);
-      setError(null);
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        // Store the code
-        setReferralCode(code);
+    try {
+      // Store the code
+      setReferralCode(code);
 
-        // Wait for authentication
-        if (status !== "authenticated") {
-          setIsLoading(false);
-          return;
-        }
-
-        // Check if we have recent valid data for this code
-        const now = Date.now();
-        const isRecentData = now - lastUpdated < CACHE_DURATION;
-
-        if (referralCode === code && isValid && isRecentData) {
-          // Use cached data
-          markCodeAsProcessed(code);
-          setIsLoading(false);
-          return;
-        }
-
-        // Fetch referrer details from API
-        const data = await fetchReferralInfo(code);
-
-        if (data.success) {
-          handleReferralSuccess(data, code);
-        } else {
-          handleReferralFailure(code, data.error);
-        }
-      } catch (error) {
-        const retryCount = retryCountRef.current.get(code) || 0;
-        retryCountRef.current.set(code, retryCount + 1);
-
-        let errorMessage = "Failed to validate referral code";
-
-        if (error instanceof Error) {
-          if (error.name === "AbortError") {
-            errorMessage = "Request timed out. Please check your connection.";
-          } else if (error.message.includes("network")) {
-            errorMessage = "Network error. Please try again.";
-          }
-        }
-
-        handleReferralFailure(code, errorMessage);
-
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Error handling referral code:", error);
-        }
-      } finally {
+      // Wait for authentication
+      if (status !== "authenticated") {
         setIsLoading(false);
+        return;
       }
-    },
-    [
-      status,
-      isLoading,
-      isCodeProcessed,
-      isCodeFailed,
-      setReferralCode,
-      referralCode,
-      isValid,
-      lastUpdated,
-      handleReferralSuccess,
-      handleReferralFailure,
-      markCodeAsProcessed,
-      fetchReferralInfo,
-    ]
-  );
+
+      // Check if we have recent valid data for this code
+      const now = Date.now();
+      const isRecentData = now - lastUpdated < CACHE_DURATION;
+
+      if (referralCode === code && isValid && isRecentData) {
+        // Use cached data
+        markCodeAsProcessed(code);
+        setIsLoading(false);
+        return;
+      }
+
+      // Fetch referrer details from API
+      const data = await fetchReferralInfo(code);
+
+      if (data.success) {
+        handleReferralSuccess(data, code);
+      } else {
+        handleReferralFailure(code, data.error);
+      }
+    } catch (error) {
+      const retryCount = retryCountRef.current.get(code) || 0;
+      retryCountRef.current.set(code, retryCount + 1);
+
+      let errorMessage = "Failed to validate referral code";
+
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          errorMessage = "Request timed out. Please check your connection.";
+        } else if (error.message.includes("network")) {
+          errorMessage = "Network error. Please try again.";
+        }
+      }
+
+      handleReferralFailure(code, errorMessage);
+
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Error handling referral code:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [
+    status,
+    isLoading,
+    isCodeProcessed,
+    isCodeFailed,
+    setReferralCode,
+    referralCode,
+    isValid,
+    lastUpdated,
+    handleReferralSuccess,
+    handleReferralFailure,
+    markCodeAsProcessed,
+    fetchReferralInfo,
+  ]);
 
   // Process URL referral code when available
   useEffect(() => {
-    if (urlReferralCode && isClient) {
-      processReferralCode(urlReferralCode);
+    if (isClient) {
+      processReferralCode();
     }
-  }, [urlReferralCode, isClient, processReferralCode]);
+  }, [isClient, processReferralCode, referralCode]);
 
   // Handle wallet-specific logic
 
