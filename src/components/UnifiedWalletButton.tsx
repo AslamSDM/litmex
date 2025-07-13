@@ -14,6 +14,7 @@ import { modal } from "@/components/providers/wallet-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { SolanaWalletPrompt } from "./SolanaWalletPrompt";
 import { getCookie, setCookie } from "@/lib/cookies";
+import { useReferralStore } from "./hooks/useReferralHandling";
 
 interface UnifiedWalletButtonProps {
   variant?: "default" | "ghost" | "outline" | "secondary" | "minimal";
@@ -38,17 +39,17 @@ export function UnifiedWalletButton({
   const [showMobileWalletPrompt, setShowMobileWalletPrompt] = useState(false);
   const [connectionTimeout, setConnectionTimeout] =
     useState<NodeJS.Timeout | null>(null);
+  const { wallet: WalletBrowser, setWallet, referralCode } = useReferralStore();
+  console.log(referralCode, WalletBrowser);
   const urlParams = new URLSearchParams(window.location.search);
   const wallet = urlParams.get("wallet");
-  const isWallet = getCookie("wallet") === "true";
+  const isWallet = WalletBrowser || wallet === "true";
   const referrerCode = urlParams.get("referral") || getCookie("referralCode");
+
   useEffect(() => {
-    if (isWallet) return;
-    // If a specific wallet is requested via URL, handle it
-    if (wallet) {
-      setCookie("wallet", "true");
-    }
-  }, [wallet]);
+    if (WalletBrowser) return;
+    if (wallet === "true") setWallet(true);
+  }, [wallet, setWallet, WalletBrowser]);
 
   // Mobile detection
   const isMobile = () => {
