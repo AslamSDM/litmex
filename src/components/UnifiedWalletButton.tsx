@@ -43,7 +43,7 @@ export function UnifiedWalletButton({
   const urlParams = new URLSearchParams(window.location.search);
   const wallet = urlParams.get("wallet");
   const isWallet = WalletBrowser || wallet === "true";
-  const referrerCode = urlParams.get("referral") || getCookie("referralCode");
+  const referrerCode = referralCode;
 
   useEffect(() => {
     if (WalletBrowser) return;
