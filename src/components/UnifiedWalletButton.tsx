@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -20,12 +20,14 @@ interface UnifiedWalletButtonProps {
   variant?: "default" | "ghost" | "outline" | "secondary" | "minimal";
   size?: "default" | "sm" | "lg";
   className?: string;
+  showSol?: boolean; // This prop is not used in the current implementation but can be used for future enhancements
 }
 
 export function UnifiedWalletButton({
   variant = "outline",
   size = "sm",
   className = "",
+  showSol = false, // This prop is not used in the current implementation but can be used for future enhancements
 }: UnifiedWalletButtonProps) {
   const { data: session, status, update } = useSession();
   const { isConnected, address } = useAppKitAccount();
@@ -73,11 +75,17 @@ export function UnifiedWalletButton({
   };
 
   // Determine wallet state
-  const isAuthenticated = status === "authenticated";
-  const hasAddress = !!address;
-  const hasSolanaAddress = !!session?.user?.solanaAddress;
-  const hasEvmAddress = !!session?.user?.evmAddress;
-  const isOnBscNetwork = chainId === 56;
+  const isAuthenticated = useMemo(() => status === "authenticated", [status]);
+  const hasAddress = useMemo(() => !!address, [address]);
+  const hasSolanaAddress = useMemo(
+    () => !!session?.user?.solanaAddress,
+    [session?.user?.solanaAddress]
+  );
+  const hasEvmAddress = useMemo(
+    () => !!session?.user?.evmAddress,
+    [session?.user?.evmAddress]
+  );
+  const isOnBscNetwork = useMemo(() => chainId === 56, [chainId]);
 
   const needsSolanaVerification = isAuthenticated && !hasSolanaAddress;
 
@@ -104,28 +112,21 @@ export function UnifiedWalletButton({
     isAuthenticated,
     isModalOpened,
   ]);
-
+  console.log(
+    isAuthenticated,
+    needsSolanaVerification,
+    showSolanaVerificationModal
+  );
   // Effect to prompt for verification when wallet is connected but not verified
   useEffect(() => {
     // Auto-show verification when wallet connected but not verified
     if (isAuthenticated) {
       // For Solana verification
-      if (needsSolanaVerification && !showSolanaVerificationModal) {
-        const timerSolana = setTimeout(() => {
-          setShowSolanaVerificationModal(true);
-        }, 1000);
-        return () => clearTimeout(timerSolana);
+      if (needsSolanaVerification) {
+        setShowSolanaVerificationModal(true);
       }
     }
-  }, [
-    isAuthenticated,
-    isConnected,
-    hasAddress,
-    needsSolanaVerification,
-    hasSolanaAddress,
-    hasEvmAddress,
-    showSolanaVerificationModal,
-  ]);
+  }, [isAuthenticated, needsSolanaVerification, status]);
 
   // Effect to monitor connection status and show Trust Wallet prompt
   useEffect(() => {
@@ -302,7 +303,6 @@ export function UnifiedWalletButton({
           </span>
         )}
       </Button>
-
       {/* Mobile Wallet Selection Modal */}
       <Dialog
         open={showMobileWalletPrompt}
@@ -407,30 +407,23 @@ export function UnifiedWalletButton({
           </div>
         </DialogContent>
       </Dialog>
-
       {/* Solana Wallet Verification Modal */}
       <Dialog
-        open={showSolanaVerificationModal}
-        onOpenChange={handleSolanaVerificationModalChange}
+        open={showSolanaVerificationModal && showSol}
+        onOpenChange={(open) => setShowSolanaVerificationModal(open)}
       >
         <DialogContent className="bg-black border border-white/10 text-white p-0 overflow-hidden">
-          <DialogHeader className="p-4 border-b border-white/10">
-            <DialogTitle className="text-lg font-medium">
-              Verify Your Solana Wallet
-            </DialogTitle>
-          </DialogHeader>
           <div className="p-0">
             <SolanaWalletPrompt
-              isModal={showSolanaVerificationModal}
+              isModal={true}
               onVerificationComplete={() =>
                 setShowSolanaVerificationModal(false)
               }
-              noDismiss={true} // Prevent dismissing the modal until verification is complete
+              noDismiss={true}
             />
           </div>
         </DialogContent>
       </Dialog>
-
       {/* BSC Wallet Verification Modal */}
       {/* <Dialog
         open={showBSCVerificationModal}

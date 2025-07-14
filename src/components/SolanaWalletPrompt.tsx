@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import { createSignMessage } from "@/lib/wallet-auth";
 import bs58 from "bs58";
 import { AppKitStateShape } from "@/components/hooks/usePresale";
+import { Button } from "./ui/button";
+import { useReferralStore } from "./hooks/useReferralHandling";
+import { UnifiedWalletButton } from "./UnifiedWalletButton";
 
 // Define error types for better handling
 const ERROR_TYPES = {
@@ -45,7 +48,18 @@ export function SolanaWalletPrompt({
   const [hasInitiatedSignRequest, setHasInitiatedSignRequest] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [showMobileWalletPrompt, setShowMobileWalletPrompt] = useState(false);
   const router = useRouter();
+
+  // Get referral code for wallet browser deep links
+  const { wallet: WalletBrowser, setWallet, referralCode } = useReferralStore();
+  const urlParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+  const wallet = urlParams?.get("wallet");
+  const isWallet = WalletBrowser || wallet === "true";
+  const referrerCode = referralCode;
 
   // AppKit hooks for wallet interaction
   const { isConnected, address } = useAppKitAccount();
@@ -54,8 +68,29 @@ export function SolanaWalletPrompt({
 
   const appKitState = useAppKitState() as AppKitStateShape;
 
+  useEffect(() => {
+    if (WalletBrowser) return;
+    if (wallet === "true" && setWallet) setWallet(true);
+  }, [wallet, setWallet, WalletBrowser]);
+
   // Check if user is on BSC network instead of Solana
   const isOnBscNetwork = chainId === 56;
+
+  // Mobile detection
+  const isMobile = () => {
+    if (typeof window === "undefined") return false;
+    return (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768
+    );
+  };
+
+  // Check if already in wallet browser
+  const isInWalletBrowser = () => {
+    if (typeof window === "undefined") return false;
+    return isWallet;
+  };
 
   useEffect(() => {
     // If it's a modal component, visibility is controlled by parent
@@ -293,6 +328,12 @@ export function SolanaWalletPrompt({
       setError(null);
       setErrorCode(null);
 
+      // On mobile, show wallet selection first unless already in wallet browser
+      if (isMobile() && !isInWalletBrowser()) {
+        setShowMobileWalletPrompt(true);
+        return;
+      }
+
       // Open the AppKit modal to connect wallet
       modal.open();
 
@@ -315,6 +356,40 @@ export function SolanaWalletPrompt({
       setHasInitiatedSignRequest(false);
       handleSignatureRequest();
     }
+  };
+
+  // Handle mobile wallet selection
+  const handleWalletSelection = (
+    walletType: "trustwallet" | "metamask" | "phantom"
+  ) => {
+    const currentUrl = window.location.href;
+    let deepLink = "";
+
+    switch (walletType) {
+      case "trustwallet":
+        deepLink = `https://link.trustwallet.com/open_url?coin_id=20000714&url=${encodeURIComponent(currentUrl)}?wallet=true${referrerCode ? `&referral=${referrerCode}` : ""}`;
+        break;
+      case "metamask":
+        deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?wallet=true${referrerCode ? `&referral=${referrerCode}` : ""}`;
+        break;
+      case "phantom":
+        deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=https%3A%2F%2F${window.location.host}&wallet=true${referrerCode ? `&referral=${referrerCode}` : ""}`;
+        break;
+    }
+
+    // Try to open the deeplink
+    window.open(deepLink, "_blank");
+
+    // Close the modal after a delay
+    setTimeout(() => {
+      setShowMobileWalletPrompt(false);
+    }, 1000);
+  };
+
+  // Proceed with connection if already in wallet browser
+  const handleProceedToConnect = () => {
+    setShowMobileWalletPrompt(false);
+    modal.open();
   };
 
   // Function to dismiss the wallet prompt
@@ -524,7 +599,7 @@ export function SolanaWalletPrompt({
               onClick={
                 isConnected
                   ? chainId == 1
-                    ? () => {}
+                    ? handleSwitchToSolana
                     : handleVerifyWallet
                   : handleConnectWallet
               }
@@ -582,7 +657,21 @@ export function SolanaWalletPrompt({
               ) : isConnected ? (
                 chainId == 1 ? (
                   <>
-                    <w3m-network-button />
+                    Switch Network
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="ml-1 inline-block h-4 w-4"
+                    >
+                      <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"></path>
+                    </svg>
                   </>
                 ) : (
                   <>
@@ -639,6 +728,97 @@ export function SolanaWalletPrompt({
           </button>
         )}
       </div>
+
+      {/* Mobile Wallet Selection Modal */}
+      {showMobileWalletPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-black border border-white/10 text-white max-w-md mx-4 rounded-xl p-6">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-center mb-2">
+                Choose Your Wallet
+              </h3>
+            </div>
+            <div className="space-y-4">
+              {isInWalletBrowser() ? (
+                <div className="text-center space-y-4">
+                  <p className="text-sm text-gray-300">
+                    You're already in a wallet browser! You can proceed to
+                    connect.
+                  </p>
+                  <Button
+                    onClick={handleProceedToConnect}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-2"
+                    >
+                      <path d="M19 7V4a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3" />
+                      <path d="M13 17h8m0 0-3-3m3 3-3 3" />
+                    </svg>
+                    Connect Wallet
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-300 text-center mb-4">
+                    Select a wallet to open and connect:
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={() => handleWalletSelection("phantom")}
+                      variant="outline"
+                      className="w-full h-14 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">P</span>
+                      </div>
+                      <span>Phantom Wallet</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleWalletSelection("trustwallet")}
+                      variant="outline"
+                      className="w-full h-14 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">T</span>
+                      </div>
+                      <span>Trust Wallet</span>
+                    </Button>
+                    <Button
+                      onClick={() => handleWalletSelection("metamask")}
+                      variant="outline"
+                      className="w-full h-14 border-white/20 bg-transparent hover:bg-white/5 text-white font-medium flex items-center justify-start px-4"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-sm">M</span>
+                      </div>
+                      <span>MetaMask</span>
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="mt-4">
+              <Button
+                onClick={() => setShowMobileWalletPrompt(false)}
+                variant="outline"
+                className="w-full border-white/20 text-gray-300 hover:bg-white/10"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

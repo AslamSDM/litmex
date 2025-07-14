@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -20,24 +20,22 @@ import { solana, bsc } from "@reown/appkit/networks";
 import { Button } from "./ui/button";
 import { UnifiedWalletButton } from "./UnifiedWalletButton";
 
-const navLinks = [
-  { href: "/presale", label: "Presale" },
-  // Removed profile link since we'll add it as an avatar
-];
+// Define constants outside of component to prevent recreation
+const navLinks = [{ href: "/presale", label: "Presale" }];
 
-// Network Selector Component
-const NetworkSelector = () => {
-  const { caipNetwork, chainId, switchNetwork } = useAppKitNetwork();
+// Memoized Network Selector Component to prevent unnecessary re-renders
+const NetworkSelector = memo(() => {
+  const { chainId, switchNetwork } = useAppKitNetwork();
   const [currentNetwork, setCurrentNetwork] = useState<"bsc" | "solana">("bsc");
 
-  // Update local network state based on chainId
+  // Update local network state based on chainId - only when chainId changes
   useEffect(() => {
-    if (chainId === "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp") {
-      setCurrentNetwork("solana");
-    } else {
-      setCurrentNetwork("bsc");
+    const newNetwork =
+      chainId === "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp" ? "solana" : "bsc";
+    if (currentNetwork !== newNetwork) {
+      setCurrentNetwork(newNetwork);
     }
-  }, [chainId]);
+  }, [chainId, currentNetwork]);
 
   const handleNetworkChange = (value: string) => {
     if (value === "bsc" || value === "solana") {
@@ -57,6 +55,37 @@ const NetworkSelector = () => {
       </SelectContent>
     </Select>
   );
+});
+
+NetworkSelector.displayName = "NetworkSelector";
+
+// Memoized avatar component
+const ProfileAvatar = memo(({ imageUrl }: { imageUrl?: string | null }) =>
+  imageUrl ? (
+    <Image
+      src={imageUrl || "/lit_logo.png"}
+      alt="Profile"
+      width={30}
+      height={30}
+      className="rounded-full"
+      priority={false}
+    />
+  ) : (
+    <User size={16} className="text-primary" />
+  )
+);
+
+ProfileAvatar.displayName = "ProfileAvatar";
+
+// Helper function to clear cookies - moved outside component
+const clearAllCookies = () => {
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+  }
 };
 
 export function Header() {
@@ -65,57 +94,57 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
 
-  // Handle scroll effect
+  // Optimized scroll handler with throttling
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Helper function to clear cookies
-  const clearAllCookies = () => {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i];
-      const eqPos = cookie.indexOf("=");
-      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-    }
-  };
 
   // Handle logout
   const handleLogout = async () => {
     try {
       await signOut({ redirect: false });
       toast.success("Successfully logged out");
-      clearAllCookies(); // Clear all cookies on logout
-      // Redirect to home page
+      clearAllCookies();
       window.location.href = "/";
     } catch (error) {
       toast.error("Failed to log out. Please try again.");
     }
   };
 
+  // Compute header classes once
+  const headerClasses = `fixed top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 backdrop-blur-lg bg-black/30 border border-white/10 rounded-xl sm:rounded-2xl ${
+    scrolled
+      ? "py-1.5 sm:py-2 w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] translate-y-0 shadow-lg"
+      : "py-2 sm:py-3 w-[97%] sm:w-[95%] md:w-[85%] lg:w-[75%] translate-y-2 sm:translate-y-4"
+  }`;
+
+  const isLoggedIn = Boolean(session?.user);
+
   return (
-    <header
-      className={`fixed top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 backdrop-blur-lg bg-black/30 border border-white/10 rounded-xl sm:rounded-2xl ${
-        scrolled
-          ? "py-1.5 sm:py-2 w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] translate-y-0 shadow-lg"
-          : "py-2 sm:py-3 w-[97%] sm:w-[95%] md:w-[85%] lg:w-[75%] translate-y-2 sm:translate-y-4"
-      }`}
-    >
+    <header className={headerClasses}>
       <div className="px-2 sm:px-4 md:px-8 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src={"/lit_logo.png"}
+            src="/lit_logo.png"
             alt="Litmex Logo"
             width={60}
             height={60}
             className="mr-2 w-[50px] min-w-[50px] h-auto sm:w-[60px] sm:min-w-[60px] md:w-[70px] md:min-w-[70px]"
             style={{ minHeight: "25px" }}
+            priority
           />
           <span className="text-white font-bold text-lg md:hidden">LITMEX</span>
         </Link>
@@ -143,32 +172,18 @@ export function Header() {
           ))}
           <div className="h-5 w-px bg-white/20" />
           <div className="flex items-center gap-3">
-            {/* <NetworkSelector /> */}
-
-            {session?.user ? (
+            {/* Auth-dependent UI elements */}
+            {isLoggedIn ? (
               <>
-                {/* Only show wallet button when logged in */}
-                <UnifiedWalletButton size="sm" />
+                <UnifiedWalletButton size="sm" showSol />
 
-                {/* Profile avatar */}
                 <Link
                   href="/profile"
                   className="relative flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 border border-primary/30 hover:border-primary transition-all"
                 >
-                  {session.user.image ? (
-                    <Image
-                      src={session.user.image || "/lit_logo.png"}
-                      alt="Profile"
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <User size={16} className="text-primary" />
-                  )}
+                  <ProfileAvatar imageUrl={session?.user?.image} />
                 </Link>
 
-                {/* Logout button */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -182,26 +197,23 @@ export function Header() {
                 </Button>
               </>
             ) : (
-              <>
-                {/* Login button when not logged in */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary/40 text-primary hover:bg-primary/10"
-                  onClick={() => signIn()}
-                >
-                  <LogIn size={16} className="mr-1.5" />
-                  Sign In
-                </Button>
-              </>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-primary/40 text-primary hover:bg-primary/10"
+                onClick={() => signIn()}
+              >
+                <LogIn size={16} className="mr-1.5" />
+                Sign In
+              </Button>
             )}
 
+            {/* Buy Now button - only show if not on presale page */}
             {pathname !== "/presale" && (
               <Link href="/presale" className="hidden lg:block">
                 <Button
                   size="sm"
                   className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-none group relative overflow-hidden"
-                  onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-primary to-[#8a63d2] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative z-10 flex items-center justify-center gap-1">
@@ -218,27 +230,26 @@ export function Header() {
 
         {/* Mobile Navigation Button */}
         <div className="md:hidden flex items-center space-x-2">
-          {session?.user ? (
+          {isLoggedIn ? (
             <>
-              {/* Profile link for mobile */}
               <Link
                 href="/profile"
                 className="relative flex items-center justify-center w-7 h-7 rounded-full bg-primary/20 border border-primary/30"
               >
-                {session.user.image ? (
+                {session?.user?.image ? (
                   <Image
-                    src={session.user.image || "/lit_logo.png"}
+                    src={session.user.image}
                     alt="Profile"
                     width={24}
                     height={24}
                     className="rounded-full"
+                    priority={false}
                   />
                 ) : (
                   <User size={14} className="text-primary" />
                 )}
               </Link>
 
-              {/* Logout button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -248,26 +259,23 @@ export function Header() {
                 <LogOut size={16} />
               </Button>
 
-              {/* Only show wallet button when logged in */}
               <UnifiedWalletButton size="sm" variant="minimal" />
             </>
           ) : (
-            <>
-              {/* Login button when not logged in */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-1.5 h-auto text-primary hover:bg-primary/10"
-                onClick={() => signIn()}
-              >
-                <LogIn size={16} />
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-1.5 h-auto text-primary hover:bg-primary/10"
+              onClick={() => signIn()}
+            >
+              <LogIn size={16} />
+            </Button>
           )}
 
           <button
             className="text-white focus:outline-none p-1.5"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -278,21 +286,9 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <motion.div
-        className="md:hidden"
-        initial="closed"
-        animate={mobileMenuOpen ? "open" : "closed"}
-        variants={{
-          open: { opacity: 1, height: "auto", display: "block" },
-          closed: {
-            opacity: 0,
-            height: 0,
-            transitionEnd: { display: "none" },
-          },
-        }}
-      >
-        <div className="mx-2 sm:mx-4 my-2 px-3 py-3 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10">
+      {/* Mobile Menu - using conditional rendering instead of animation to reduce memory usage */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mx-2 sm:mx-4 my-2 px-3 py-3 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10">
           <div className="flex flex-col space-y-3">
             {navLinks.map((link) => (
               <Link
@@ -309,7 +305,6 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Always show profile link in mobile menu */}
             <Link
               href="/profile"
               className={`text-sm font-medium px-3 py-1.5 transition-colors hover:bg-white/10 rounded flex items-center ${
@@ -324,14 +319,11 @@ export function Header() {
             </Link>
 
             <div className="pt-2 border-t border-primary/10">
-              {session?.user ? (
-                <>
-                  {/* Only show network selector when logged in */}
-                  <div className="flex items-center justify-between mb-3 mt-2">
-                    <span className="text-xs text-white/70">Network:</span>
-                    <NetworkSelector />
-                  </div>
-                </>
+              {isLoggedIn ? (
+                <div className="flex items-center justify-between mb-3 mt-2">
+                  <span className="text-xs text-white/70">Network:</span>
+                  <NetworkSelector />
+                </div>
               ) : (
                 <div className="mb-3 mt-2">
                   <Button
@@ -352,7 +344,6 @@ export function Header() {
                   className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-none group relative overflow-hidden"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-[#8a63d2] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative z-10 flex items-center justify-center gap-1">
                     Buy Now
                     <span className="inline-block group-hover:translate-x-1 transition-transform duration-300">
@@ -364,7 +355,7 @@ export function Header() {
             </div>
           </div>
         </div>
-      </motion.div>
+      )}
     </header>
   );
 }
