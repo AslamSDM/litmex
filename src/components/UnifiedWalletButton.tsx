@@ -40,7 +40,6 @@ export function UnifiedWalletButton({
   const [connectionTimeout, setConnectionTimeout] =
     useState<NodeJS.Timeout | null>(null);
   const { wallet: WalletBrowser, setWallet, referralCode } = useReferralStore();
-  console.log(referralCode, WalletBrowser);
   const urlParams = new URLSearchParams(window.location.search);
   const wallet = urlParams.get("wallet");
   const isWallet = WalletBrowser || wallet === "true";

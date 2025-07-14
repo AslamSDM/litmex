@@ -236,12 +236,12 @@ export default function useReferralHandling(): ReferralInfo {
     setReferralData,
     markCodeAsProcessed,
     markCodeAsFailed,
-    isCodeProcessed,
     isCodeFailed,
     resetFailedCodes,
     setWallet,
     wallet,
   } = useReferralStore();
+  console.log(referralCode, "Referral Code from store");
 
   // Initialize client-side detection
   useEffect(() => {
@@ -340,16 +340,67 @@ export default function useReferralHandling(): ReferralInfo {
   );
 
   // API call with retry logic
-  const fetchReferralInfo = useCallback(
-    async (code: string, attempt: number = 1): Promise<ReferralResponse> => {
-      const controller = new AbortController();
+  const fetchReferralInfo = async (
+    code: string,
+    attempt: number = 1
+  ): Promise<ReferralResponse> => {
+    try {
+      console.log("Fetching referral info for code:", code);
+      const response = await fetch(
+        `/api/referral/info?code=${encodeURIComponent(code)}`,
+        {
+          headers: {
+            "Cache-Control": "max-age=3600",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // Set timeout for mobile networks
-      timeoutRef.current = setTimeout(() => {
-        controller.abort();
-      }, API_TIMEOUT);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
+      const data: ReferralResponse = await response.json();
+      return data;
+    } catch (error) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Retry logic for network errors
+      if (
+        attempt < MAX_RETRY_ATTEMPTS &&
+        error instanceof Error &&
+        (error.name === "AbortError" || error.message.includes("network"))
+      ) {
+        await delay(RETRY_DELAY * attempt); // Exponential backoff
+        return fetchReferralInfo(code, attempt + 1);
+      }
+
+      throw error;
+    }
+  };
+
+  // Process referral code with enhanced error handling
+  const processReferralCode = useCallback(
+    async (code: string) => {
+      if (!code || isLoading) return;
+      console.log("Processing referral code:", code, "Loading:", isLoading);
+
+      setIsLoading(true);
+      setError(null);
       try {
+        // Store the code
+        setReferralCode(code);
+
+        // Wait for authentication
+        console.log(status);
+        if (status !== "authenticated") {
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("Fetching referral info for code:", code);
         const response = await fetch(
           `/api/referral/info?code=${encodeURIComponent(code)}`,
           {
@@ -357,137 +408,65 @@ export default function useReferralHandling(): ReferralInfo {
               "Cache-Control": "max-age=3600",
               "Content-Type": "application/json",
             },
-            signal: controller.signal,
           }
         );
-
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data: ReferralResponse = await response.json();
-        return data;
+        // Check if we have recent valid data for this code
+
+        // Fetch referrer details from API
+
+        if (data.success) {
+          handleReferralSuccess(data, code);
+        } else {
+          handleReferralFailure(code, data.error);
+        }
       } catch (error) {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
+        const retryCount = retryCountRef.current.get(code) || 0;
+        retryCountRef.current.set(code, retryCount + 1);
+
+        let errorMessage = "Failed to validate referral code";
+
+        if (error instanceof Error) {
+          if (error.name === "AbortError") {
+            errorMessage = "Request timed out. Please check your connection.";
+          } else if (error.message.includes("network")) {
+            errorMessage = "Network error. Please try again.";
+          }
         }
 
-        // Retry logic for network errors
-        if (
-          attempt < MAX_RETRY_ATTEMPTS &&
-          error instanceof Error &&
-          (error.name === "AbortError" || error.message.includes("network"))
-        ) {
-          await delay(RETRY_DELAY * attempt); // Exponential backoff
-          return fetchReferralInfo(code, attempt + 1);
-        }
+        handleReferralFailure(code, errorMessage);
 
-        throw error;
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Error handling referral code:", error);
+        }
+      } finally {
+        setIsLoading(false);
       }
     },
-    []
+    [
+      status,
+      isLoading,
+      isCodeFailed,
+      setReferralCode,
+      referralCode,
+      isValid,
+      lastUpdated,
+      handleReferralSuccess,
+      handleReferralFailure,
+      markCodeAsProcessed,
+      fetchReferralInfo,
+    ]
   );
-
-  // Process referral code with enhanced error handling
-  const processReferralCode = useCallback(async () => {
-    const code = getCurrentReferralCode();
-    console.log("Processing referral code:", code, "Loading:", isLoading);
-    if (!code || isLoading) return;
-
-    // Skip if already processed or failed recently
-    console.log(
-      "Checking if code is processed or failed:",
-      isCodeProcessed(code)
-    );
-
-    // Check if code failed recently (implement basic rate limiting)
-    if (isCodeFailed(code)) {
-      const retryCount = retryCountRef.current.get(code) || 0;
-      if (retryCount >= MAX_RETRY_ATTEMPTS) {
-        setError("Referral code validation failed. Please try again later.");
-        return;
-      }
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Store the code
-      setReferralCode(code);
-
-      // Wait for authentication
-      if (status !== "authenticated") {
-        setIsLoading(false);
-        return;
-      }
-
-      // Check if we have recent valid data for this code
-      const now = Date.now();
-      const isRecentData = now - lastUpdated < CACHE_DURATION;
-
-      if (referralCode === code && isValid && isRecentData) {
-        // Use cached data
-        markCodeAsProcessed(code);
-        setIsLoading(false);
-        return;
-      }
-
-      // Fetch referrer details from API
-      const data = await fetchReferralInfo(code);
-
-      if (data.success) {
-        handleReferralSuccess(data, code);
-      } else {
-        handleReferralFailure(code, data.error);
-      }
-    } catch (error) {
-      const retryCount = retryCountRef.current.get(code) || 0;
-      retryCountRef.current.set(code, retryCount + 1);
-
-      let errorMessage = "Failed to validate referral code";
-
-      if (error instanceof Error) {
-        if (error.name === "AbortError") {
-          errorMessage = "Request timed out. Please check your connection.";
-        } else if (error.message.includes("network")) {
-          errorMessage = "Network error. Please try again.";
-        }
-      }
-
-      handleReferralFailure(code, errorMessage);
-
-      if (process.env.NODE_ENV !== "production") {
-        console.error("Error handling referral code:", error);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    status,
-    isLoading,
-    isCodeProcessed,
-    isCodeFailed,
-    setReferralCode,
-    referralCode,
-    isValid,
-    lastUpdated,
-    handleReferralSuccess,
-    handleReferralFailure,
-    markCodeAsProcessed,
-    fetchReferralInfo,
-  ]);
 
   // Process URL referral code when available
   useEffect(() => {
-    if (isClient) {
-      processReferralCode();
-    }
-  }, [isClient, processReferralCode, referralCode]);
+    const code = getCurrentReferralCode();
+    if (!code) return;
+    processReferralCode(code);
+  }, [isClient, status]);
 
   // Handle wallet-specific logic
 
