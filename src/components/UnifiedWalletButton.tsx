@@ -79,10 +79,7 @@ export function UnifiedWalletButton({
   const hasEvmAddress = !!session?.user?.evmAddress;
   const isOnBscNetwork = chainId === 56;
 
-  const needsSolanaVerification =
-    isAuthenticated && hasAddress && !hasSolanaAddress && !isOnBscNetwork;
-  const needsBSCVerification =
-    isAuthenticated && hasAddress && !hasEvmAddress && isOnBscNetwork;
+  const needsSolanaVerification = isAuthenticated && !hasSolanaAddress;
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -94,19 +91,9 @@ export function UnifiedWalletButton({
   useEffect(() => {
     if (appKitState?.open) {
       setIsModalOpened(true);
-    } else if (isModalOpened && !appKitState?.open && isConnected) {
+    } else if (isModalOpened && !appKitState?.open) {
       // AppKit modal was closed and wallet is now connected but may need verification
       setIsModalOpened(false);
-
-      if (isAuthenticated) {
-        // Wait a moment for connection to settle before showing verification modal
-        setTimeout(() => {
-          // Show the appropriate verification modal based on the network
-          if (!hasSolanaAddress) {
-            setShowSolanaVerificationModal(true);
-          }
-        }, 500);
-      }
     } else if (!appKitState?.open) {
       setIsModalOpened(false);
     }
@@ -121,29 +108,13 @@ export function UnifiedWalletButton({
   // Effect to prompt for verification when wallet is connected but not verified
   useEffect(() => {
     // Auto-show verification when wallet connected but not verified
-    if (isAuthenticated && isConnected && hasAddress && !appKitState?.open) {
+    if (isAuthenticated) {
       // For Solana verification
-      if (
-        needsSolanaVerification &&
-        !showSolanaVerificationModal &&
-        !localStorage.getItem("skipWalletPrompt")
-      ) {
+      if (needsSolanaVerification && !showSolanaVerificationModal) {
         const timerSolana = setTimeout(() => {
           setShowSolanaVerificationModal(true);
         }, 1000);
         return () => clearTimeout(timerSolana);
-      }
-
-      // For BSC verification
-      if (
-        needsBSCVerification &&
-        !showBSCVerificationModal &&
-        !localStorage.getItem("skipBSCWalletPrompt")
-      ) {
-        const timerBSC = setTimeout(() => {
-          setShowBSCVerificationModal(true);
-        }, 1000);
-        return () => clearTimeout(timerBSC);
       }
     }
   }, [
@@ -151,12 +122,9 @@ export function UnifiedWalletButton({
     isConnected,
     hasAddress,
     needsSolanaVerification,
-    needsBSCVerification,
     hasSolanaAddress,
     hasEvmAddress,
     showSolanaVerificationModal,
-    showBSCVerificationModal,
-    appKitState?.open,
   ]);
 
   // Effect to monitor connection status and show Trust Wallet prompt
@@ -195,8 +163,8 @@ export function UnifiedWalletButton({
 
   const handleVerifyWallet = () => {
     // Remove any previously set skip flags before showing the modal
-    localStorage.removeItem("skipWalletPrompt");
-    localStorage.removeItem("skipBSCWalletPrompt");
+    setCookie("skipSolanaVerification", "false");
+    setCookie("skipBSCVerification", "false");
 
     // Show appropriate verification modal based on the network
     if (isOnBscNetwork) {
@@ -210,15 +178,6 @@ export function UnifiedWalletButton({
   const handleSolanaVerificationModalChange = (isOpen: boolean) => {
     setShowSolanaVerificationModal(isOpen);
     if (!isOpen && hasSolanaAddress !== !!session?.user?.solanaAddress) {
-      // If modal was closed and the verification status might have changed, refresh the session
-      update();
-    }
-  };
-
-  // Handle BSC modal close and refresh session if needed
-  const handleBSCVerificationModalChange = (isOpen: boolean) => {
-    setShowBSCVerificationModal(isOpen);
-    if (!isOpen && hasEvmAddress !== !!session?.user?.evmAddress) {
       // If modal was closed and the verification status might have changed, refresh the session
       update();
     }
