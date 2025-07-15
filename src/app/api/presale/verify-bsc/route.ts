@@ -270,6 +270,7 @@ export async function POST(req: NextRequest) {
         lmxTokensAllocated: formatEther(BigInt(tokenAmount)),
         pricePerLmxInUsdt: LMX_PRICE_USD,
         network: "BSC",
+        roundId: "presale",
         status: "COMPLETED",
         paymentCurrency: "BNB",
         referralBonusPaid: referralPaid,

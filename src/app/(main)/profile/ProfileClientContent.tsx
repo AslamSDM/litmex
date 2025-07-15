@@ -23,6 +23,7 @@ import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ReferralCard from "@/components/ReferralCard";
+import ReferralBalanceDisplay from "@/components/ReferralBalanceDisplay";
 import TrumpBalanceCard from "@/components/TrumpBalanceCard";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 
@@ -816,6 +817,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         paymentStats={userData.referrals.paymentStats}
                         serverRenderedStats={userData.referrals.referralStats}
                       />
+
+                      {/* 5-Level Referral Balance Display */}
+                      <div className="mt-6">
+                        <ReferralBalanceDisplay trumpPrice={8} />
+                      </div>
 
                       {/* Referrals Table with Emails and Joined Dates */}
                       <div className="mt-6">

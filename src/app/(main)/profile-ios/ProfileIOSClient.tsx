@@ -8,6 +8,7 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { generateReferralUrl } from "@/lib/referral";
 import { Button } from "@/components/ui/button";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
+import ReferralBalanceDisplay from "@/components/ReferralBalanceDisplay";
 
 interface UserData {
   balance: number;
@@ -259,6 +260,11 @@ export default function ProfileIOSClient({
                 <p className="text-xs text-white/50 text-center">
                   Share this link to earn rewards when others make purchases
                 </p>
+              </div>
+
+              {/* 5-Level Referral Balance Display */}
+              <div className="mb-5">
+                <ReferralBalanceDisplay trumpPrice={trumpPrice} />
               </div>
             </>
           )}

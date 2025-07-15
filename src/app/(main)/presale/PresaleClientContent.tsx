@@ -29,6 +29,7 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 import { LMX_PRICE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
+import ReferralSystem from "@/components/ReferralLevel";
 
 // Tokenomics data
 const tokenomicsData = [
@@ -45,7 +46,7 @@ const tokenomicsData = [
 // Presale phases
 const presalePhases = [
   {
-    name: "Seed round",
+    name: "Presale",
     price: "0.06 USD",
     bonus: "+30%",
     status: "Active",
@@ -151,7 +152,7 @@ const FaqAccordion = () => {
     {
       question: "What are the benefits of buying during presale?",
       answer:
-        "Seed Round investors receive tokens at a discounted price compared to the public launch. You&apos;ll also receive bonuses based on the current phase and will have early access to platform features and exclusive VIP benefits.",
+        "Presale investors receive tokens at a discounted price compared to the public launch. You&apos;ll also receive bonuses based on the current phase and will have early access to platform features and exclusive VIP benefits.",
       delay: 300,
     },
     {
@@ -332,10 +333,10 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
             style={{ maxWidth: "100%", margin: "0 auto" }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
-              <span className="text-primary">LITMEX Token Seed Round</span>
+              <span className="text-primary">LITMEX Token Presale</span>
             </h1>
             <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-4">
-              Litmex seed round is now live Building Gamblifi for autonomous
+              Litmex Presale is now live Building Gamblifi for autonomous
               onchain AI gambling . Join early as we reshape betting
             </p>
           </motion.div>
@@ -573,10 +574,10 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               style={{ maxWidth: "100%", margin: "0 auto" }}
             >
               <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
-                <span className="text-primary">LITMEX Token Seed Round</span>
+                <span className="text-primary">LITMEX Token Presale</span>
               </h1>
               <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-4">
-                Litmex seed round is now live Building Gamblifi for autonomous
+                Litmex Presale is now live Building Gamblifi for autonomous
                 onchain AI gambling . Join early as we reshape betting
               </p>
             </motion.div>
@@ -614,7 +615,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm opacity-80">
-                  You can now participate in the Seed Round
+                  You can now participate in the Presale
                 </p>
               </motion.div>
             )}
@@ -1227,6 +1228,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                   </div>
                 </div>
               </div>
+              <ReferralSystem />
 
               <p className="text-base sm:text-lg bg-black/30 p-3 rounded-lg border border-primary/10">
                 Share your unique referral link and earn Trump Tokens on every
