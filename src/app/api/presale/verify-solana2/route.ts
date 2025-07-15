@@ -370,6 +370,7 @@ export async function POST(req: NextRequest) {
         transactionSignature: signature,
         referralBonusPaid: referralPaid,
         status: "COMPLETED",
+        roundId: "presale",
         transactionId: existingTransactionRecord.id,
         referraltxnId: referralTxn?.id || null,
       },

@@ -453,6 +453,7 @@ export async function POST(req: NextRequest) {
         lmxTokensAllocated: tokenAmount,
         pricePerLmxInUsdt: LMX_PRICE_USD,
         transactionSignature: signature,
+        roundId: "presale",
         referralBonusPaid: referralPaid,
         status: "COMPLETED",
         transactionId: existingTransactionRecord.id,
