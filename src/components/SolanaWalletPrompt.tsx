@@ -60,7 +60,6 @@ export function SolanaWalletPrompt({
   const wallet = urlParams?.get("wallet");
   const isWallet = WalletBrowser || wallet === "true";
   const referrerCode = referralCode;
-
   // AppKit hooks for wallet interaction
   const { isConnected, address } = useAppKitAccount();
   const { caipNetwork, chainId } = useAppKitNetwork();
@@ -739,7 +738,7 @@ export function SolanaWalletPrompt({
               </h3>
             </div>
             <div className="space-y-4">
-              {isInWalletBrowser() ? (
+              {!isInWalletBrowser() ? (
                 <div className="text-center space-y-4">
                   <p className="text-sm text-gray-300">
                     You're already in a wallet browser! You can proceed to
