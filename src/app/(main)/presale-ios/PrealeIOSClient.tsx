@@ -23,6 +23,7 @@ import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
 import { Footer } from "@/components/Footer";
+import ReferralSystem from "@/components/ReferralLevel";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -679,6 +680,9 @@ export default function SimplePresalePage(cryptoPrices: {
                   <span className="text-amber-400 font-medium">Unlimited</span>
                 </div>
               </div>
+            </div>
+            <div className="mt-12 mb-8">
+              <ReferralSystem />
             </div>
             <div className="mt-12">
               <h3 className="text-lg sm:text-xl font-bold text-primary mb-4 flex items-center">

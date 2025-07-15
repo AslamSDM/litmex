@@ -60,19 +60,19 @@ const ReferralSystem = () => {
     {
       level: 3,
       title: "Level 3",
-      description: "Third level connections",
+      description: "Third level referrals",
       percentage: 15,
     },
     {
       level: 4,
       title: "Level 4",
-      description: "Fourth level connections",
+      description: "Fourth level referrals",
       percentage: 15,
     },
     {
       level: 5,
       title: "Level 5",
-      description: "Fifth level connections",
+      description: "Fifth level referrals",
       percentage: 15,
     },
   ];
