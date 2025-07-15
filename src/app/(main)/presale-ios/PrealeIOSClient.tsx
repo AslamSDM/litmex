@@ -23,6 +23,7 @@ import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
 import { Footer } from "@/components/Footer";
+import ReferralSystem from "@/components/ReferralLevel";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -407,11 +408,11 @@ export default function SimplePresalePage(cryptoPrices: {
         </header>
         <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen  overflow-hidden">
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
-            <span className="text-primary">LITMEX Token Seed Round</span>
+            <span className="text-primary">LITMEX Token Presale</span>
           </h1>
           <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-4">
-            Litmex seed round is now live Building Gamblifi for autonomous
-            onchain AI gambling . Join early as we reshape betting
+            Litmex Presale is now live Building Gamblifi for autonomous onchain
+            AI gambling . Join early as we reshape betting
           </p>
           <div className="w-full max-w-md bg-black/30 backdrop-blur-md rounded-xl p-6 border border-primary/10">
             {/* Header */}
@@ -679,6 +680,9 @@ export default function SimplePresalePage(cryptoPrices: {
                   <span className="text-amber-400 font-medium">Unlimited</span>
                 </div>
               </div>
+            </div>
+            <div className="mt-12 mb-8">
+              <ReferralSystem />
             </div>
             <div className="mt-12">
               <h3 className="text-lg sm:text-xl font-bold text-primary mb-4 flex items-center">

@@ -410,6 +410,8 @@ export async function POST(req: NextRequest) {
         pricePerLmxInUsdt: LMX_PRICE_USD,
         network: "BSC",
         status: "COMPLETED",
+        roundId: "presale",
+
         paymentCurrency: "USDT",
         referralBonusPaid: referralPaid,
         referraltxnId: referralTxn?.id || null,

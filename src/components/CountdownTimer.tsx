@@ -63,7 +63,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
     <div className={`${className}`}>
       <div className="flex items-center mb-4">
         <TimerIcon className="text-primary w-5 h-5 mr-2" />
-        <h3 className="text-xl font-medium">Seed Round Ends In</h3>
+        <h3 className="text-xl font-medium">Presale Ends In</h3>
       </div>
 
       <div className="flex justify-between gap-2 md:gap-4">

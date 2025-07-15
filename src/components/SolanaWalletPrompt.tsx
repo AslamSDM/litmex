@@ -769,9 +769,6 @@ export function SolanaWalletPrompt({
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-gray-300 text-center mb-4">
-                    Select a wallet to open and connect:
-                  </p>
                   <div className="flex flex-col gap-3">
                     <Button
                       onClick={() => handleWalletSelection("phantom")}

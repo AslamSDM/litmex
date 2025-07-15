@@ -23,6 +23,7 @@ import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ReferralCard from "@/components/ReferralCard";
+import ReferralBalanceDisplay from "@/components/ReferralBalanceDisplay";
 import TrumpBalanceCard from "@/components/TrumpBalanceCard";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 
@@ -205,7 +206,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
   const handleDisconnect = () => {
     modal.disconnect();
   };
-  console.log(session);
   // Update URL when tab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -217,7 +217,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
       window.history.pushState({}, "", url);
     }
   };
-  console.log(userData.referrals.purchases);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -237,7 +236,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
       transition: { duration: isLowMemoryDevice ? 0.3 : 0.5 },
     },
   };
-  console.log(userData);
   return (
     <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
       {/* Optimized background for iOS devices */}
@@ -816,6 +814,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         paymentStats={userData.referrals.paymentStats}
                         serverRenderedStats={userData.referrals.referralStats}
                       />
+
+                      {/* 5-Level Referral Balance Display */}
+                      <div className="mt-6">
+                        <ReferralBalanceDisplay trumpPrice={8} />
+                      </div>
 
                       {/* Referrals Table with Emails and Joined Dates */}
                       <div className="mt-6">
