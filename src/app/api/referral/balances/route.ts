@@ -76,8 +76,7 @@ async function getReferralsAtLevel(
 // Calculate earnings for a set of referrals
 async function calculateLevelEarnings(
   referralIds: string[],
-  level: number,
-  trumpPrice: number = 8
+  level: number
 ): Promise<{
   totalEarnings: number;
   totalEarningsUsd: number;
@@ -117,13 +116,14 @@ async function calculateLevelEarnings(
       },
     },
   });
-
+  console.log("Referrals with purchases:", referralsWithPurchases);
   let totalEarnings = 0;
   let totalEarningsUsd = 0;
 
   const referrals = referralsWithPurchases.map((referral) => {
     // Calculate total purchase amount for this referral
     let totalPurchaseAmount = 0;
+    let bonusEarnedUSD = 0;
     let bonusEarned = 0;
 
     referral.purchases.forEach((purchase) => {
@@ -132,16 +132,18 @@ async function calculateLevelEarnings(
         purchase.pricePerLmxInUsdt?.toString() || "0"
       );
       const purchaseAmountUsd = lmxAmount * pricePerLmx;
+      const purchaseAmount = lmxAmount;
 
       totalPurchaseAmount += purchaseAmountUsd;
 
       // Calculate bonus earned (15% of purchase in LMX tokens)
       const bonusInUsd = purchaseAmountUsd * referralBonusPercentage;
-      bonusEarned += bonusInUsd;
+      bonusEarnedUSD += bonusInUsd;
+      bonusEarned += purchaseAmount * referralBonusPercentage;
     });
 
-    totalEarnings += bonusEarned / trumpPrice; // Convert to TRUMP tokens
-    totalEarningsUsd += bonusEarned;
+    totalEarnings += bonusEarned;
+    totalEarningsUsd += bonusEarnedUSD;
 
     return {
       id: referral.id,
@@ -150,7 +152,7 @@ async function calculateLevelEarnings(
       createdAt: referral.createdAt.toISOString(),
       totalPurchases: referral.purchases.length,
       totalPurchaseAmount,
-      bonusEarned: bonusEarned / trumpPrice, // In TRUMP tokens
+      bonusEarned: bonusEarned,
     };
   });
 
@@ -184,9 +186,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Get current token price (defaulting to 8 if not available)
-    const trumpPrice = 8; // This could be fetched from your price API
-
     // Get referrals at each level (1-5)
     const allLevelReferrals = await getReferralsAtLevel([userId], 1, 5);
 
@@ -200,11 +199,7 @@ export async function GET(req: NextRequest) {
       const referralIds = allLevelReferrals[level] || [];
       totalReferrals += referralIds.length;
 
-      const levelEarnings = await calculateLevelEarnings(
-        referralIds,
-        level,
-        trumpPrice
-      );
+      const levelEarnings = await calculateLevelEarnings(referralIds, level);
 
       totalEarnings += levelEarnings.totalEarnings;
       totalEarningsUsd += levelEarnings.totalEarningsUsd;
