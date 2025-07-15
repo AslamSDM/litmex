@@ -19,7 +19,7 @@ export const USDT_SPL_TOKEN_ADDRESS =
 // BSC USDT Token Address (for mainnet)
 export const BSC_USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // BSC USDT (Binance-Peg)
 
-export const LMX_PRICE = 0.014;
+export const LMX_PRICE = 0.022;
 export const MIN_BUY = 2;
 
 // Network and Currency Icons
