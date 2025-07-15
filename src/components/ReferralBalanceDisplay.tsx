@@ -48,49 +48,19 @@ interface ReferralBalanceData {
 
 const ReferralBalanceDisplay = ({
   trumpPrice = 8,
+  balanceData,
+  loadingBalance = false,
 }: {
   trumpPrice?: number;
+  balanceData?: ReferralBalanceData | null;
+  loadingBalance?: boolean;
 }) => {
   const { data: session, status } = useSession();
-  const [balanceData, setBalanceData] = useState<ReferralBalanceData | null>(
-    null
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedLevels, setExpandedLevels] = useState<Set<number>>(
     new Set([1])
   );
-
-  useEffect(() => {
-    const fetchReferralBalances = async () => {
-      if (status !== "authenticated" || !session?.user?.id) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await fetch("/api/referral/balances");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch referral balances");
-        }
-
-        const data = await response.json();
-        setBalanceData(data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching referral balances:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load referral data"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReferralBalances();
-  }, [session, status]);
 
   const toggleLevel = (level: number) => {
     const newExpanded = new Set(expandedLevels);

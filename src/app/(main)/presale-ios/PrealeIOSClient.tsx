@@ -610,7 +610,7 @@ export default function SimplePresalePage(cryptoPrices: {
                       disabled={usdAmount < MIN_BUY}
                       className="w-full py-3 bg-gradient-to-br from-indigo-600/90 to-violet-700 hover:from-indigo-600 hover:to-violet-600 border-indigo-400/30 text-white font-medium transition-all duration-200 rounded-md"
                     >
-                      Buy ${tokenAmount.toFixed(2)} LMX
+                      Buy {tokenAmount.toFixed(2)} LMX
                     </button>
                   )}
 

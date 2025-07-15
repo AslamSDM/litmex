@@ -61,6 +61,45 @@ interface UserData {
   }[];
 }
 
+interface ReferralLevelData {
+  level: number;
+  title: string;
+  description: string;
+  percentage: number;
+  referralCount: number;
+  totalEarnings: number;
+  totalEarningsUsd: number;
+  referrals: {
+    id: string;
+    email?: string | null;
+    username?: string | null;
+    createdAt: string;
+    totalPurchases: number;
+    totalPurchaseAmount: number;
+    bonusEarned: number;
+  }[];
+}
+
+interface ReferralBalanceData {
+  userId: string;
+  referralCode: string;
+  totalEarnings: number;
+  totalEarningsUsd: number;
+  totalReferrals: number;
+  levels: ReferralLevelData[];
+  summary: {
+    completedPayments: number;
+    pendingPayments: number;
+    totalPaidAmount: number;
+    totalPendingAmount: number;
+  };
+}
+const formatCurrency = (amount: number, decimals: number = 2) => {
+  return amount.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+};
 interface ProfileIOSClientProps {
   initialUserData: UserData;
   trumpPrice?: number; // Optional prop for TRUMP price
@@ -80,7 +119,34 @@ export default function ProfileIOSClient({
   // Use server-rendered data instead of fetching it again
   const [userData] = useState<UserData>(initialUserData);
   const [isLoading, setIsLoading] = useState(false);
+  const [balanceData, setBalanceData] = useState<ReferralBalanceData | null>(
+    null
+  );
+  const [loadingBalance, setLoadingBalance] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchReferralBalances = async () => {
+      if (status !== "authenticated" || !session?.user?.id) {
+        setLoadingBalance(false);
+        return;
+      }
 
+      try {
+        setLoadingBalance(true);
+        const response = await fetch("/api/referral/balances");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch referral balances");
+        }
+
+        const data = await response.json();
+        setBalanceData(data);
+      } finally {
+        setLoadingBalance(false);
+      }
+    };
+
+    fetchReferralBalances();
+  }, [session, status]);
   // Generate referral URL when component mounts or referral code changes
   useEffect(() => {
     // Get referral code from server data or session
@@ -197,6 +263,19 @@ export default function ProfileIOSClient({
                   <Coins className="h-6 w-6 text-primary" />
                 </div>
               </div>
+              {!loadingBalance && (
+                <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-white/70 text-sm mb-1">Referral Bonus</p>
+                    <p className="text-2xl font-bold text-white">
+                      {balanceData?.totalEarnings} LMX
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-primary" />
+                  </div>
+                </div>
+              )}
 
               {/* Referral Stats Card */}
               <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5">
@@ -264,7 +343,11 @@ export default function ProfileIOSClient({
 
               {/* 5-Level Referral Balance Display */}
               <div className="mb-5">
-                <ReferralBalanceDisplay trumpPrice={trumpPrice} />
+                <ReferralBalanceDisplay
+                  trumpPrice={trumpPrice}
+                  balanceData={balanceData}
+                  loadingBalance={loadingBalance}
+                />
               </div>
             </>
           )}

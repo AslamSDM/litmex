@@ -2,23 +2,12 @@
 import React, { useState, Suspense, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import Image from "next/image";
-import {
-  User,
-  Wallet,
-  Shield,
-  Clock,
-  Award,
-  AlertCircle,
-  Share2,
-} from "lucide-react";
+import { User, Wallet, Shield, Clock, Award, AlertCircle } from "lucide-react";
 import { useAppKitState, useAppKitAccount } from "@reown/appkit/react";
 import { modal } from "@/components/providers/wallet-provider";
 import { AppKitStateShape, getWalletType } from "@/components/hooks/usePresale";
 import { Button } from "@/components/ui/button";
 import { UserActivityHistory } from "@/components/UserActivityHistory";
-import { UserBalanceDisplay } from "@/components/UserBalanceDisplay";
-import { RecentActivitySummary } from "@/components/RecentActivitySummary";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -88,6 +77,46 @@ interface ProfileClientContentProps {
   initialSession?: Session | null;
 }
 
+interface ReferralLevelData {
+  level: number;
+  title: string;
+  description: string;
+  percentage: number;
+  referralCount: number;
+  totalEarnings: number;
+  totalEarningsUsd: number;
+  referrals: {
+    id: string;
+    email?: string | null;
+    username?: string | null;
+    createdAt: string;
+    totalPurchases: number;
+    totalPurchaseAmount: number;
+    bonusEarned: number;
+  }[];
+}
+
+interface ReferralBalanceData {
+  userId: string;
+  referralCode: string;
+  totalEarnings: number;
+  totalEarningsUsd: number;
+  totalReferrals: number;
+  levels: ReferralLevelData[];
+  summary: {
+    completedPayments: number;
+    pendingPayments: number;
+    totalPaidAmount: number;
+    totalPendingAmount: number;
+  };
+}
+const formatCurrency = (amount: number, decimals: number = 2) => {
+  return amount.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+};
+
 const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
   userData = {
     purchases: [],
@@ -118,7 +147,34 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const [isLowMemoryDevice, setIsLowMemoryDevice] = useState<boolean>(false);
   const [isReducedMotion, setIsReducedMotion] = useState<boolean>(false);
+  const [balanceData, setBalanceData] = useState<ReferralBalanceData | null>(
+    null
+  );
+  const [loadingBalance, setLoadingBalance] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchReferralBalances = async () => {
+      if (sessionStatus !== "authenticated" || !session?.user?.id) {
+        setLoadingBalance(false);
+        return;
+      }
 
+      try {
+        setLoadingBalance(true);
+        const response = await fetch("/api/referral/balances");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch referral balances");
+        }
+
+        const data = await response.json();
+        setBalanceData(data);
+      } finally {
+        setLoadingBalance(false);
+      }
+    };
+
+    fetchReferralBalances();
+  }, [session, sessionStatus]);
   // Detect iOS devices and set memory optimization flags
   useEffect(() => {
     // Only run on client side
@@ -378,6 +434,37 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         }
                       >
                         {balance.toFixed(2)}
+                      </motion.span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-primary/20">
+                      <span className="text-white/70">ReferralBonus</span>
+                      <motion.span
+                        className="text-primary"
+                        animate={
+                          !isLowMemoryDevice
+                            ? {
+                                textShadow: [
+                                  "0 0 0px rgba(212,175,55,0)",
+                                  "0 0 5px rgba(212,175,55,0.5)",
+                                  "0 0 0px rgba(212,175,55,0)",
+                                ],
+                              }
+                            : {}
+                        }
+                        transition={
+                          !isLowMemoryDevice
+                            ? {
+                                duration: 2,
+                                repeat: Infinity,
+                                delay: 0.5,
+                              }
+                            : {}
+                        }
+                      >
+                        {loadingBalance
+                          ? ""
+                          : formatCurrency(balanceData?.totalEarnings ?? 0) +
+                            "LMX"}{" "}
                       </motion.span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-primary/20">
@@ -817,7 +904,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
 
                       {/* 5-Level Referral Balance Display */}
                       <div className="mt-6">
-                        <ReferralBalanceDisplay trumpPrice={8} />
+                        <ReferralBalanceDisplay
+                          trumpPrice={8}
+                          balanceData={balanceData}
+                          loadingBalance={loadingBalance}
+                        />
                       </div>
 
                       {/* Referrals Table with Emails and Joined Dates */}
