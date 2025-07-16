@@ -135,6 +135,7 @@ export function UnifiedWalletButton({
   );
   // Effect to prompt for verification when wallet is connected but not verified
   useEffect(() => {
+    if (!isConnected) return;
     // Auto-show verification when wallet connected but not verified
     if (isAuthenticated) {
       // For Solana verification
@@ -142,7 +143,7 @@ export function UnifiedWalletButton({
         setShowSolanaVerificationModal(true);
       }
     }
-  }, [isAuthenticated, needsSolanaVerification, status]);
+  }, [isAuthenticated, needsSolanaVerification, status, isConnected]);
 
   // Effect to monitor connection status and show Trust Wallet prompt
   useEffect(() => {
