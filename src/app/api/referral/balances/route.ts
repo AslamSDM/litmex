@@ -38,19 +38,34 @@ interface ReferralBalanceResponse {
   };
 }
 
-// Recursive function to get referrals at each level
+// Recursive function to get referrals at each level with circular reference prevention
 async function getReferralsAtLevel(
   userIds: string[],
   currentLevel: number,
-  maxLevel: number = 5
+  maxLevel: number = 5,
+  visitedUsers: Set<string> = new Set()
 ): Promise<{ [level: number]: string[] }> {
   if (currentLevel > maxLevel || userIds.length === 0) {
     return {};
   }
 
+  // Filter out any userIds that we've already visited to prevent cycles
+  const validUserIds = userIds.filter((userId) => !visitedUsers.has(userId));
+
+  if (validUserIds.length === 0) {
+    return {};
+  }
+
+  // Add current users to visited set
+  validUserIds.forEach((userId) => visitedUsers.add(userId));
+
   const directReferrals = await prisma.user.findMany({
     where: {
-      referrerId: { in: userIds },
+      referrerId: { in: validUserIds },
+      // Additional check: ensure referred user is not in the ancestor chain
+      NOT: {
+        id: { in: Array.from(visitedUsers) },
+      },
     },
     select: {
       id: true,
@@ -62,10 +77,14 @@ async function getReferralsAtLevel(
   result[currentLevel] = referralIds;
 
   if (currentLevel < maxLevel && referralIds.length > 0) {
+    // Create a new Set that includes all previously visited users
+    const nextVisitedUsers = new Set(visitedUsers);
+
     const nextLevels = await getReferralsAtLevel(
       referralIds,
       currentLevel + 1,
-      maxLevel
+      maxLevel,
+      nextVisitedUsers
     );
     Object.assign(result, nextLevels);
   }
@@ -73,7 +92,7 @@ async function getReferralsAtLevel(
   return result;
 }
 
-// Calculate earnings for a set of referrals
+// Calculate earnings for a set of referrals (optimized for parallel execution)
 async function calculateLevelEarnings(
   referralIds: string[],
   level: number
@@ -92,7 +111,16 @@ async function calculateLevelEarnings(
 
   const referralBonusPercentage = 0.15; // 15% as defined in the component
 
-  // Get detailed referral data with their purchases
+  // Use Promise.resolve to handle empty arrays efficiently
+  if (referralIds.length === 0) {
+    return Promise.resolve({
+      totalEarnings: 0,
+      totalEarningsUsd: 0,
+      referrals: [],
+    });
+  }
+
+  // Get detailed referral data with their purchases in a single optimized query
   const referralsWithPurchases = await prisma.user.findMany({
     where: {
       id: { in: referralIds },
@@ -116,7 +144,7 @@ async function calculateLevelEarnings(
       },
     },
   });
-  console.log("Referrals with purchases:", referralsWithPurchases);
+
   let totalEarnings = 0;
   let totalEarningsUsd = 0;
 
@@ -163,6 +191,64 @@ async function calculateLevelEarnings(
   };
 }
 
+// Add validation functions to prevent circular referrals
+async function validateReferralRelationship(
+  referrerId: string,
+  refereeId: string
+): Promise<{ isValid: boolean; error?: string }> {
+  // Check if referee is trying to refer their own referrer (direct cycle)
+  const directCycle = await prisma.user.findFirst({
+    where: {
+      id: referrerId,
+      referrerId: refereeId,
+    },
+  });
+
+  if (directCycle) {
+    return {
+      isValid: false,
+      error: "Cannot create circular referral: User is already your referrer",
+    };
+  }
+
+  // Check if referrer is in the referee's referral chain (indirect cycle)
+  const refereeAncestors = await getReferralAncestors(refereeId);
+
+  if (refereeAncestors.includes(referrerId)) {
+    return {
+      isValid: false,
+      error: "Cannot create circular referral: User is in your referral chain",
+    };
+  }
+
+  return { isValid: true };
+}
+
+// Helper function to get all ancestors in referral chain
+async function getReferralAncestors(
+  userId: string,
+  visitedUsers: Set<string> = new Set()
+): Promise<string[]> {
+  // Prevent infinite loops
+  if (visitedUsers.has(userId)) {
+    return [];
+  }
+
+  visitedUsers.add(userId);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { referrerId: true },
+  });
+
+  if (!user?.referrerId) {
+    return [];
+  }
+
+  const ancestors = await getReferralAncestors(user.referrerId, visitedUsers);
+  return [user.referrerId, ...ancestors];
+}
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -186,21 +272,44 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Get referrals at each level (1-5)
-    const allLevelReferrals = await getReferralsAtLevel([userId], 1, 5);
+    // Get referrals at each level (1-5) with circular reference prevention and payment statistics in parallel
+    const visitedUsers = new Set<string>();
+    const [allLevelReferrals, completedPayments, pendingPayments] =
+      await Promise.all([
+        getReferralsAtLevel([userId], 1, 5, visitedUsers),
+        (prisma as any).referralPayment.findMany({
+          where: {
+            referrerId: userId,
+            status: "COMPLETED",
+          },
+        }),
+        (prisma as any).referralPayment.findMany({
+          where: {
+            referrerId: userId,
+            status: "PENDING",
+          },
+        }),
+      ]);
+
+    // Process all levels in parallel
+    const levelPromises = [];
+    for (let level = 1; level <= 5; level++) {
+      const referralIds = allLevelReferrals[level] || [];
+      levelPromises.push(calculateLevelEarnings(referralIds, level));
+    }
+
+    const levelEarningsResults = await Promise.all(levelPromises);
 
     const levels: ReferralLevelData[] = [];
     let totalEarnings = 0;
     let totalEarningsUsd = 0;
     let totalReferrals = 0;
 
-    // Process each level
-    for (let level = 1; level <= 5; level++) {
+    // Build levels array with results
+    levelEarningsResults.forEach((levelEarnings, index) => {
+      const level = index + 1;
       const referralIds = allLevelReferrals[level] || [];
       totalReferrals += referralIds.length;
-
-      const levelEarnings = await calculateLevelEarnings(referralIds, level);
-
       totalEarnings += levelEarnings.totalEarnings;
       totalEarningsUsd += levelEarnings.totalEarningsUsd;
 
@@ -219,23 +328,7 @@ export async function GET(req: NextRequest) {
         totalEarningsUsd: levelEarnings.totalEarningsUsd,
         referrals: levelEarnings.referrals,
       });
-    }
-
-    // Get payment statistics
-    const [completedPayments, pendingPayments] = await Promise.all([
-      (prisma as any).referralPayment.findMany({
-        where: {
-          referrerId: userId,
-          status: "COMPLETED",
-        },
-      }),
-      (prisma as any).referralPayment.findMany({
-        where: {
-          referrerId: userId,
-          status: "PENDING",
-        },
-      }),
-    ]);
+    });
 
     const totalPaidAmount = completedPayments.reduce(
       (sum: number, payment: any) =>
