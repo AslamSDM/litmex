@@ -69,7 +69,6 @@ export function UnifiedWalletButton({
     // Check for wallet-specific objects in window
     const hasPhantomEthereum = !!(window as any).phantom?.ethereum;
     const hasTrustWallet = !!(window as any).trustwallet;
-    const hasEthereum = !!(window as any).ethereum;
     const hasPhantomSolana = !!(window as any).phantom?.solana;
     const hasSolana = !!(window as any).solana;
 
@@ -85,7 +84,6 @@ export function UnifiedWalletButton({
       isWallet ||
       hasPhantomEthereum ||
       hasTrustWallet ||
-      hasEthereum ||
       hasPhantomSolana ||
       hasSolana ||
       isWalletUserAgent
