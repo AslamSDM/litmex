@@ -84,11 +84,31 @@ export function SolanaWalletPrompt({
       ) || window.innerWidth <= 768
     );
   };
-
-  // Check if already in wallet browser
   const isInWalletBrowser = () => {
     if (typeof window === "undefined") return false;
-    return isWallet;
+
+    // Check for wallet-specific objects in window
+    const hasPhantomEthereum = !!(window as any).phantom?.ethereum;
+    const hasTrustWallet = !!(window as any).trustwallet;
+    const hasPhantomSolana = !!(window as any).phantom?.solana;
+    const hasSolana = !!(window as any).solana;
+
+    // Check user agent for wallet browsers
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isWalletUserAgent =
+      userAgent.includes("trustwallet") ||
+      userAgent.includes("metamask") ||
+      userAgent.includes("phantom");
+
+    // Return true if we detect wallet objects or wallet user agent, or if wallet param is set
+    return (
+      isWallet ||
+      hasPhantomEthereum ||
+      hasTrustWallet ||
+      hasPhantomSolana ||
+      hasSolana ||
+      isWalletUserAgent
+    );
   };
 
   useEffect(() => {
