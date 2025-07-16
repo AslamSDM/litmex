@@ -17,7 +17,9 @@ import { useBscPresale } from "@/components/hooks/useBscPresale";
 import { useWalletBalances } from "@/components/hooks/useWalletBalances";
 import { LMX_PRICE, MIN_BUY } from "@/lib/constants";
 import TransactionStatusModal from "@/components/TransactionStatusModal";
-import useReferralHandling from "@/components/hooks/useReferralHandling";
+import useReferralHandling, {
+  useReferralStore,
+} from "@/components/hooks/useReferralHandling";
 import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
@@ -57,6 +59,7 @@ export default function SimplePresalePage(cryptoPrices: {
   const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("USDT");
   const [solanaCurrency, setSolanaCurrency] = useState<"SOL" | "USDT">("SOL");
   const refer = useReferralHandling();
+  const { setReferralCode } = useReferralStore();
   // Access appkit hooks for wallet connection
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();
@@ -401,6 +404,7 @@ export default function SimplePresalePage(cryptoPrices: {
             onClick={() => {
               // Add your logout logic here
               signOut({ callbackUrl: "/" }); // Redirect to home after logout
+              setReferralCode("");
             }}
           >
             <LogOut size={16} />

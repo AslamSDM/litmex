@@ -19,6 +19,7 @@ import { useAppKitNetwork } from "@reown/appkit/react";
 import { solana, bsc } from "@reown/appkit/networks";
 import { Button } from "./ui/button";
 import { UnifiedWalletButton } from "./UnifiedWalletButton";
+import { useReferralStore } from "./hooks/useReferralHandling";
 
 // Define constants outside of component to prevent recreation
 const navLinks = [{ href: "/presale", label: "Presale" }];
@@ -111,11 +112,13 @@ export function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  const { setReferralCode } = useReferralStore();
 
   // Handle logout
   const handleLogout = async () => {
     try {
       await signOut({ redirect: false });
+      setReferralCode(""); // Clear referral code on logout
       toast.success("Successfully logged out");
       clearAllCookies();
       window.location.href = "/";

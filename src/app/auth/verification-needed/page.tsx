@@ -4,12 +4,14 @@ import { useState, Suspense } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useReferralStore } from "@/components/hooks/useReferralHandling";
 
 function VerificationNeededContent() {
   const { data: session } = useSession({ required: true });
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || session?.user?.email || "";
   const [isSending, setIsSending] = useState(false);
+  const { setReferralCode } = useReferralStore();
 
   const handleResendVerification = async () => {
     if (isSending) return;
@@ -94,7 +96,10 @@ function VerificationNeededContent() {
           </button>
 
           <button
-            onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+            onClick={() => {
+              signOut({ callbackUrl: "/" }); // Redirect to home after logout
+              setReferralCode(""); // Clear referral code on logout
+            }}
             className="w-full rounded-md border border-gray-700 bg-transparent px-4 py-2 text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
           >
             Sign Out

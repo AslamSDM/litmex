@@ -71,7 +71,7 @@ export const useReferralStore = create<ReferralStore>()(
       failedCodes: new Set(),
 
       // Actions
-      setReferralCode: (code: string) =>
+      setReferralCode: (code: string | null) =>
         set((state) => ({
           referralCode: code,
           lastUpdated: Date.now(),

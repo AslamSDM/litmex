@@ -7,7 +7,9 @@ import { signIn } from "next-auth/react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { generateReferralUrl } from "@/lib/referral";
 import { Button } from "@/components/ui/button";
-import useReferralHandling from "@/components/hooks/useReferralHandling";
+import useReferralHandling, {
+  useReferralStore,
+} from "@/components/hooks/useReferralHandling";
 import ReferralBalanceDisplay from "@/components/ReferralBalanceDisplay";
 
 interface UserData {
@@ -122,6 +124,8 @@ export default function ProfileIOSClient({
   const [balanceData, setBalanceData] = useState<ReferralBalanceData | null>(
     null
   );
+  const { setReferralCode } = useReferralStore();
+
   const [loadingBalance, setLoadingBalance] = useState<boolean>(true);
   useEffect(() => {
     const fetchReferralBalances = async () => {
@@ -200,6 +204,7 @@ export default function ProfileIOSClient({
             onClick={() => {
               // Add your logout logic here
               signOut({ callbackUrl: "/" }); // Redirect to home after logout
+              setReferralCode(""); // Clear referral code on logout
             }}
           >
             <LogOut size={16} />
