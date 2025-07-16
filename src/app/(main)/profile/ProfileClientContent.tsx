@@ -175,6 +175,8 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
 
     fetchReferralBalances();
   }, [session, sessionStatus]);
+  console.log(balanceData, loadingBalance);
+
   // Detect iOS devices and set memory optimization flags
   useEffect(() => {
     // Only run on client side
@@ -464,7 +466,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         {loadingBalance
                           ? ""
                           : formatCurrency(balanceData?.totalEarnings ?? 0) +
-                            "LMX"}{" "}
+                            " LMX"}{" "}
                       </motion.span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-primary/20">

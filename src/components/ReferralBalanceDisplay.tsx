@@ -56,7 +56,6 @@ const ReferralBalanceDisplay = ({
   loadingBalance?: boolean;
 }) => {
   const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedLevels, setExpandedLevels] = useState<Set<number>>(
     new Set([1])
@@ -87,7 +86,7 @@ const ReferralBalanceDisplay = ({
     });
   };
 
-  if (status === "loading" || loading) {
+  if (status === "loading" || loadingBalance) {
     return (
       <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
         <div className="flex items-center justify-center py-8">
