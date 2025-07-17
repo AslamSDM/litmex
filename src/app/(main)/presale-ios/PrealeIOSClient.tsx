@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
-import { Footer } from "@/components/Footer";
 import ReferralSystem from "@/components/ReferralLevel";
 // Network icons
 const NETWORK_ICONS = {
@@ -397,6 +396,7 @@ export default function SimplePresalePage(cryptoPrices: {
           <div className="flex items-center">
             <img src="/lit_logo.png" alt="Logo" className="h-8 w-auto" />
           </div>
+          <UnifiedWalletButton size="sm" variant="minimal" />
           <Button
             variant="ghost"
             size="sm"

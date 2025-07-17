@@ -281,7 +281,7 @@ export default function useReferralHandling(): ReferralInfo {
     try {
       // First try URL parameters
       const urlParams = new URLSearchParams(window.location.search);
-      console.log(referralCode, "Referral Code from store");
+      console.log(referralCode, "Referral Code from url");
       const code = urlParams.get("referral") || referralCode;
 
       // Basic validation
@@ -300,13 +300,13 @@ export default function useReferralHandling(): ReferralInfo {
   // Handle referral API success
   const handleReferralSuccess = useCallback(
     (data: ReferralResponse, code: string) => {
-      setReferralData({
-        referrerId: data.referrerId,
-        referrerAddress: data.walletAddress,
-        referrerUsername: data.username,
-        isValid: true,
-      });
-
+      // setReferralData({
+      //   referrerId: data.referrerId,
+      //   referrerAddress: data.walletAddress,
+      //   referrerUsername: data.username,
+      //   isValid: true,
+      // });
+      setReferralCode("");
       markCodeAsProcessed(code);
       retryCountRef.current.delete(code);
       setError(null);
@@ -323,10 +323,10 @@ export default function useReferralHandling(): ReferralInfo {
   // Handle referral API failure
   const handleReferralFailure = useCallback(
     (code: string, errorMessage?: string) => {
-      setReferralData({
-        referrerId: "",
-        isValid: false,
-      });
+      // setReferralData({
+      //   referrerId: "",
+      //   isValid: false,
+      // });
 
       markCodeAsFailed(code);
       retryCountRef.current.delete(code);
