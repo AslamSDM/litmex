@@ -154,10 +154,7 @@ export default function ProfileIOSClient({
   // Generate referral URL when component mounts or referral code changes
   useEffect(() => {
     // Get referral code from server data or session
-    const code =
-      userData.referrals.referralStats?.referralCode ||
-      (session?.user as any)?.referralCode ||
-      "";
+    const code = (session?.user as any)?.referralCode || "";
 
     if (code) {
       const url = generateReferralUrl(code);

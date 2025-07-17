@@ -396,19 +396,21 @@ export default function SimplePresalePage(cryptoPrices: {
           <div className="flex items-center">
             <img src="/lit_logo.png" alt="Logo" className="h-8 w-auto" />
           </div>
-          <UnifiedWalletButton size="sm" variant="minimal" />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-1.5 h-auto text-red-400 hover:bg-red-500/10"
-            onClick={() => {
-              // Add your logout logic here
-              setReferralCode("");
-              signOut({ callbackUrl: "/" }); // Redirect to home after logout
-            }}
-          >
-            <LogOut size={16} />
-          </Button>
+          <div className="flex">
+            <UnifiedWalletButton size="sm" variant="minimal" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-1.5 h-auto text-red-400 hover:bg-red-500/10"
+              onClick={() => {
+                // Add your logout logic here
+                setReferralCode("");
+                signOut({ callbackUrl: "/" }); // Redirect to home after logout
+              }}
+            >
+              <LogOut size={16} />
+            </Button>
+          </div>
         </header>
         <div className="container mx-auto py-12 px-4 md:px-8 min-h-screen  overflow-hidden">
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-center ">
