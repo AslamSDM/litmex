@@ -397,7 +397,7 @@ export default function SimplePresalePage(cryptoPrices: {
             <img src="/lit_logo.png" alt="Logo" className="h-8 w-auto" />
           </div>
           <div className="flex">
-            <UnifiedWalletButton size="sm" variant="minimal" />
+            <UnifiedWalletButton size="sm" variant="minimal" showSol={true} />
             <Button
               variant="ghost"
               size="sm"

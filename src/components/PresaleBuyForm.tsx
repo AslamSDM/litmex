@@ -10,12 +10,10 @@ import {
   RefreshCcw,
   Loader2,
   BadgeCheck,
-  ChevronDown,
 } from "lucide-react";
 import usePresale from "@/components/hooks/usePresale";
 import GlowButton from "@/components/GlowButton";
 import { toast } from "sonner";
-import { WalletConnectButton } from "@/components/WalletConnectButton";
 import { useBscPresale } from "./hooks/useBscPresale";
 import { useBscUsdtPresale } from "./hooks/useBscUsdtPresale";
 import { useSolanaPresale } from "./hooks/useSolanaPresale";
@@ -33,6 +31,7 @@ import Image from "next/image";
 import { UnifiedWalletButton } from "./UnifiedWalletButton";
 
 // Extended type for our session with referredBy field
+
 interface CustomSessionUser {
   id: string;
   name?: string | null;
@@ -787,7 +786,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
                               <>Approve {usdAmount} USDT</>
                             ) : (
                               <>
-                                Buy $
+                                Buy
                                 {isNaN(usdAmount)
                                   ? "0.00"
                                   : usdAmount.toFixed(2)}{" "}
@@ -828,8 +827,10 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
                     ) : (
                       <div className="flex items-center justify-center">
                         <span>
-                          Buy $
-                          {isNaN(usdAmount) ? "0.00" : usdAmount.toFixed(2)}{" "}
+                          Buy
+                          {isNaN(usdAmount)
+                            ? "0.00"
+                            : usdAmount.toFixed(2)}{" "}
                           worth of LMX (
                           {isNaN(tokenAmount) ? "0.00" : tokenAmount.toFixed(2)}{" "}
                           LMX)
