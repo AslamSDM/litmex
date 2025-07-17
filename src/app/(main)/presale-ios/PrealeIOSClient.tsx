@@ -403,8 +403,8 @@ export default function SimplePresalePage(cryptoPrices: {
             className="p-1.5 h-auto text-red-400 hover:bg-red-500/10"
             onClick={() => {
               // Add your logout logic here
-              signOut({ callbackUrl: "/" }); // Redirect to home after logout
               setReferralCode("");
+              signOut({ callbackUrl: "/" }); // Redirect to home after logout
             }}
           >
             <LogOut size={16} />

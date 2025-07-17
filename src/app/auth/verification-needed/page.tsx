@@ -97,8 +97,8 @@ function VerificationNeededContent() {
 
           <button
             onClick={() => {
-              signOut({ callbackUrl: "/" }); // Redirect to home after logout
               setReferralCode(""); // Clear referral code on logout
+              signOut({ callbackUrl: "/" }); // Redirect to home after logout
             }}
             className="w-full rounded-md border border-gray-700 bg-transparent px-4 py-2 text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
           >

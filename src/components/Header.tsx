@@ -117,8 +117,8 @@ export function Header() {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await signOut({ redirect: false });
       setReferralCode(""); // Clear referral code on logout
+      await signOut({ redirect: false });
       toast.success("Successfully logged out");
       clearAllCookies();
       window.location.href = "/";

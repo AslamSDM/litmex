@@ -12,7 +12,9 @@ import FutureGamblingSection from "@/components/sections/FutureGamblingSection";
 import BettingMarketsSection from "@/components/sections/BettingMarketsSection";
 import StakeEarnSection from "@/components/sections/StakeEarnSection";
 import CtaSection from "@/components/sections/CtaSection";
-import useReferralHandling from "@/components/hooks/useReferralHandling";
+import useReferralHandling, {
+  useReferralStore,
+} from "@/components/hooks/useReferralHandling";
 import "../components/sections/animation-utils.css"; // Ensure this path is correct
 import Image from "next/image";
 
@@ -27,6 +29,9 @@ export default function HomePage() {
   const [mappedScrollProgress, setMappedScrollProgress] = useState<number>(0);
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const referralInfo = useReferralHandling();
+  const { referralCode } = useReferralStore();
+  console.log("Referral Code:", referralCode);
+
   useEffect(() => {
     // Only run on client side
     if (typeof window !== "undefined") {
