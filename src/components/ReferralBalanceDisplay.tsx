@@ -5,10 +5,7 @@ import {
   ChevronDown,
   ChevronRight,
   Users,
-  DollarSign,
   TrendingUp,
-  Clock,
-  CheckCircle,
   AlertCircle,
 } from "lucide-react";
 
@@ -144,14 +141,6 @@ const ReferralBalanceDisplay = ({
         </h3>
 
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="bg-black/40 p-4 rounded-lg text-center">
-            <Users className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-white">
-              {balanceData.totalReferrals}
-            </p>
-            <p className="text-sm text-gray-300">Total Referrals</p>
-          </div>
-
           <div className="bg-black/40 p-4 rounded-lg text-center">
             <TrendingUp className="h-6 w-6 text-green-400 mx-auto mb-2" />
             <p className="text-2xl font-bold text-green-400">
