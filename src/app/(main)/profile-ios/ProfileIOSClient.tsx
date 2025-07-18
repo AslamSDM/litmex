@@ -124,7 +124,7 @@ export default function ProfileIOSClient({
   const [balanceData, setBalanceData] = useState<ReferralBalanceData | null>(
     null
   );
-  const { setReferralCode } = useReferralStore();
+  const { setReferralCode, setReferralData } = useReferralStore();
 
   const [loadingBalance, setLoadingBalance] = useState<boolean>(true);
   useEffect(() => {
@@ -201,6 +201,10 @@ export default function ProfileIOSClient({
             onClick={() => {
               // Add your logout logic here
               setReferralCode(""); // Clear referral code on logout
+              setReferralData({
+                referrerId: "",
+                isValid: false,
+              });
               signOut({ callbackUrl: "/" }); // Redirect to home after logout
             }}
           >

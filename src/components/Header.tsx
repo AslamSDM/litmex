@@ -112,12 +112,16 @@ export function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const { setReferralCode } = useReferralStore();
+  const { setReferralCode, setReferralData } = useReferralStore();
 
   // Handle logout
   const handleLogout = async () => {
     try {
       setReferralCode(""); // Clear referral code on logout
+      setReferralData({
+        referrerId: "",
+        isValid: false,
+      });
       await signOut({ redirect: false });
       toast.success("Successfully logged out");
       clearAllCookies();

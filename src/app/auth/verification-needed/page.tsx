@@ -11,7 +11,6 @@ function VerificationNeededContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || session?.user?.email || "";
   const [isSending, setIsSending] = useState(false);
-  const { setReferralCode } = useReferralStore();
 
   const handleResendVerification = async () => {
     if (isSending) return;
@@ -97,7 +96,6 @@ function VerificationNeededContent() {
 
           <button
             onClick={() => {
-              setReferralCode(""); // Clear referral code on logout
               signOut({ callbackUrl: "/" }); // Redirect to home after logout
             }}
             className="w-full rounded-md border border-gray-700 bg-transparent px-4 py-2 text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"

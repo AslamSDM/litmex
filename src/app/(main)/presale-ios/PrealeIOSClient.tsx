@@ -58,7 +58,7 @@ export default function SimplePresalePage(cryptoPrices: {
   const [bscCurrency, setBscCurrency] = useState<"BNB" | "USDT">("USDT");
   const [solanaCurrency, setSolanaCurrency] = useState<"SOL" | "USDT">("SOL");
   const refer = useReferralHandling();
-  const { setReferralCode } = useReferralStore();
+  const { setReferralCode, setReferralData } = useReferralStore();
   // Access appkit hooks for wallet connection
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();
@@ -405,6 +405,10 @@ export default function SimplePresalePage(cryptoPrices: {
               onClick={() => {
                 // Add your logout logic here
                 setReferralCode("");
+                setReferralData({
+                  referrerId: "",
+                  isValid: false,
+                });
                 signOut({ callbackUrl: "/" }); // Redirect to home after logout
               }}
             >
