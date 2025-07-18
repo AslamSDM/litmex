@@ -71,6 +71,19 @@ export default function SignUp() {
   }, [status, router, isIOS]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (name === "email") {
+      // Convert email to lowercase for consistency
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value.toLowerCase(),
+      }));
+      // Clear validation error for email when user types
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: "",
+      }));
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
