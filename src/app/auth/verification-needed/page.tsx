@@ -4,13 +4,16 @@ import { useState, Suspense } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { useReferralStore } from "@/components/hooks/useReferralHandling";
+import useReferralHandling, {
+  useReferralStore,
+} from "@/components/hooks/useReferralHandling";
 
 function VerificationNeededContent() {
   const { data: session } = useSession({ required: true });
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || session?.user?.email || "";
   const [isSending, setIsSending] = useState(false);
+  const referralinfo = useReferralHandling();
 
   const handleResendVerification = async () => {
     if (isSending) return;
