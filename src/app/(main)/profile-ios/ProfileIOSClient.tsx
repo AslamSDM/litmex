@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { Copy, Check, LogIn, Coins, Users, Wallet, LogOut } from "lucide-react";
+import {
+  Copy,
+  Check,
+  LogIn,
+  Coins,
+  Users,
+  Wallet,
+  LogOut,
+  Star,
+} from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { generateReferralUrl } from "@/lib/referral";
@@ -282,6 +291,38 @@ export default function ProfileIOSClient({
                   </div>
                 </div>
               )}
+
+              {/* Pending TRUMP Rewards Card */}
+              {!loadingBalance &&
+                balanceData?.summary?.totalPendingAmount &&
+                balanceData.summary.totalPendingAmount > 0 && (
+                  <div className="bg-black/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-5 mb-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-yellow-300 text-sm mb-1 flex items-center">
+                        <Star className="h-3 w-3 mr-1" />
+                        Pending TRUMP Rewards
+                      </p>
+                      <p className="text-2xl font-bold text-yellow-300">
+                        {formatCurrency(
+                          (balanceData?.summary?.totalPendingAmount || 0) /
+                            trumpPrice,
+                          2
+                        )}{" "}
+                        TRUMP
+                      </p>
+                      <p className="text-xs text-yellow-300/70 mt-1">
+                        Value: $
+                        {formatCurrency(
+                          balanceData?.summary?.totalPendingAmount || 0,
+                          2
+                        )}
+                      </p>
+                    </div>
+                    <div className="h-12 w-12 rounded-full bg-yellow-400/10 flex items-center justify-center">
+                      <Star className="h-6 w-6 text-yellow-400" />
+                    </div>
+                  </div>
+                )}
 
               {/* Referral Stats Card */}
               <div className="bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg p-5 mb-5">
