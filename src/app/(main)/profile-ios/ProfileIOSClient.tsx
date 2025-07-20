@@ -283,7 +283,7 @@ export default function ProfileIOSClient({
                   <div>
                     <p className="text-white/70 text-sm mb-1">Referral Bonus</p>
                     <p className="text-2xl font-bold text-white">
-                      {balanceData?.totalEarnings} LMX
+                      {balanceData?.totalEarnings.toFixed(2)} LMX
                     </p>
                   </div>
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
