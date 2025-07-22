@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { UnifiedWalletButton } from "@/components/UnifiedWalletButton";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import RoadmapTimeline from "@/components/RoadmapTimeline";
-import ReferralSystem from "@/components/ReferralLevel";
+// import ReferralSystem from "@/components/ReferralLevel";
 // Network icons
 const NETWORK_ICONS = {
   BSC: "/icons/bsc.svg",
@@ -691,9 +691,9 @@ export default function SimplePresalePage(cryptoPrices: {
                 </div>
               </div>
             </div>
-            <div className="mt-12 mb-8">
+            {/* <div className="mt-12 mb-8">
               <ReferralSystem />
-            </div>
+            </div> */}
             <div className="mt-12">
               <h3 className="text-lg sm:text-xl font-bold text-primary mb-4 flex items-center">
                 Road map

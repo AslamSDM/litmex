@@ -29,7 +29,7 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 import { LMX_PRICE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import useReferralHandling from "@/components/hooks/useReferralHandling";
-import ReferralSystem from "@/components/ReferralLevel";
+// import ReferralSystem from "@/components/ReferralLevel";
 
 // Tokenomics data
 const tokenomicsData = [
@@ -585,7 +585,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
 
           <div className="w-full max-w-[95%] sm:max-w-md md:max-w-2xl lg:max-w-3x l mx-auto mb-6 sm:mb-8 md:mb-12 px-0 sm:px-2">
             <CountdownTimer
-              targetDate={new Date("2025-07-20T23:59:59")}
+              targetDate={new Date("2025-09-22T23:59:59")}
               className="mb-4 sm:mb-6 md:mb-8"
             />
             <TokenProgressBar raised={totalRaised} goal={10000} />
@@ -1228,7 +1228,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
                   </div>
                 </div>
               </div>
-              <ReferralSystem />
+              {/* <ReferralSystem /> */}
 
               <p className="text-base sm:text-lg bg-black/30 p-3 rounded-lg border border-primary/10">
                 Share your unique referral link and earn Trump Tokens on every

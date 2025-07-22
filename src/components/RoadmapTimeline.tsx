@@ -16,7 +16,7 @@ type RoadmapPhase = {
 const RoadmapTimeline: React.FC = () => {
   const roadmapData: RoadmapPhase[] = [
     {
-      title: "Seed Phase",
+      title: "Presale",
       period: "Q3 2025",
       isCompleted: true,
       icon: <Calendar className="h-5 w-5 text-primary" />,
