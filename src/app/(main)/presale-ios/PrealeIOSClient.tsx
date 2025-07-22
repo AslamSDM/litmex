@@ -748,15 +748,15 @@ export default function SimplePresalePage(cryptoPrices: {
                 <h3 className="text-white text-lg font-medium mb-4">
                   Resources
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   <li>
                     <a
                       href="https://github.com/Litmexprotocol/Litmex-Whitepaper/blob/main/LItmex%20Protocol%20Whitepaper.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                      className="flex items-center justify-center p-3 rounded-md bg-white/5 hover:bg-primary/10 text-white/70 hover:text-primary transition-colors text-sm"
                     >
-                      📄 Whitepaper
+                      <span className="mr-2">📄</span> Whitepaper
                     </a>
                   </li>
                   <li>
@@ -764,9 +764,9 @@ export default function SimplePresalePage(cryptoPrices: {
                       href="https://www.cyberscope.io/audits/lmx"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                      className="flex items-center justify-center p-3 rounded-md bg-white/5 hover:bg-primary/10 text-white/70 hover:text-primary transition-colors text-sm"
                     >
-                      🔍 Audit
+                      <span className="mr-2">🔍</span> Audit
                     </a>
                   </li>
                   <li>
@@ -774,9 +774,9 @@ export default function SimplePresalePage(cryptoPrices: {
                       href="https://github.com/cyberscope-io/audits/blob/main/lmx/audit.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-white/70 hover:text-primary transition-colors text-sm"
+                      className="flex items-center justify-center p-3 rounded-md bg-white/5 hover:bg-primary/10 text-white/70 hover:text-primary transition-colors text-sm"
                     >
-                      📋 Audit Report
+                      <span className="mr-2">📋</span> Audit Report
                     </a>
                   </li>
                 </ul>
