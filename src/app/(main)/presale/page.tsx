@@ -29,7 +29,7 @@ export default async function PresalePage() {
       <PresaleClientContent
         contributorCount={89}
         // contributorCount={presaleData.contributorCount || 0}
-        totalRaised={31225 / 0.02}
+        totalRaised={31225 / 185}
         // totalRaised={presaleData.totalRaised || 0}
         // usdRaised={presaleData.usdRaised || 0}
         usdRaised={31225}
