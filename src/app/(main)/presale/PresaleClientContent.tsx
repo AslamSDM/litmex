@@ -588,7 +588,7 @@ const PresaleClientContent: React.FC<PresaleClientContentProps> = ({
               targetDate={new Date("2025-09-22T23:59:59")}
               className="mb-4 sm:mb-6 md:mb-8"
             />
-            <TokenProgressBar raised={totalRaised} goal={10000} />
+            <TokenProgressBar raised={totalRaised} goal={10000000} />
           </div>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
