@@ -27,12 +27,12 @@ export default async function PresalePage() {
     <Suspense fallback={<div>Loading presale...</div>}>
       <Header />
       <PresaleClientContent
-        contributorCount={89}
+        contributorCount={111}
         // contributorCount={presaleData.contributorCount || 0}
-        totalRaised={31225 / 185}
+        totalRaised={36345 / 185}
         // totalRaised={presaleData.totalRaised || 0}
         // usdRaised={presaleData.usdRaised || 0}
-        usdRaised={31225}
+        usdRaised={36345}
         prices={presaleData.prices || 0}
         userBalance={userBalance}
         initialSession={session}
