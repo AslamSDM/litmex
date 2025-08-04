@@ -6,7 +6,10 @@ import { presaleAbi } from "@/lib/abi";
 import { LMX_PRICE_USD } from "@/lib/price-utils";
 import { formatEther, formatUnits } from "viem";
 
-import { sendReferralTokens } from "@/lib/send-referral";
+import {
+  recordPendingReferralPayment,
+  sendReferralTokens,
+} from "@/lib/send-referral";
 import {
   BSC_PRESALE_CONTRACT_ADDRESS,
   BSC_USDT_ADDRESS,
@@ -397,6 +400,14 @@ export async function POST(req: NextRequest) {
         );
         referralPaid = sent || false;
         referralTxn = referraltxn || null;
+      } else {
+        const pendingPayment = await recordPendingReferralPayment(
+          user.referrerId,
+          existingTransactionRecord.id,
+          parseFloat(usdtAmount),
+          "usdt"
+        );
+        referralPaid = pendingPayment.success;
       }
     }
 

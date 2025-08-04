@@ -6,7 +6,10 @@ import {
   fetchCryptoPricesServer,
   LMX_PRICE_USD,
 } from "@/lib/price-utils";
-import { sendReferralTokens } from "@/lib/send-referral";
+import {
+  recordPendingReferralPayment,
+  sendReferralTokens,
+} from "@/lib/send-referral";
 import { MASTER_WALLET_ADDRESS, USDT_SPL_TOKEN_ADDRESS } from "@/lib/constants";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth";
@@ -433,6 +436,14 @@ export async function POST(req: NextRequest) {
         } catch (error) {
           console.error("Error sending referral tokens:", error);
         }
+      } else {
+        const pendingPayment = await recordPendingReferralPayment(
+          sender.referrerId,
+          existingTransactionRecord.id,
+          transferAmount,
+          "usdt"
+        );
+        referralPaid = pendingPayment.success;
       }
     }
 
