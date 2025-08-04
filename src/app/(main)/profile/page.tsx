@@ -253,6 +253,30 @@ async function getReferralPaymentStats(
         },
       }),
     ]);
+    if (pendingPayments.length !== 0) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          walletAddress: true,
+          walletType: true,
+          solanaAddress: true,
+        },
+      });
+      if (user?.solanaAddress) {
+        // Import the processPendingReferralPayments function
+        const { processPendingReferralPayments } = await import(
+          "@/lib/send-referral"
+        );
+
+        // Process any pending payments for this user
+        const referralPaymentsProcessed = await processPendingReferralPayments(
+          userId,
+          user.solanaAddress
+        );
+      }
+    }
 
     // Get pending referral payments
     // const pendingPayments = await (prisma as any).referralPayment.findMany({
