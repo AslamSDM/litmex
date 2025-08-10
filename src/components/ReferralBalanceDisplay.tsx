@@ -165,22 +165,40 @@ const ReferralBalanceDisplay = ({
             >
               {/* Level Header */}
               <div
-                className="bg-black/40 p-4 cursor-pointer hover:bg-black/60 transition-colors"
+                className="bg-black/40 p-3 md:p-4 cursor-pointer hover:bg-black/60 transition-colors"
                 onClick={() => toggleLevel(level.level)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <h5 className="font-semibold text-white">
+                  <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <h5 className="font-semibold text-white text-sm md:text-base truncate">
                         {level.title}
                       </h5>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-xs md:text-sm text-gray-300 truncate">
                         {level.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  {/* Mobile Layout */}
+                  <div className="flex md:hidden items-center gap-2">
+                    <div className="text-right">
+                      <p className="text-blue-400 font-bold text-xs">
+                        {level.percentage}%
+                      </p>
+                      <p className="text-green-400 font-bold text-xs">
+                        {formatCurrency(level.totalEarnings, 0)} LMX
+                      </p>
+                    </div>
+                    {expandedLevels.has(level.level) ? (
+                      <ChevronDown className="h-4 w-4 text-blue-400 flex-shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-blue-400 flex-shrink-0" />
+                    )}
+                  </div>
+
+                  {/* Desktop Layout */}
+                  <div className="hidden md:flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-blue-400 font-bold">
                         {level.percentage}%
@@ -214,8 +232,64 @@ const ReferralBalanceDisplay = ({
               {/* Level Details (Expanded) */}
               {expandedLevels.has(level.level) &&
                 level.referrals.length > 0 && (
-                  <div className="bg-black/20 p-4">
-                    <div className="overflow-x-auto">
+                  <div className="bg-black/20 p-2 md:p-4">
+                    {/* Mobile Card View */}
+                    <div className="block md:hidden space-y-3">
+                      {level.referrals.map((referral) => (
+                        <div
+                          key={referral.id}
+                          className="bg-black/40 p-3 rounded-lg border border-white/10"
+                        >
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-start">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-white font-medium text-sm truncate">
+                                  {referral.username || "Anonymous"}
+                                </p>
+                                <p className="text-gray-400 text-xs truncate">
+                                  {referral.email
+                                    ? referral.email.length > 25
+                                      ? `${referral.email.substring(0, 10)}...${referral.email.substring(referral.email.indexOf("@"))}`
+                                      : referral.email
+                                    : "No email"}
+                                </p>
+                              </div>
+                              <div className="text-right ml-2">
+                                <p className="text-green-400 font-bold text-sm">
+                                  {formatCurrency(referral.bonusEarned)} LMX
+                                </p>
+                                <p className="text-gray-400 text-xs">
+                                  Your Bonus
+                                </p>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
+                              <div className="text-center">
+                                <p className="text-white text-xs font-medium">
+                                  {formatDate(referral.createdAt)}
+                                </p>
+                                <p className="text-gray-400 text-xs">Joined</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-white text-xs font-medium">
+                                  {referral.totalPurchases}
+                                </p>
+                                <p className="text-gray-400 text-xs">Purchases</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-white text-xs font-medium">
+                                  ${formatCurrency(referral.totalPurchaseAmount)}
+                                </p>
+                                <p className="text-gray-400 text-xs">Amount</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead className="text-xs uppercase bg-black/40 text-white/60">
                           <tr>

@@ -63,7 +63,7 @@ export default function IntroSection({
         }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        <p className="text-xl mt-2 text-white/90">
+        <p className="text-sm lg:text-xl mt-2 text-white/90">
           Built on Solana, Litmex combines decentralized prediction markets,
           addictive mini games, and autonomous AI betting agents. It&apos;s not
           just gambling it&apos;s intelligent, automated crypto wagering at

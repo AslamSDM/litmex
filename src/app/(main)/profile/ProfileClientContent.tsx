@@ -2,7 +2,7 @@
 import React, { useState, Suspense, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { User, Wallet, Shield, Clock, Award, AlertCircle } from "lucide-react";
+import { User, Wallet, Shield, Clock, Award, AlertCircle, Users } from "lucide-react";
 import { useAppKitState, useAppKitAccount } from "@reown/appkit/react";
 import { modal } from "@/components/providers/wallet-provider";
 import { AppKitStateShape, getWalletType } from "@/components/hooks/usePresale";
@@ -295,7 +295,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
     },
   };
   return (
-    <div className="container mx-auto py-24 px-4 md:px-8 min-h-screen relative mt-24 overflow-hidden">
+    <div className="container mx-auto py-8 px-4 md:px-8 min-h-screen relative mt-16 md:mt-24 overflow-hidden">
       {/* Optimized background for iOS devices */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {!isLowMemoryDevice ? (
@@ -311,27 +311,27 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
         initial={{ opacity: 0, y: isLowMemoryDevice ? 10 : 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: isLowMemoryDevice ? 0.3 : 0.5 }}
-        className="text-center mb-12"
+        className="text-center mb-8 md:mb-12"
       >
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 font-display">
           Your <span className="luxury-text">Profile</span>
         </h1>
-        <p className="text-lg max-w-2xl mx-auto text-white/80">
+        <p className="text-base md:text-lg max-w-2xl mx-auto text-white/80 px-4">
           {isAuthenticated
             ? "Manage your profile, view activity, and explore features."
             : "Connect your wallet to access exclusive features and track your gaming history"}
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
         {/* Profile Sidebar */}
         <motion.div
           variants={itemVariants}
           initial="hidden"
           animate="visible"
-          className="lg:col-span-1 space-y-8"
+          className="lg:col-span-1 space-y-6 md:space-y-8"
         >
-          <Card className="p-6 border border-primary/30 bg-black/60 backdrop-blur-sm relative overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.1)] luxury-card min-h-[500px]">
+          <Card className="p-4 md:p-6 border border-primary/30 bg-black/60 backdrop-blur-sm relative overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.1)] luxury-card min-h-[400px] md:min-h-[500px]">
             {!isLowMemoryDevice && <div className="luxury-shimmer"></div>}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
             <div className="luxury-corner luxury-corner-tl"></div>
@@ -543,10 +543,10 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
           <Card className="border border-primary/30 bg-black/60 backdrop-blur-sm overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.1)] luxury-card">
             {!isLowMemoryDevice && <div className="luxury-shimmer"></div>}
             <div className="border-b border-primary/20">
-              <div className="flex overflow-x-auto">
+              <div className="flex overflow-x-auto scrollbar-hide">
                 <motion.button
                   onClick={() => handleTabChange("overview")}
-                  className={`px-6 py-4 font-medium text-sm transition-all duration-300 ${
+                  className={`px-4 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm transition-all duration-300 whitespace-nowrap ${
                     activeTab === "overview"
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
@@ -558,7 +558,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                 </motion.button>
                 <motion.button
                   onClick={() => handleTabChange("wallets")}
-                  className={`px-6 py-4 font-medium text-sm transition-all duration-300 ${
+                  className={`px-4 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm transition-all duration-300 whitespace-nowrap ${
                     activeTab === "wallets"
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
@@ -570,7 +570,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                 </motion.button>
                 <motion.button
                   onClick={() => handleTabChange("activity")}
-                  className={`px-6 py-4 font-medium text-sm transition-all duration-300 ${
+                  className={`px-4 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm transition-all duration-300 whitespace-nowrap ${
                     activeTab === "activity"
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
@@ -582,7 +582,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                 </motion.button>
                 <motion.button
                   onClick={() => handleTabChange("referrals")}
-                  className={`px-6 py-4 font-medium text-sm transition-all duration-300 ${
+                  className={`px-4 md:px-6 py-3 md:py-4 font-medium text-xs md:text-sm transition-all duration-300 whitespace-nowrap ${
                     activeTab === "referrals"
                       ? "border-b-2 border-primary text-primary"
                       : "text-white/60 hover:text-white"
@@ -595,9 +595,16 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {activeTab === "overview" && (
                 <div className="space-y-8">
+                  {/* Referral link generation */}
+                  <ReferralCard
+                    totalBonus={userData.referrals.totalBonus}
+                    referralCount={userData.referrals.count}
+                    paymentStats={userData.referrals.paymentStats}
+                    serverRenderedStats={userData.referrals.referralStats}
+                  />
                   <motion.div
                     variants={itemVariants}
                     className="bg-black/40 backdrop-blur-sm p-6 rounded-lg border border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.05)] transform transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]"
@@ -896,14 +903,6 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                         </p>
                       </div>
 
-                      {/* Referral link generation */}
-                      <ReferralCard
-                        totalBonus={userData.referrals.totalBonus}
-                        referralCount={userData.referrals.count}
-                        paymentStats={userData.referrals.paymentStats}
-                        serverRenderedStats={userData.referrals.referralStats}
-                      />
-
                       {/* 5-Level Referral Balance Display */}
                       <div className="mt-6">
                         <ReferralBalanceDisplay
@@ -924,66 +923,156 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                           )}
                         </h4>
                         {userData.referrals.count > 0 ? (
-                          <div className="overflow-auto max-h-96">
-                            <table className="w-full min-w-full">
-                              <thead className="bg-primary/10 border-b border-primary/20">
-                                <tr>
-                                  <th className="text-left py-3 px-4 text-sm font-medium text-primary">
-                                    User
-                                  </th>
-                                  <th className="text-left py-3 px-4 text-sm font-medium text-primary">
-                                    Email
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Joined Date
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Status
-                                  </th>
-                                  <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                    Total Earned
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-primary/10">
-                                {userData.referrals.referredUsers ? (
-                                  // If we have all referred users data, use that
-                                  userData.referrals.referredUsers.map(
-                                    (user) => {
-                                      // Convert the createdAt string to a Date object
-                                      const joinedDate = new Date(
-                                        user.createdAt
+                          <div className="space-y-4">
+                            {/* Mobile Card View */}
+                            <div className="block md:hidden space-y-3">
+                              {userData.referrals.referredUsers ? (
+                                userData.referrals.referredUsers.map((user) => {
+                                  const joinedDate = new Date(user.createdAt);
+                                  const formattedDate = joinedDate.toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  });
+
+                                  const userPurchases = userData.referrals.purchases.filter(
+                                    (purchase) =>
+                                      (purchase.userEmail &&
+                                        user.email &&
+                                        purchase.userEmail === user.email) ||
+                                      purchase.id === user.id
+                                  );
+
+                                  const hasMadePurchase = userPurchases.length > 0;
+                                  const totalEarnings = userPurchases.reduce(
+                                    (sum, purchase) => sum + (purchase.referralEarnings || 0),
+                                    0
+                                  );
+
+                                  return (
+                                    <div
+                                      key={user.id}
+                                      className="bg-black/40 p-4 rounded-lg border border-primary/20"
+                                    >
+                                      <div className="space-y-3">
+                                        <div className="flex justify-between items-start">
+                                          <div className="min-w-0 flex-1">
+                                            <p className="text-white font-medium truncate">
+                                              {user.name || "User"}
+                                            </p>
+                                            <p className="text-gray-400 text-sm truncate">
+                                              {user.email
+                                                ? user.email.length > 25
+                                                  ? `${user.email.substring(0, 12)}...${user.email.substring(user.email.indexOf("@"))}`
+                                                  : user.email
+                                                : "No email provided"}
+                                            </p>
+                                          </div>
+                                          <div className="text-right ml-3">
+                                            <p className="text-primary text-sm font-medium">
+                                              {formattedDate}
+                                            </p>
+                                            <p className="text-gray-400 text-xs">Joined</p>
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/10">
+                                          <div className="text-center">
+                                            {hasMadePurchase ? (
+                                              <span className="text-green-400 font-medium text-sm">
+                                                Purchased
+                                              </span>
+                                            ) : (
+                                              <span className="text-amber-400 text-sm">
+                                                No purchase yet
+                                              </span>
+                                            )}
+                                            <p className="text-gray-400 text-xs mt-1">Status</p>
+                                          </div>
+                                          <div className="text-center">
+                                            <p className="text-primary font-medium text-sm">
+                                              {formatCurrency(totalEarnings)} LMX
+                                            </p>
+                                            <p className="text-gray-400 text-xs mt-1">Earned</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                userData.referrals.purchases.map((purchase) => (
+                                  <div
+                                    key={purchase.id}
+                                    className="bg-black/40 p-4 rounded-lg border border-primary/20"
+                                  >
+                                    <div className="space-y-3">
+                                      <div className="flex justify-between items-start">
+                                        <div className="min-w-0 flex-1">
+                                          <p className="text-white font-medium truncate">
+                                            {purchase.userName || "Anonymous"}
+                                          </p>
+                                          <p className="text-gray-400 text-sm truncate">
+                                            {purchase.userEmail || "No email"}
+                                          </p>
+                                        </div>
+                                        <div className="text-right ml-3">
+                                          <p className="text-primary font-medium text-sm">
+                                            {formatCurrency(purchase.referralEarnings || 0)} LMX
+                                          </p>
+                                          <p className="text-gray-400 text-xs">Earned</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block overflow-auto max-h-96 bg-black/40 rounded-lg border border-primary/20">
+                              <table className="w-full min-w-full">
+                                <thead className="bg-primary/10 border-b border-primary/20">
+                                  <tr>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-primary">
+                                      User
+                                    </th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-primary">
+                                      Email
+                                    </th>
+                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                      Joined Date
+                                    </th>
+                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                      Status
+                                    </th>
+                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                      Total Earned
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-primary/10">
+                                  {userData.referrals.referredUsers ? (
+                                    userData.referrals.referredUsers.map((user) => {
+                                      const joinedDate = new Date(user.createdAt);
+                                      const formattedDate = joinedDate.toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                      });
+
+                                      const userPurchases = userData.referrals.purchases.filter(
+                                        (purchase) =>
+                                          (purchase.userEmail &&
+                                            user.email &&
+                                            purchase.userEmail === user.email) ||
+                                          purchase.id === user.id
                                       );
-                                      // Format the date as a readable string
-                                      const formattedDate =
-                                        joinedDate.toLocaleDateString("en-US", {
-                                          year: "numeric",
-                                          month: "short",
-                                          day: "numeric",
-                                        });
 
-                                      // Find all purchases by this user
-                                      const userPurchases =
-                                        userData.referrals.purchases.filter(
-                                          (purchase) =>
-                                            (purchase.userEmail &&
-                                              user.email &&
-                                              purchase.userEmail ===
-                                                user.email) ||
-                                            purchase.id === user.id
-                                        );
-
-                                      const hasMadePurchase =
-                                        userPurchases.length > 0;
-
-                                      // Calculate total TRUMP earnings from this user's purchases
-                                      const totalEarnings =
-                                        userPurchases.reduce(
-                                          (sum, purchase) =>
-                                            sum +
-                                            (purchase.referralEarnings || 0),
-                                          0
-                                        );
+                                      const hasMadePurchase = userPurchases.length > 0;
+                                      const totalEarnings = userPurchases.reduce(
+                                        (sum, purchase) => sum + (purchase.referralEarnings || 0),
+                                        0
+                                      );
 
                                       return (
                                         <tr
@@ -1010,48 +1099,53 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               </span>
                                             )}
                                           </td>
-                                          <td className="py-3 px-4 text-sm text-right text-green-400 font-medium">
-                                            {totalEarnings > 0
-                                              ? `${totalEarnings.toFixed(2)} $TRUMP`
-                                              : "-"}
+                                          <td className="py-3 px-4 text-sm text-right text-primary font-medium">
+                                            {formatCurrency(totalEarnings)} LMX
                                           </td>
                                         </tr>
                                       );
-                                    }
-                                  )
-                                ) : (
-                                  <></>
-                                )}
-
-                                {/* For users who haven't made any purchases yet but are referred */}
-                                {/* Only show this message if we don't have referredUsers but we know there are more users than purchases */}
-                                {!userData.referrals.referredUsers &&
-                                  userData.referrals.count >
-                                    userData.referrals.purchases.length && (
-                                    <tr className="hover:bg-primary/5 transition-colors bg-amber-900/10">
-                                      <td
-                                        colSpan={5}
-                                        className="py-3 px-4 text-sm text-center text-amber-400"
+                                    })
+                                  ) : (
+                                    userData.referrals.purchases.map((purchase) => (
+                                      <tr
+                                        key={purchase.id}
+                                        className="hover:bg-primary/5 transition-colors"
                                       >
-                                        <span className="flex items-center justify-center gap-2">
-                                          <AlertCircle className="h-4 w-4" />
-                                          {userData.referrals.count -
-                                            userData.referrals.purchases
-                                              .length}{" "}
-                                          more referred users not yet fetched
-                                          from server
-                                        </span>
-                                      </td>
-                                    </tr>
+                                        <td className="py-3 px-4 text-sm text-white/90">
+                                          {purchase.userName || "Anonymous"}
+                                        </td>
+                                        <td className="py-3 px-4 text-sm text-white/90">
+                                          {purchase.userEmail || "No email"}
+                                        </td>
+                                        <td className="py-3 px-4 text-sm text-right text-white/90">
+                                          {new Date(purchase.createdAt).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                          })}
+                                        </td>
+                                        <td className="py-3 px-4 text-sm text-right">
+                                          <span className="text-green-400 font-medium">
+                                            Purchased
+                                          </span>
+                                        </td>
+                                        <td className="py-3 px-4 text-sm text-right text-primary font-medium">
+                                          {formatCurrency(purchase.referralEarnings || 0)} LMX
+                                        </td>
+                                      </tr>
+                                    ))
                                   )}
-                              </tbody>
-                            </table>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         ) : (
-                          <div className="p-6 text-center bg-black/20 rounded-lg">
-                            <p className="text-white/70">
-                              You haven't referred any users yet.
-                            </p>
+                          <div className="text-center py-8 bg-black/40 rounded-lg border border-primary/20">
+                            <div className="text-gray-400">
+                              <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                              <p>No referrals yet</p>
+                              <p className="text-sm mt-1">Share your referral link to start earning!</p>
+                            </div>
                           </div>
                         )}
                       </div>
