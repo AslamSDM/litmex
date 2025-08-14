@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import LuxuryCard from "./LuxuryCard";
 import {
   ChevronDown,
   ChevronRight,
@@ -85,75 +84,66 @@ const ReferralBalanceDisplay = ({
 
   if (status === "loading" || loadingBalance) {
     return (
-      <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-          <span className="ml-3 text-blue-400">
+      <div className="p-4 bg-black/40 border border-blue-500/20 rounded-lg">
+        <div className="flex items-center justify-center py-6">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
+          <span className="ml-3 text-blue-400 text-sm">
             Loading referral balances...
           </span>
         </div>
-      </LuxuryCard>
+      </div>
     );
   }
 
   if (status !== "authenticated") {
     return (
-      <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
-        <div className="text-center py-8">
-          <AlertCircle className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-          <p className="text-white/70">
-            Sign in to view your referral balances
-          </p>
-        </div>
-      </LuxuryCard>
+      <div className="p-4 bg-black/40 border border-blue-500/20 rounded-lg text-center">
+        <AlertCircle className="h-8 w-8 text-yellow-400 mx-auto mb-3" />
+        <p className="text-white/70 text-sm">
+          Sign in to view your referral balances
+        </p>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <LuxuryCard className="p-6 bg-gradient-to-br from-red-500/10 to-black/80 border border-red-500/20">
-        <div className="text-center py-8">
-          <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-          <p className="text-red-400 mb-2">Error loading referral data</p>
-          <p className="text-white/70 text-sm">{error}</p>
-        </div>
-      </LuxuryCard>
+      <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg text-center">
+        <AlertCircle className="h-8 w-8 text-red-400 mx-auto mb-3" />
+        <p className="text-red-400 mb-1 text-sm">Error loading referral data</p>
+        <p className="text-white/70 text-xs">{error}</p>
+      </div>
     );
   }
 
   if (!balanceData) {
     return (
-      <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
-        <div className="text-center py-8">
-          <Users className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-          <p className="text-white/70">No referral data available</p>
-        </div>
-      </LuxuryCard>
+      <div className="p-4 bg-black/40 border border-blue-500/20 rounded-lg text-center">
+        <Users className="h-8 w-8 text-blue-400 mx-auto mb-3" />
+        <p className="text-white/70 text-sm">No referral data available</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Summary Card */}
-      <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
-        <h3 className="text-xl md:text-2xl font-bold text-blue-400 mb-6 text-center">
+    <div className="space-y-4">
+      {/* Summary - Compact Mobile Header */}
+      <div className="p-4 bg-black/40 border border-blue-500/20 rounded-lg">
+        <h3 className="text-lg font-bold text-blue-400 mb-3 text-center">
           5-Level Referral Balance
         </h3>
-
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="bg-black/40 p-4 rounded-lg text-center">
-            <TrendingUp className="h-6 w-6 text-green-400 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-green-400">
-              {formatCurrency(balanceData.totalEarnings)} LMX
-            </p>
-            <p className="text-sm text-gray-300">Total Earnings</p>
-          </div>
+        <div className="text-center bg-black/40 p-3 rounded">
+          <TrendingUp className="h-5 w-5 text-green-400 mx-auto mb-1" />
+          <p className="text-xl font-bold text-green-400">
+            {formatCurrency(balanceData.totalEarnings)} LMX
+          </p>
+          <p className="text-xs text-gray-300">Total Earnings</p>
         </div>
-      </LuxuryCard>
+      </div>
 
-      {/* Level Details */}
-      <LuxuryCard className="p-6 bg-gradient-to-br from-blue-500/10 to-black/80 border border-blue-500/20">
-        <h4 className="text-lg font-bold text-blue-400 mb-4">
+      {/* Level Details - No Extra Wrapper */}
+      <div className="space-y-3">
+        <h4 className="text-base font-bold text-blue-400 px-2">
           Referral Levels Breakdown
         </h4>
 
@@ -198,32 +188,27 @@ const ReferralBalanceDisplay = ({
                   </div>
 
                   {/* Desktop Layout */}
-                  <div className="hidden md:flex items-center gap-4">
+                  <div className="hidden md:flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-blue-400 font-bold">
+                      <p className="text-blue-400 font-bold text-sm">
                         {level.percentage}%
                       </p>
-                      <p className="text-sm text-gray-300">Commission</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-bold">
+                      <p className="text-white font-bold text-sm">
                         {level.referralCount}
                       </p>
-                      <p className="text-sm text-gray-300">Referrals</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-green-400 font-bold">
-                        {formatCurrency(level.totalEarnings)} LMX
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        ${formatCurrency(level.totalEarningsUsd)}
+                      <p className="text-green-400 font-bold text-sm">
+                        {formatCurrency(level.totalEarnings, 0)} LMX
                       </p>
                     </div>
 
                     {expandedLevels.has(level.level) ? (
-                      <ChevronDown className="h-5 w-5 text-blue-400" />
+                      <ChevronDown className="h-4 w-4 text-blue-400" />
                     ) : (
-                      <ChevronRight className="h-5 w-5 text-blue-400" />
+                      <ChevronRight className="h-4 w-4 text-blue-400" />
                     )}
                   </div>
                 </div>
@@ -233,55 +218,29 @@ const ReferralBalanceDisplay = ({
               {expandedLevels.has(level.level) &&
                 level.referrals.length > 0 && (
                   <div className="bg-black/20 p-2 md:p-4">
-                    {/* Mobile Card View */}
-                    <div className="block md:hidden space-y-3">
+                    {/* Mobile Simple List */}
+                    <div className="block md:hidden">
                       {level.referrals.map((referral) => (
                         <div
                           key={referral.id}
-                          className="bg-black/40 p-3 rounded-lg border border-white/10"
+                          className="p-3 border-b border-white/10 last:border-b-0"
                         >
-                          <div className="space-y-2">
-                            <div className="flex justify-between items-start">
-                              <div className="min-w-0 flex-1">
-                                <p className="text-white font-medium text-sm truncate">
-                                  {referral.username || "Anonymous"}
-                                </p>
-                                <p className="text-gray-400 text-xs truncate">
-                                  {referral.email
-                                    ? referral.email.length > 25
-                                      ? `${referral.email.substring(0, 10)}...${referral.email.substring(referral.email.indexOf("@"))}`
-                                      : referral.email
-                                    : "No email"}
-                                </p>
-                              </div>
-                              <div className="text-right ml-2">
-                                <p className="text-green-400 font-bold text-sm">
-                                  {formatCurrency(referral.bonusEarned)} LMX
-                                </p>
-                                <p className="text-gray-400 text-xs">
-                                  Your Bonus
-                                </p>
-                              </div>
+                          <div className="flex justify-between items-center">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-white text-sm font-medium truncate">
+                                {referral.username ||
+                                  referral.email?.split("@")[0] ||
+                                  "User"}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                {formatDate(referral.createdAt)} •{" "}
+                                {referral.totalPurchases} purchases
+                              </p>
                             </div>
-                            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
-                              <div className="text-center">
-                                <p className="text-white text-xs font-medium">
-                                  {formatDate(referral.createdAt)}
-                                </p>
-                                <p className="text-gray-400 text-xs">Joined</p>
-                              </div>
-                              <div className="text-center">
-                                <p className="text-white text-xs font-medium">
-                                  {referral.totalPurchases}
-                                </p>
-                                <p className="text-gray-400 text-xs">Purchases</p>
-                              </div>
-                              <div className="text-center">
-                                <p className="text-white text-xs font-medium">
-                                  ${formatCurrency(referral.totalPurchaseAmount)}
-                                </p>
-                                <p className="text-gray-400 text-xs">Amount</p>
-                              </div>
+                            <div className="text-right ml-3">
+                              <p className="text-green-400 font-bold text-sm">
+                                +{formatCurrency(referral.bonusEarned)} LMX
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -289,18 +248,14 @@ const ReferralBalanceDisplay = ({
                     </div>
 
                     {/* Desktop Table View */}
-                    <div className="hidden md:block overflow-x-auto">
+                    <div className="hidden md:block">
                       <table className="w-full text-sm">
                         <thead className="text-xs uppercase bg-black/40 text-white/60">
                           <tr>
-                            <th className="px-3 py-2 text-left">User</th>
-                            <th className="px-3 py-2 text-left">Email</th>
-                            <th className="px-3 py-2 text-right">Joined</th>
-                            <th className="px-3 py-2 text-right">Purchases</th>
-                            <th className="px-3 py-2 text-right">
-                              Purchase Amount
-                            </th>
-                            <th className="px-3 py-2 text-right">Your Bonus</th>
+                            <th className="px-2 py-2 text-left">User</th>
+                            <th className="px-2 py-2 text-right">Joined</th>
+                            <th className="px-2 py-2 text-right">Purchases</th>
+                            <th className="px-2 py-2 text-right">Your Bonus</th>
                           </tr>
                         </thead>
                         <tbody className="text-white/80">
@@ -309,26 +264,29 @@ const ReferralBalanceDisplay = ({
                               key={referral.id}
                               className="border-t border-white/10"
                             >
-                              <td className="px-3 py-2">
-                                {referral.username || "Anonymous"}
+                              <td className="px-2 py-2 max-w-[140px]">
+                                <div className="truncate">
+                                  <p className="font-medium text-sm truncate">
+                                    {referral.username ||
+                                      referral.email?.split("@")[0] ||
+                                      "User"}
+                                  </p>
+                                  {referral.email && (
+                                    <p className="text-xs text-gray-400 truncate">
+                                      {referral.email.length > 25
+                                        ? `${referral.email.substring(0, 10)}...@${referral.email.split("@")[1]}`
+                                        : referral.email}
+                                    </p>
+                                  )}
+                                </div>
                               </td>
-                              <td className="px-3 py-2">
-                                {referral.email
-                                  ? referral.email.length > 20
-                                    ? `${referral.email.substring(0, 8)}...${referral.email.substring(referral.email.indexOf("@"))}`
-                                    : referral.email
-                                  : "No email"}
-                              </td>
-                              <td className="px-3 py-2 text-right text-xs">
+                              <td className="px-2 py-2 text-right text-xs text-gray-300">
                                 {formatDate(referral.createdAt)}
                               </td>
-                              <td className="px-3 py-2 text-right">
+                              <td className="px-2 py-2 text-right text-sm">
                                 {referral.totalPurchases}
                               </td>
-                              <td className="px-3 py-2 text-right">
-                                ${formatCurrency(referral.totalPurchaseAmount)}
-                              </td>
-                              <td className="px-3 py-2 text-right text-green-400 font-medium">
+                              <td className="px-2 py-2 text-right text-green-400 font-medium text-sm">
                                 {formatCurrency(referral.bonusEarned)} LMX
                               </td>
                             </tr>
@@ -353,15 +311,15 @@ const ReferralBalanceDisplay = ({
           ))}
         </div>
 
-        {/* Footer Info */}
-        <div className="mt-6 p-4 bg-black/40 border border-blue-500/20 rounded-lg text-center">
-          <p className="text-sm text-gray-300">
+        {/* Footer Info - Compact */}
+        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+          <p className="text-xs text-gray-300">
             Earn{" "}
             <span className="text-blue-400 font-bold">15% in LMX tokens</span>{" "}
-            on all purchases made through your 5-level referral network!
+            on all purchases!
           </p>
         </div>
-      </LuxuryCard>
+      </div>
     </div>
   );
 };

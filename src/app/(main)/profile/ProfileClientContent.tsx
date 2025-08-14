@@ -985,7 +985,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               <p className="text-primary text-xs font-medium">
                                                 {formattedDate}
                                               </p>
-                                              {hasMadePurchase ? (
+                                              {/* {hasMadePurchase ? (
                                                 <p className="text-green-400 text-xs font-medium">
                                                   +
                                                   {formatCurrency(
@@ -997,7 +997,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                                 <p className="text-amber-400 text-xs">
                                                   No purchase
                                                 </p>
-                                              )}
+                                              )} */}
                                             </div>
                                           </div>
                                         </div>
@@ -1019,7 +1019,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               {purchase.userEmail || "No email"}
                                             </p>
                                           </div>
-                                          <div className="text-right ml-2">
+                                          {/* <div className="text-right ml-2">
                                             <p className="text-primary font-medium text-xs">
                                               +
                                               {formatCurrency(
@@ -1027,7 +1027,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               )}{" "}
                                               LMX
                                             </p>
-                                          </div>
+                                          </div> */}
                                         </div>
                                       </div>
                                     )
@@ -1045,12 +1045,12 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                     <th className="text-right py-2 px-2 text-sm font-medium text-primary">
                                       Joined
                                     </th>
-                                    <th className="text-right py-2 px-2 text-sm font-medium text-primary">
+                                    {/* <th className="text-right py-2 px-2 text-sm font-medium text-primary">
                                       Status
-                                    </th>
-                                    <th className="text-right py-2 px-2 text-sm font-medium text-primary">
+                                    </th> */}
+                                    {/* <th className="text-right py-2 px-2 text-sm font-medium text-primary">
                                       Earned
-                                    </th>
+                                    </th> */}
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-primary/10">
@@ -1113,7 +1113,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                               <td className="py-2 px-2 text-sm text-right text-white/90">
                                                 {formattedDate}
                                               </td>
-                                              <td className="py-2 px-2 text-sm text-right">
+                                              {/* <td className="py-2 px-2 text-sm text-right">
                                                 {hasMadePurchase ? (
                                                   <span className="text-green-400 font-medium">
                                                     ✓
@@ -1123,11 +1123,11 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                                     -
                                                   </span>
                                                 )}
-                                              </td>
-                                              <td className="py-2 px-2 text-sm text-right text-primary font-medium">
+                                              </td> */}
+                                              {/* <td className="py-2 px-2 text-sm text-right text-primary font-medium">
                                                 {formatCurrency(totalEarnings)}{" "}
                                                 LMX
-                                              </td>
+                                              </td> */}
                                             </tr>
                                           );
                                         }
@@ -1163,7 +1163,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                                 day: "numeric",
                                               })}
                                             </td>
-                                            <td className="py-2 px-2 text-sm text-right">
+                                            {/* <td className="py-2 px-2 text-sm text-right">
                                               <span className="text-green-400 font-medium">
                                                 ✓
                                               </span>
@@ -1173,7 +1173,7 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                                                 purchase.referralEarnings || 0
                                               )}{" "}
                                               LMX
-                                            </td>
+                                            </td> */}
                                           </tr>
                                         )
                                       )}
