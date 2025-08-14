@@ -2,7 +2,15 @@
 import React, { useState, Suspense, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { User, Wallet, Shield, Clock, Award, AlertCircle, Users } from "lucide-react";
+import {
+  User,
+  Wallet,
+  Shield,
+  Clock,
+  Award,
+  AlertCircle,
+  Users,
+} from "lucide-react";
 import { useAppKitState, useAppKitAccount } from "@reown/appkit/react";
 import { modal } from "@/components/providers/wallet-provider";
 import { AppKitStateShape, getWalletType } from "@/components/hooks/usePresale";
@@ -883,38 +891,33 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
               )}
 
               {activeTab === "referrals" && (
-                <motion.div
-                  variants={itemVariants}
-                  className="w-full bg-black/40 backdrop-blur-sm p-6 rounded-lg border border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.05)] transform transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]"
-                >
+                <div className="space-y-4">
                   {isAuthenticated ? (
                     <>
-                      {/* Note about Trump balance being shown in Overview */}
-                      <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg mb-6">
-                        <div className="flex items-center mb-2">
-                          <Award className="h-5 w-5 text-primary mr-2" />
-                          <h4 className="font-medium text-primary">
+                      {/* TRUMP Balance Note - Compact */}
+                      <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Award className="h-4 w-4 text-primary" />
+                          <h4 className="font-medium text-primary text-sm">
                             TRUMP Balance Summary
                           </h4>
                         </div>
-                        <p className="text-sm text-gray-300">
+                        <p className="text-xs text-gray-300">
                           Your detailed TRUMP balance and referral earnings are
-                          now displayed in the Overview tab.
+                          in the Overview tab.
                         </p>
                       </div>
 
-                      {/* 5-Level Referral Balance Display */}
-                      <div className="mt-6">
-                        <ReferralBalanceDisplay
-                          trumpPrice={8}
-                          balanceData={balanceData}
-                          loadingBalance={loadingBalance}
-                        />
-                      </div>
+                      {/* 5-Level Referral Balance - No Extra Wrapper */}
+                      <ReferralBalanceDisplay
+                        trumpPrice={8}
+                        balanceData={balanceData}
+                        loadingBalance={loadingBalance}
+                      />
 
-                      {/* Referrals Table with Emails and Joined Dates */}
-                      <div className="mt-6">
-                        <h4 className="text-primary font-medium mb-4">
+                      {/* All Referred Users - Simplified */}
+                      <div className="space-y-3">
+                        <h4 className="text-primary font-medium text-base">
                           All Referred Users
                           {userData.referrals.count > 0 && (
                             <span className="text-sm text-white/70 ml-2">
@@ -922,271 +925,291 @@ const ProfileClientContent: React.FC<ProfileClientContentProps> = ({
                             </span>
                           )}
                         </h4>
+
                         {userData.referrals.count > 0 ? (
-                          <div className="space-y-4">
-                            {/* Mobile Card View */}
-                            <div className="block md:hidden space-y-3">
-                              {userData.referrals.referredUsers ? (
-                                userData.referrals.referredUsers.map((user) => {
-                                  const joinedDate = new Date(user.createdAt);
-                                  const formattedDate = joinedDate.toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  });
+                          <>
+                            {/* Mobile: Simple Cards */}
+                            <div className="block md:hidden space-y-2">
+                              {userData.referrals.referredUsers
+                                ? userData.referrals.referredUsers.map(
+                                    (user) => {
+                                      const joinedDate = new Date(
+                                        user.createdAt
+                                      );
+                                      const formattedDate =
+                                        joinedDate.toLocaleDateString("en-US", {
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric",
+                                        });
 
-                                  const userPurchases = userData.referrals.purchases.filter(
-                                    (purchase) =>
-                                      (purchase.userEmail &&
-                                        user.email &&
-                                        purchase.userEmail === user.email) ||
-                                      purchase.id === user.id
-                                  );
+                                      const userPurchases =
+                                        userData.referrals.purchases.filter(
+                                          (purchase) =>
+                                            (purchase.userEmail &&
+                                              user.email &&
+                                              purchase.userEmail ===
+                                                user.email) ||
+                                            purchase.id === user.id
+                                        );
 
-                                  const hasMadePurchase = userPurchases.length > 0;
-                                  const totalEarnings = userPurchases.reduce(
-                                    (sum, purchase) => sum + (purchase.referralEarnings || 0),
-                                    0
-                                  );
+                                      const hasMadePurchase =
+                                        userPurchases.length > 0;
+                                      const totalEarnings =
+                                        userPurchases.reduce(
+                                          (sum, purchase) =>
+                                            sum +
+                                            (purchase.referralEarnings || 0),
+                                          0
+                                        );
 
-                                  return (
-                                    <div
-                                      key={user.id}
-                                      className="bg-black/40 p-4 rounded-lg border border-primary/20"
-                                    >
-                                      <div className="space-y-3">
-                                        <div className="flex justify-between items-start">
+                                      return (
+                                        <div
+                                          key={user.id}
+                                          className="bg-black/40 p-3 border border-primary/20 rounded"
+                                        >
+                                          <div className="flex justify-between items-center">
+                                            <div className="min-w-0 flex-1">
+                                              <p className="text-white font-medium text-sm truncate">
+                                                {user.name || "User"}
+                                              </p>
+                                              <p className="text-gray-400 text-xs truncate">
+                                                {user.email
+                                                  ? user.email.length > 25
+                                                    ? `${user.email.substring(0, 10)}...${user.email.substring(user.email.indexOf("@"))}`
+                                                    : user.email
+                                                  : "No email"}
+                                              </p>
+                                            </div>
+                                            <div className="text-right ml-2">
+                                              <p className="text-primary text-xs font-medium">
+                                                {formattedDate}
+                                              </p>
+                                              {hasMadePurchase ? (
+                                                <p className="text-green-400 text-xs font-medium">
+                                                  +
+                                                  {formatCurrency(
+                                                    totalEarnings
+                                                  )}{" "}
+                                                  LMX
+                                                </p>
+                                              ) : (
+                                                <p className="text-amber-400 text-xs">
+                                                  No purchase
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                  )
+                                : userData.referrals.purchases.map(
+                                    (purchase) => (
+                                      <div
+                                        key={purchase.id}
+                                        className="bg-black/40 p-3 border border-primary/20 rounded"
+                                      >
+                                        <div className="flex justify-between items-center">
                                           <div className="min-w-0 flex-1">
-                                            <p className="text-white font-medium truncate">
-                                              {user.name || "User"}
+                                            <p className="text-white font-medium text-sm truncate">
+                                              {purchase.userName || "Anonymous"}
                                             </p>
-                                            <p className="text-gray-400 text-sm truncate">
-                                              {user.email
-                                                ? user.email.length > 25
-                                                  ? `${user.email.substring(0, 12)}...${user.email.substring(user.email.indexOf("@"))}`
-                                                  : user.email
-                                                : "No email provided"}
+                                            <p className="text-gray-400 text-xs truncate">
+                                              {purchase.userEmail || "No email"}
                                             </p>
                                           </div>
-                                          <div className="text-right ml-3">
-                                            <p className="text-primary text-sm font-medium">
-                                              {formattedDate}
+                                          <div className="text-right ml-2">
+                                            <p className="text-primary font-medium text-xs">
+                                              +
+                                              {formatCurrency(
+                                                purchase.referralEarnings || 0
+                                              )}{" "}
+                                              LMX
                                             </p>
-                                            <p className="text-gray-400 text-xs">Joined</p>
-                                          </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/10">
-                                          <div className="text-center">
-                                            {hasMadePurchase ? (
-                                              <span className="text-green-400 font-medium text-sm">
-                                                Purchased
-                                              </span>
-                                            ) : (
-                                              <span className="text-amber-400 text-sm">
-                                                No purchase yet
-                                              </span>
-                                            )}
-                                            <p className="text-gray-400 text-xs mt-1">Status</p>
-                                          </div>
-                                          <div className="text-center">
-                                            <p className="text-primary font-medium text-sm">
-                                              {formatCurrency(totalEarnings)} LMX
-                                            </p>
-                                            <p className="text-gray-400 text-xs mt-1">Earned</p>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  );
-                                })
-                              ) : (
-                                userData.referrals.purchases.map((purchase) => (
-                                  <div
-                                    key={purchase.id}
-                                    className="bg-black/40 p-4 rounded-lg border border-primary/20"
-                                  >
-                                    <div className="space-y-3">
-                                      <div className="flex justify-between items-start">
-                                        <div className="min-w-0 flex-1">
-                                          <p className="text-white font-medium truncate">
-                                            {purchase.userName || "Anonymous"}
-                                          </p>
-                                          <p className="text-gray-400 text-sm truncate">
-                                            {purchase.userEmail || "No email"}
-                                          </p>
-                                        </div>
-                                        <div className="text-right ml-3">
-                                          <p className="text-primary font-medium text-sm">
-                                            {formatCurrency(purchase.referralEarnings || 0)} LMX
-                                          </p>
-                                          <p className="text-gray-400 text-xs">Earned</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              )}
+                                    )
+                                  )}
                             </div>
 
-                            {/* Desktop Table View */}
-                            <div className="hidden md:block overflow-auto max-h-96 bg-black/40 rounded-lg border border-primary/20">
-                              <table className="w-full min-w-full">
+                            {/* Desktop: Compact Table */}
+                            <div className="hidden md:block bg-black/40 border border-primary/20 rounded-lg overflow-hidden">
+                              <table className="w-full">
                                 <thead className="bg-primary/10 border-b border-primary/20">
                                   <tr>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-primary">
+                                    <th className="text-left py-2 px-2 text-sm font-medium text-primary">
                                       User
                                     </th>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-primary">
-                                      Email
+                                    <th className="text-right py-2 px-2 text-sm font-medium text-primary">
+                                      Joined
                                     </th>
-                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                      Joined Date
-                                    </th>
-                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
+                                    <th className="text-right py-2 px-2 text-sm font-medium text-primary">
                                       Status
                                     </th>
-                                    <th className="text-right py-3 px-4 text-sm font-medium text-primary">
-                                      Total Earned
+                                    <th className="text-right py-2 px-2 text-sm font-medium text-primary">
+                                      Earned
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-primary/10">
-                                  {userData.referrals.referredUsers ? (
-                                    userData.referrals.referredUsers.map((user) => {
-                                      const joinedDate = new Date(user.createdAt);
-                                      const formattedDate = joinedDate.toLocaleDateString("en-US", {
-                                        year: "numeric",
-                                        month: "short",
-                                        day: "numeric",
-                                      });
+                                  {userData.referrals.referredUsers
+                                    ? userData.referrals.referredUsers.map(
+                                        (user) => {
+                                          const joinedDate = new Date(
+                                            user.createdAt
+                                          );
+                                          const formattedDate =
+                                            joinedDate.toLocaleDateString(
+                                              "en-US",
+                                              {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                              }
+                                            );
 
-                                      const userPurchases = userData.referrals.purchases.filter(
-                                        (purchase) =>
-                                          (purchase.userEmail &&
-                                            user.email &&
-                                            purchase.userEmail === user.email) ||
-                                          purchase.id === user.id
-                                      );
+                                          const userPurchases =
+                                            userData.referrals.purchases.filter(
+                                              (purchase) =>
+                                                (purchase.userEmail &&
+                                                  user.email &&
+                                                  purchase.userEmail ===
+                                                    user.email) ||
+                                                purchase.id === user.id
+                                            );
 
-                                      const hasMadePurchase = userPurchases.length > 0;
-                                      const totalEarnings = userPurchases.reduce(
-                                        (sum, purchase) => sum + (purchase.referralEarnings || 0),
-                                        0
-                                      );
+                                          const hasMadePurchase =
+                                            userPurchases.length > 0;
+                                          const totalEarnings =
+                                            userPurchases.reduce(
+                                              (sum, purchase) =>
+                                                sum +
+                                                (purchase.referralEarnings ||
+                                                  0),
+                                              0
+                                            );
 
-                                      return (
-                                        <tr
-                                          key={user.id}
-                                          className="hover:bg-primary/5 transition-colors"
-                                        >
-                                          <td className="py-3 px-4 text-sm text-white/90">
-                                            {user.name || "User"}
-                                          </td>
-                                          <td className="py-3 px-4 text-sm text-white/90">
-                                            {user.email || "No email provided"}
-                                          </td>
-                                          <td className="py-3 px-4 text-sm text-right text-white/90">
-                                            {formattedDate}
-                                          </td>
-                                          <td className="py-3 px-4 text-sm text-right">
-                                            {hasMadePurchase ? (
+                                          return (
+                                            <tr
+                                              key={user.id}
+                                              className="hover:bg-primary/5 transition-colors"
+                                            >
+                                              <td className="py-2 px-2 text-sm max-w-[140px]">
+                                                <div className="truncate">
+                                                  <p className="text-white/90 font-medium truncate">
+                                                    {user.name || "User"}
+                                                  </p>
+                                                  {user.email && (
+                                                    <p className="text-xs text-gray-400 truncate">
+                                                      {user.email.length > 25
+                                                        ? `${user.email.substring(0, 10)}...@${user.email.split("@")[1]}`
+                                                        : user.email}
+                                                    </p>
+                                                  )}
+                                                </div>
+                                              </td>
+                                              <td className="py-2 px-2 text-sm text-right text-white/90">
+                                                {formattedDate}
+                                              </td>
+                                              <td className="py-2 px-2 text-sm text-right">
+                                                {hasMadePurchase ? (
+                                                  <span className="text-green-400 font-medium">
+                                                    ✓
+                                                  </span>
+                                                ) : (
+                                                  <span className="text-amber-400">
+                                                    -
+                                                  </span>
+                                                )}
+                                              </td>
+                                              <td className="py-2 px-2 text-sm text-right text-primary font-medium">
+                                                {formatCurrency(totalEarnings)}{" "}
+                                                LMX
+                                              </td>
+                                            </tr>
+                                          );
+                                        }
+                                      )
+                                    : userData.referrals.purchases.map(
+                                        (purchase) => (
+                                          <tr
+                                            key={purchase.id}
+                                            className="hover:bg-primary/5 transition-colors"
+                                          >
+                                            <td className="py-2 px-2 text-sm max-w-[140px]">
+                                              <div className="truncate">
+                                                <p className="text-white/90 font-medium truncate">
+                                                  {purchase.userName ||
+                                                    "Anonymous"}
+                                                </p>
+                                                {purchase.userEmail && (
+                                                  <p className="text-xs text-gray-400 truncate">
+                                                    {purchase.userEmail.length >
+                                                    25
+                                                      ? `${purchase.userEmail.substring(0, 10)}...@${purchase.userEmail.split("@")[1]}`
+                                                      : purchase.userEmail}
+                                                  </p>
+                                                )}
+                                              </div>
+                                            </td>
+                                            <td className="py-2 px-2 text-sm text-right text-white/90">
+                                              {new Date(
+                                                purchase.createdAt
+                                              ).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                              })}
+                                            </td>
+                                            <td className="py-2 px-2 text-sm text-right">
                                               <span className="text-green-400 font-medium">
-                                                Purchased
+                                                ✓
                                               </span>
-                                            ) : (
-                                              <span className="text-amber-400">
-                                                No purchase yet
-                                              </span>
-                                            )}
-                                          </td>
-                                          <td className="py-3 px-4 text-sm text-right text-primary font-medium">
-                                            {formatCurrency(totalEarnings)} LMX
-                                          </td>
-                                        </tr>
-                                      );
-                                    })
-                                  ) : (
-                                    userData.referrals.purchases.map((purchase) => (
-                                      <tr
-                                        key={purchase.id}
-                                        className="hover:bg-primary/5 transition-colors"
-                                      >
-                                        <td className="py-3 px-4 text-sm text-white/90">
-                                          {purchase.userName || "Anonymous"}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-white/90">
-                                          {purchase.userEmail || "No email"}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right text-white/90">
-                                          {new Date(purchase.createdAt).toLocaleDateString("en-US", {
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                          })}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right">
-                                          <span className="text-green-400 font-medium">
-                                            Purchased
-                                          </span>
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-right text-primary font-medium">
-                                          {formatCurrency(purchase.referralEarnings || 0)} LMX
-                                        </td>
-                                      </tr>
-                                    ))
-                                  )}
+                                            </td>
+                                            <td className="py-2 px-2 text-sm text-right text-primary font-medium">
+                                              {formatCurrency(
+                                                purchase.referralEarnings || 0
+                                              )}{" "}
+                                              LMX
+                                            </td>
+                                          </tr>
+                                        )
+                                      )}
                                 </tbody>
                               </table>
                             </div>
-                          </div>
+                          </>
                         ) : (
-                          <div className="text-center py-8 bg-black/40 rounded-lg border border-primary/20">
-                            <div className="text-gray-400">
-                              <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                              <p>No referrals yet</p>
-                              <p className="text-sm mt-1">Share your referral link to start earning!</p>
-                            </div>
+                          <div className="text-center py-6 bg-black/40 border border-primary/20 rounded-lg">
+                            <Users className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p className="text-gray-400 text-sm">
+                              No referrals yet
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Share your referral link to start earning!
+                            </p>
                           </div>
                         )}
                       </div>
-
-                      {connected && currentWalletType === "solana" ? (
-                        <div className="bg-black/20 p-6 rounded-lg mt-8"></div>
-                      ) : connected ? (
-                        <div className="bg-black/20 p-6 rounded-lg mt-8"></div>
-                      ) : null}
                     </>
                   ) : (
-                    <div className="text-center py-10">
-                      <motion.p
-                        className="text-white/70 mb-6"
-                        animate={
-                          !isLowMemoryDevice ? { opacity: [0.7, 1, 0.7] } : {}
-                        }
-                        transition={
-                          !isLowMemoryDevice
-                            ? { duration: 2, repeat: Infinity }
-                            : {}
-                        }
-                      >
+                    <div className="text-center py-8 bg-black/40 border border-primary/20 rounded-lg">
+                      <p className="text-white/70 mb-4 text-sm">
                         Sign in or connect your wallet to access the referral
                         program
-                      </motion.p>
-                      <motion.div
-                        whileHover={!isLowMemoryDevice ? { scale: 1.05 } : {}}
-                        whileTap={!isLowMemoryDevice ? { scale: 0.98 } : {}}
+                      </p>
+                      <Button
+                        onClick={handleConnect}
+                        className="bg-primary hover:bg-primary/90 text-black font-semibold"
+                        disabled={loading}
                       >
-                        <Button
-                          onClick={handleConnect}
-                          className="mx-auto bg-primary hover:bg-primary/90 text-black font-semibold shadow-[0_0_15px_rgba(212,175,55,0.3)]"
-                          disabled={loading}
-                        >
-                          {loading ? "Connecting..." : "Connect Wallet"}
-                        </Button>
-                      </motion.div>
+                        {loading ? "Connecting..." : "Connect Wallet"}
+                      </Button>
                     </div>
                   )}
-                </motion.div>
+                </div>
               )}
             </div>
           </Card>
