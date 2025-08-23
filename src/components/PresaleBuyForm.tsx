@@ -379,12 +379,7 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
 
   // Handle purchase
   const handleBuy = async () => {
-    // Temp Error
-    toast.error("Some Error Occurred");
-    return;
-
     // Validate presale status
-
     if (!presaleStatus) {
       toast.error("Presale is not active");
       return;
@@ -400,7 +395,6 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
       toast.error(`Minimum purchase amount is $${MIN_BUY.toFixed(2)} USD`);
       return;
     }
-    const currentBalance = 0;
 
     // Check if the user has enough balance for the purchase
     if (currentBalance !== null) {

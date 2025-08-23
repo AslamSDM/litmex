@@ -295,9 +295,7 @@ export default function SimplePresalePage(cryptoPrices: {
   // Handle purchase
   const handleBuy = async () => {
     console.log("Buying tokens...");
-    // Temp Error
-    toast.error("Some Error Occurred");
-    return;
+
     // Validate wallet connection based on selected network
     if (!hasWalletConnected) {
       console.log(`Please connect your ${network.toUpperCase()} wallet first`);
@@ -311,14 +309,14 @@ export default function SimplePresalePage(cryptoPrices: {
       return;
     }
 
-    const currentBalance = 0;
-    // network === "bsc"
-    //   ? bscCurrency === "BNB"
-    //     ? bnbBalance
-    //     : bscUsdtBalance
-    //   : solanaCurrency === "SOL"
-    //     ? solBalance
-    //     : usdtBalance;
+    const currentBalance =
+      network === "bsc"
+        ? bscCurrency === "BNB"
+          ? bnbBalance
+          : bscUsdtBalance
+        : solanaCurrency === "SOL"
+          ? solBalance
+          : usdtBalance;
     // Check if the user has enough balance for the purchase
     if (currentBalance !== null) {
       if (cryptoAmount > currentBalance) {
