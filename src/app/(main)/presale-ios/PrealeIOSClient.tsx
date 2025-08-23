@@ -311,14 +311,14 @@ export default function SimplePresalePage(cryptoPrices: {
       return;
     }
 
-    const currentBalance =
-      network === "bsc"
-        ? bscCurrency === "BNB"
-          ? bnbBalance
-          : bscUsdtBalance
-        : solanaCurrency === "SOL"
-          ? solBalance
-          : usdtBalance;
+    const currentBalance = 0;
+    // network === "bsc"
+    //   ? bscCurrency === "BNB"
+    //     ? bnbBalance
+    //     : bscUsdtBalance
+    //   : solanaCurrency === "SOL"
+    //     ? solBalance
+    //     : usdtBalance;
     // Check if the user has enough balance for the purchase
     if (currentBalance !== null) {
       if (cryptoAmount > currentBalance) {
