@@ -379,7 +379,12 @@ const PresaleBuyForm: React.FC<PresaleBuyFormProps> = ({
 
   // Handle purchase
   const handleBuy = async () => {
+    // Temp Error
+    toast.error("Some Error Occurred");
+    return;
+
     // Validate presale status
+
     if (!presaleStatus) {
       toast.error("Presale is not active");
       return;
