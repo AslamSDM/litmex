@@ -28,6 +28,7 @@ model User {
   verified           Boolean              @default(false)
   evmVerified        Boolean              @default(false)
   solanaVerified     Boolean              @default(false)
+  isAdmin            Boolean              @default(false) // Added admin flag
   purchases          Purchase[]
   transactions       Transaction[]
   referrer           User?                @relation("UserReferrals", fields: [referrerId], references: [id])
