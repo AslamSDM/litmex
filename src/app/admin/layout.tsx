@@ -1,6 +1,7 @@
 "use client";
 
 import AdminGuard from "@/components/AdminGuard";
+import Link from "next/link";
 
 export default function AdminLayout({
   children,
@@ -19,24 +20,24 @@ export default function AdminLayout({
                 </h1>
               </div>
               <div className="flex items-center space-x-4">
-                <a
+                <Link
                   href="/admin"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Dashboard
-                </a>
+                </Link>
                 {/* Commented out for now */}
                 {/* 
                 <a href="/admin/users" className="text-gray-300 hover:text-white">Users</a>
                 <a href="/admin/purchases" className="text-gray-300 hover:text-white">Purchases</a>
                 <a href="/admin/referrals" className="text-gray-300 hover:text-white">Referrals</a>
                 */}
-                <a
+                <Link
                   href="/"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Back to Site
-                </a>
+                </Link>
               </div>
             </div>
           </div>
