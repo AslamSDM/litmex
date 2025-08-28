@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Bruno_Ace } from "next/font/google";
+import { Geist, Bruno_Ace, Arvo } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
@@ -11,8 +11,19 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+// const asimovian = Asimovian({
+//   variable: "--font-asimovian",
+//   subsets: ["latin"],
+//   weight: "400",
+// });
 const brunoAce = Bruno_Ace({
   variable: "--font-bruno-ace",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const arvo = Arvo({
+  variable: "--font-arvo",
   subsets: ["latin"],
   weight: "400",
 });
@@ -44,9 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${brunoAce.className}  antialiased bg-black`}
-      >
+      <body className={` ${arvo.className}  antialiased bg-black`}>
         <LoadingProvider>
           <AuthProvider>
             <Toaster />
